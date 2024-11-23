@@ -1,13 +1,13 @@
 import React from "react";
 //lib
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "@apollo/client";
+//import { useMutation } from "@apollo/client";
 //props
 import { OptionProps } from "../../interface/data";
 //icon
 import { PiOption } from "react-icons/pi";
 import { MdDeleteOutline } from "react-icons/md";
-import { GrMultiple } from "react-icons/gr";
+//import { GrMultiple } from "react-icons/gr";
 
 interface QueryProps {
   queries: string;

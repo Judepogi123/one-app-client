@@ -1,11 +1,11 @@
-import { useState, useId } from "react";
+//import { useState, useId } from "react";
 
 //props
-import { PurokSchema, BarangaySchema } from "../zod/data";
+import {  BarangaySchema } from "../zod/data";
 
 //lib
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client";
+import { useParams } from "react-router-dom";
+import {  useQuery } from "@apollo/client";
 import z from "zod";
 //mutaion
 
@@ -13,45 +13,45 @@ import z from "zod";
 import { GET_BARANGAY } from "../GraphQL/Queries";
 
 //ui
-import { Button } from "../components/ui/button";
+// import { Button } from "../components/ui/button";
 import AreaHeader from "../layout/AreaHeader";
-import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-import Purok from "../components/item/Purok";
+// import {
+//   Select,
+//   SelectItem,
+//   SelectContent,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../components/ui/select";
+// import Purok from "../components/item/Purok";
 
 type BarangayType = z.infer<typeof BarangaySchema>;
 
 const Barangay = () => {
-  const [selected, setSelected] = useSearchParams({ area: "All" });
-  const { municipalID, barangayID } = useParams();
+  //const [selected, setSelected] = useSearchParams({ area: "All" });
+  const { barangayID } = useParams();
 
-  const currentArea = selected.get("area");
-  const navigate = useNavigate();
+  // const currentArea = selected.get("area");
+  // const navigate = useNavigate();
 
-  const { data, loading, error } = useQuery<{barangay: BarangayType}>(GET_BARANGAY, {
+  const { data} = useQuery<{barangay: BarangayType}>(GET_BARANGAY, {
     variables: {
       id: barangayID,
     },
   });
 
-  const handleChangeArea = (value: string) => {
-    setSelected(
-      (prev) => {
-        prev.set("area", value);
-        return prev;
-      },
-      {
-        replace: true,
-      }
-    );
-  };
+  // const handleChangeArea = (value: string) => {
+  //   setSelected(
+  //     (prev) => {
+  //       prev.set("area", value);
+  //       return prev;
+  //     },
+  //     {
+  //       replace: true,
+  //     }
+  //   );
+  // };
 
-  const handleNavigateNew = (value: string) => {};
+  //const handleNavigateNew = (value: string) => {};
 
   return (
     <div className="w-full h-full">

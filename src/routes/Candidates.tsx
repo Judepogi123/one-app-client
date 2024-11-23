@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChromePicker, ColorResult, SketchPicker } from "react-color";
+import { ChromePicker, ColorResult } from "react-color";
 //ui
 import { Button } from "../components/ui/button";
 import {
@@ -15,7 +15,7 @@ import {
   TableCell,
 } from "../components/ui/table";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+//import { Label } from "../components/ui/label";
 import Modal from "../components/custom/Modal";
 import {
   Form,
@@ -30,13 +30,13 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "../components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../components/ui/select";
 import {
   ApolloQueryResult,
   OperationVariables,
@@ -70,7 +70,7 @@ type PositionProps = z.infer<typeof PositionSchema>;
 const Candidates = () => {
   const [onModal, setOnModal] = useState(0);
 
-  const { data, loading, error, refetch } = useQuery<{
+  const { data, refetch } = useQuery<{
     candidates: CandidatesProps[];
   }>(GET_CANDIDATES);
 
@@ -165,7 +165,7 @@ const NewCandidates = ({
       setValue,
     } = form;
   
-    const [addNewCandidate, { loading, error }] = useMutation(ADD_NEW_CANDIDATE);
+    const [addNewCandidate, { error }] = useMutation(ADD_NEW_CANDIDATE);
   
     useEffect(() => {
       if (error) {

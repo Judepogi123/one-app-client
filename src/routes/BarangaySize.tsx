@@ -39,7 +39,7 @@ const BarangaySize = () => {
   const [onEdit, setOnEdit] = useState<boolean>(false);
 
   const form = useForm<BarangayProps>();
-  const { handleSubmit, register } = form;
+  // const { handleSubmit, register } = form;
 
   const { surveyID } = useParams();
   const {
@@ -48,7 +48,7 @@ const BarangaySize = () => {
     error: munError,
   } = useQuery<{ municipals: MunicipalProps[] }>(GET_MUNICIPALS);
 
-  const { data, loading, error, refetch } = useQuery<{
+  const { data } = useQuery<{
     barangays: BarangayProps[];
   }>(SURVEY_BARANGAY_QUOTA, {
     variables: {

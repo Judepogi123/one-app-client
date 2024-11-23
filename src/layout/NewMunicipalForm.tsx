@@ -1,4 +1,3 @@
-import React from "react";
 
 //lib
 import { useForm } from "react-hook-form";
@@ -45,7 +44,7 @@ const NewMunicipalForm = () => {
 
   const onSubmit = async (value: FormType) => {
     try {
-      const { data, errors } = await createMunicipal({
+      const { data } = await createMunicipal({
         variables: {
           municipal: {
             name: value.municipalName,

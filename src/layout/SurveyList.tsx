@@ -1,5 +1,5 @@
 import { ALL_SURVEY_LIST } from "../GraphQL/Queries";
-import { useState } from "react";
+// import { useState } from "react";
 //props
 import { SurveyInfoProps } from "../interface/data";
 //graphql

@@ -27,13 +27,12 @@ interface RefineProps {
 }
 
 const RefineVoterList = ({
-  setBarangay,
   setMunicipal,
   minicipals,
   currentBarangay,
   currentMunicipal,
 }: RefineProps) => {
-  const { data, loading, refetch, error } = useQuery<{
+  const { data, loading, refetch } = useQuery<{
     barangayList: BarangayProps[];
   }>(GET_BARANGAYS, {
     variables: {

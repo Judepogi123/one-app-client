@@ -73,7 +73,7 @@ const DraftedVoter = ({ draftData }: DraftReq) => {
     { loading: discarding, data: discarded, error: discardIsError },
   ] = useMutation(DISCARD_DRAFTED_VOTERE);
 
-  const [saveDraftedVoter, { loading: saving, data: savedData }] = useMutation(
+  const [saveDraftedVoter, { loading: saving }] = useMutation(
     SAVE_DRAFTED_VOTER,
     { refetchQueries: [{ query: GET_DRAFT }] }
   );

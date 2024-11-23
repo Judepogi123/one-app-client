@@ -43,7 +43,7 @@ const UpdateSelectedList = () => {
   const [selectedVoter, setSelectedVoter] = useState<VotersProps | undefined>(
     undefined
   );
-  const { data, loading, error } = useQuery<{
+  const { data, error } = useQuery<{
     getSelectedVoters: VotersProps[];
   }>(GET_SELECT_VOTER, {
     variables: {
@@ -52,7 +52,7 @@ const UpdateSelectedList = () => {
     skip: !selectedList,
   });
 
-  const [addTeam, { data: newTeam, loading: adding, error: addingError }] =
+  const [addTeam, { data: newTeam }] =
     useMutation<{ addTeam: string }>(ADD_TEAM);
 
   const main = async () => {

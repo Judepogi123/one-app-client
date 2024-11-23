@@ -21,7 +21,6 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableFooter,
 } from "../components/ui/table";
 import { Input } from "../components/ui/input";
 import {
@@ -124,35 +123,35 @@ const Manually = () => {
   const [value] = useDebounce(searchParams, 1000);
   const LIMIT = 10;
 
-  const [setVoterLevel] = useMutation(SET_VOTER_LEVEL);
+  //const [setVoterLevel] = useMutation(SET_VOTER_LEVEL);
 
-  const handleSetVoterLevel = async (level: number) => {
-    const response = await setVoterLevel({
-      variables: {
-        id: select,
-        level,
-      },
-    });
-    if (response.errors) {
-      toast("Voter already selected", {
-        description: "Go to the 'Selected List'",
-        closeButton: false,
-        className: " bg-white font-semibold text-red-500",
-      });
-      return;
-    }
-    toast("Update success", {
-      description: "You can now assign team ",
-      closeButton: false,
-      className: " bg-white",
-    });
-    setOnOpenModal(0);
-    await refetch({
-      query: value.trim(),
-      skip: (page - 1) * LIMIT,
-      take: LIMIT,
-    });
-  };
+  // const handleSetVoterLevel = async (level: number) => {
+  //   const response = await setVoterLevel({
+  //     variables: {
+  //       id: select,
+  //       level,
+  //     },
+  //   });
+  //   if (response.errors) {
+  //     toast("Voter already selected", {
+  //       description: "Go to the 'Selected List'",
+  //       closeButton: false,
+  //       className: " bg-white font-semibold text-red-500",
+  //     });
+  //     return;
+  //   }
+  //   toast("Update success", {
+  //     description: "You can now assign team ",
+  //     closeButton: false,
+  //     className: " bg-white",
+  //   });
+  //   setOnOpenModal(0);
+  //   await refetch({
+  //     query: value.trim(),
+  //     skip: (page - 1) * LIMIT,
+  //     take: LIMIT,
+  //   });
+  // };
 
   useEffect(() => {
     const fetchVoters = async () => {
@@ -277,7 +276,7 @@ const Manually = () => {
               <TableBody>
                 {data.searchVoter.map((item) => (
                   <TableRow
-                    onClick={(e) => {
+                    onClick={() => {
                       if (onMultiSelect) {
                         handleCheckVoter(item.id, handleCheckValue(item.id));
                         return;

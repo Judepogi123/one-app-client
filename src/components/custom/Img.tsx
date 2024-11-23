@@ -11,7 +11,7 @@ interface ImageProps {
   image?: boolean;
 }
 
-const Img = ({ src, local,name,className ,image}: ImageProps) => {
+const Img = ({ src, local,name,className }: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -18,7 +18,7 @@ import { SURVEY_RESPONSE_INFO } from "../GraphQL/Queries";
 import { SurveyResponseProps } from "../interface/data";
 
 const RespondentResponse = () => {
-  const { surveyResponseID,responseID} = useParams();
+  const { surveyResponseID} = useParams();
   const navigate = useNavigate()
   const { data, loading, error } = useQuery<{
     surveyResponseInfo: SurveyResponseProps | null;
@@ -28,9 +28,9 @@ const RespondentResponse = () => {
     },
   });
 
-  const handleNavigateRespondent = ()=>{
+  // const handleNavigateRespondent = ()=>{
     
-  }
+  // }
 
   if (loading) {
     return (

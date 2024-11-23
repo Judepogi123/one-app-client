@@ -67,7 +67,7 @@ const SurveyResult = () => {
     string | undefined
   >(undefined);
 
-  const { data, loading, error, refetch } = useQuery<{
+  const { data, loading, refetch } = useQuery<{
     survey: SurveyInfoProps;
     barangayList: BarangayProps[];
     genderList: GenderProps[];
@@ -99,7 +99,6 @@ const SurveyResult = () => {
   const {
     data: responseData,
     loading: responseIsLoading,
-    error: errorB,
   } = useQuery<{
     barangayList: SurveyResultProps[];
   }>(SURVEY_RESPONSE, {
@@ -219,7 +218,7 @@ const SurveyResult = () => {
           />
         )}
       </div>
-      <div className="w-full p-2 flex items-center gap-2 sticky absolute top-0 bg-white z-10 px-2">
+      <div className="w-full p-2 flex items-center gap-2 sticky top-0 bg-white z-10 px-2">
         <Label>Barangay: </Label>
         <Select
           value={selectedBaragnay}

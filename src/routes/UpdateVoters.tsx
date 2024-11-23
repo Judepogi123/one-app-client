@@ -2,17 +2,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import z from "zod";
+//import z from "zod";
 // UI components
 import { Button } from "../components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-import { Input } from "../components/ui/input";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../components/ui/select";
+// import { Input } from "../components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -86,7 +86,7 @@ const UpdateVoters = () => {
   const currentMunicipal = municipal.get("area") || "all";
   const currentBarangay = barangay.get("barangay") || "all";
   const currentPurok = barangay.get("purok") || "all";
-  const currentCandidate = barangay.get("candidate") || "all";
+  //const currentCandidate = barangay.get("candidate") || "all";
 
   const LIMIT = 20;
 
@@ -172,7 +172,7 @@ const UpdateVoters = () => {
   const [removeVotersArea, { loading: areaRemoving }] =
     useMutation(REMOVE_AREA_VOTERS);
 
-  const [genderBundleQrCode, { loading: generating, data: qrCodeResult }] =
+  const [genderBundleQrCode, { loading: generating }] =
     useMutation(GENERATE_BUNLE_QRCODE);
 
   const handleBundleQrcodeGenerating = async () => {

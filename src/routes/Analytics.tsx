@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 //lib
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { z } from "zod";
 
 //query
@@ -14,7 +14,7 @@ import { Button } from "../components/ui/button";
 import Modal from "../components/custom/Modal";
 import NewMunicipalForm from "../layout/NewMunicipalForm";
 import { Skeleton } from "../components/ui/skeleton";
-import Empty from "../components/custom/Empty";
+//import Empty from "../components/custom/Empty";
 import Error from "../components/custom/Error";
 import Municipal from "../components/item/Municipal";
 //icon

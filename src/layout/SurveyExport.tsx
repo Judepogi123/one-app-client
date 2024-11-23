@@ -10,30 +10,29 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Button } from "../components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionTrigger,
-  AccordionItem,
-} from "../components/ui/accordion";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableCell,
-  TableRow,
-} from "../components/ui/table";
+// import {
+//   Accordion,
+//   AccordionContent,
+//   AccordionTrigger,
+//   AccordionItem,
+// } from "../components/ui/accordion";
+// import {
+//   Table,
+//   TableBody,
+//   TableHead,
+//   TableHeader,
+//   TableCell,
+//   TableRow,
+// } from "../components/ui/table";
 import { toast } from "sonner";
 //graphql
-import { GET_SELECTED_OPTION, GET_SELECTED_QUERY } from "../GraphQL/Queries";
+import {  GET_SELECTED_QUERY } from "../GraphQL/Queries";
 import { useLazyQuery } from "@apollo/client";
 //props
 import {
   SurveyInfoProps,
   BarangayProps,
   MunicipalProps,
-  OptionProps,
   QueryProps,
 } from "../interface/data";
 interface SurveyExportProps {
@@ -58,8 +57,6 @@ interface SelectedOptionProps {
 
 const SurveyExport = ({
   setOnExport,
-  survey,
-  barangayList,
   municipals,
   surveyQueriesList,
 }: SurveyExportProps) => {
@@ -69,18 +66,19 @@ const SurveyExport = ({
     null
   );
   const [selectedQuery, setSelectedQuery] = useState<string | null>(null);
-  const [selectedOpton, setSelectedOption] = useState<{
-    title: string;
-    id: string;
-  } | null>(null);
+  // const [selectedOpton, setSelectedOption] = useState<{
+  //   title: string;
+  //   id: string;
+  // } | null>(null);
+  
 
   const [option, { data, loading }] = useLazyQuery<{
     option: SelectedOptionProps;
   }>(GET_SELECTED_QUERY);
 
-  const handleSelectedOption = (title: string, id: string) => {
-    setSelectedOption({ title, id });
-  };
+  // const handleSelectedOption = (title: string, id: string) => {
+  //   setSelectedOption({ title, id });
+  // };
 
   const handleSelectQuery = (value: string) => {
     setSelectedQuery(value);

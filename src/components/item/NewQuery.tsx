@@ -32,7 +32,7 @@ const NewQuery = ({ setOnNew }: NewOptionProps) => {
 
   const { queryID, surveyID } = useParams();
 
-  const [createOptionWithMedia, { error }] = useMutation(CREATE_OPTION, {
+  const [createOptionWithMedia] = useMutation(CREATE_OPTION, {
     refetchQueries: [GET_QUERIES],
     variables: { id: queryID },
   });

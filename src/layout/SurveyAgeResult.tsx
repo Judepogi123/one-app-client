@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import { Select,SelectContent,SelectItem,SelectTrigger,SelectValue } from "../components/ui/select";
+//import { Select,SelectContent,SelectItem,SelectTrigger,SelectValue } from "../components/ui/select";
 // Props
 import { SurveyAgeCountProps } from "../interface/data";
 

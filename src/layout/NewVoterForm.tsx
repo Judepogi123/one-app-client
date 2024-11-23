@@ -1,9 +1,8 @@
-import React from "react";
 
 //lib
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams,useNavigate } from "react-router-dom";
+//import { useParams,useNavigate } from "react-router-dom";
 import z from "zod";
 
 //ui
@@ -28,11 +27,11 @@ const NewVoterForm = () => {
     resolver: zodResolver(VoterSchema),
   });
   const { handleSubmit } = form;
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
-  const { municipalID } = useParams();
+  // const { municipalID } = useParams();
 
-  const onSubmit = (value: VoterType) => {};
+  const onSubmit = () => {};
   return (
     <div className=" w-full h-auto px-8">
       <Form {...form}>

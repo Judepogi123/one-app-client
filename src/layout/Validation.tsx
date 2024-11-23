@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+// import { useEffect, useState } from "react";
+// import { useLocation } from "react-router-dom";
 //graphql
 import { BARANGAY_VALIDATION_LIST } from "../GraphQL/Queries";
 import { useQuery } from "@apollo/client";
@@ -16,7 +16,7 @@ interface Props {
   barangayId: string;
 }
 const Validation = ({ barangayId }: Props) => {
-  const location = useLocation();
+  //const location = useLocation();
 
   const { data, loading } = useQuery<{
     validationList: ValidationProps[];
@@ -51,7 +51,7 @@ const Validation = ({ barangayId }: Props) => {
 export default Validation;
 
 const Items = ({ ...props }: ValidationProps) => {
-  const [onOpen, setOnOpen] = useState(0);
+  //const [onOpen, setOnOpen] = useState(0);
 
   return (
     <div className="w-full p-2 border border-gray-500 rounded bg-gray-100">

@@ -1,4 +1,3 @@
-import React from "react";
 
 //lib
 import { useForm } from "react-hook-form";
@@ -10,11 +9,11 @@ import { Form, FormControl, FormField, FormItem } from "../components/ui/form";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 //schema
-import { MunicipalSchema, BarangaySchema } from "../zod/data";
+import { BarangaySchema } from "../zod/data";
 
 //types
-type MunicipalType = z.infer<typeof MunicipalSchema>;
-type BarangayType = z.infer<typeof BarangaySchema>;
+// type MunicipalType = z.infer<typeof MunicipalSchema>;
+// type BarangayType = z.infer<typeof BarangaySchema>;
 
 const formSchema = z.object({
   municipals: z.string().nonempty("Municipal is required"),

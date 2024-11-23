@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import {
   Select,
   SelectContent,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
   SelectItem,
@@ -53,16 +52,16 @@ const Option = () => {
   );
 
 
-  const [removeQuery, { loading: removeLoading, error: removeError }] =
+  const [removeQuery, { loading: removeLoading }] =
     useMutation(REMOVE_QUERY, {
       refetchQueries: [GET_SELECTED_DRAFT_SURVEY],
       variables: { id: surveyID },
     });
 
-  const [updateQuery, { loading: updateIsLoading }] = useMutation(UPDATE_QUERY);
+  const [updateQuery] = useMutation(UPDATE_QUERY);
   const [updateQueryType, { loading: typeIsLoading }] =
     useMutation(UPDATE_QUERY_TYPE);
-  const [updateQueryAccess, { loading: queryAccessLoading,error: queryAccessError }] =
+  const [updateQueryAccess, { loading: queryAccessLoading }] =
     useMutation(UPDATE_QUERY_ACCESS);
 
   const handleUpdateQueryType = async () => {

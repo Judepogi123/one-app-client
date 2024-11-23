@@ -1,5 +1,5 @@
 //ui
-import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+//import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 //props
 interface ErrorProps {
   title?: string;

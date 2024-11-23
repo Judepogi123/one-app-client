@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "use-debounce";
 //graphql
@@ -58,7 +58,6 @@ import {
   VotersProps,
 } from "../interface/data";
 import {
-  handleGender,
   handleLevel,
   handleSanitizeChar,
   handleReverseSanitizeChar,
@@ -92,7 +91,7 @@ const GenerateList = () => {
 
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams({ type: "all" });
-  const [queryParams, setQueryParams] = useSearchParams({
+  const [, setQueryParams] = useSearchParams({
     search: "",
   });
   const [areas, setAreas] = useSearchParams({
@@ -130,7 +129,7 @@ const GenerateList = () => {
   const LIMIT = 50;
 
   //query params
-  const currentQueryParas = queryParams.get("search");
+  //const currentQueryParas = queryParams.get("search");
 
   const sanitizedQuery = handleSanitizeChar("Jude DEmnuvar%");
   console.log("X", sanitizedQuery);
@@ -192,7 +191,6 @@ const GenerateList = () => {
   const {
     data: voter,
     loading: voterLoading,
-    error: voterError,
     refetch,
   } = useQuery<{ getVotersList: { voters: VotersProps[]; results: number } }>(
     GET_VOTER_LIST,
@@ -251,14 +249,13 @@ const GenerateList = () => {
     currentGender,
   ]);
 
-  const { data, loading, error } = useQuery<{ municipals: MunicipalProps[] }>(
+  const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
   );
 
   const {
     data: barData,
     loading: barLoading,
-    error: barError,
     refetch: barFetch,
   } = useQuery<{ barangayList: BarangayProps[] }>(GET_BARANGAYS, {
     variables: {
@@ -282,7 +279,6 @@ const GenerateList = () => {
   const {
     data: purokData,
     loading: purokLoading,
-    error: purokError,
   } = useQuery<{ getPurokList: PurokProps[] }>(GET_PUROKLIST, {
     variables: {
       id: currentBarangay,

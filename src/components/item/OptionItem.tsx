@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 //lib
 import { useMutation } from "@apollo/client";
 import { useParams } from "react-router-dom";
@@ -20,7 +20,7 @@ import {
   UPDATE_OPTION_IMAGE,
   DELETE_OPTION_MEDIA,
   UPDATE_OPTION,
-  UPDATE_OPTION_TOP,UPDATE_OPTION_FORALL
+  UPDATE_OPTION_FORALL
 } from "../../GraphQL/Mutation";
 import { GET_QUERIES } from "../../GraphQL/Queries";
 //icon
@@ -32,12 +32,12 @@ import { IoMdExit } from "react-icons/io";
 import axios from "../../api/axios";
 
 const OptionItem = ({ ...props }: OptionProps) => {
-  const { queryID, surveyID } = useParams();
+  const { queryID } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [onDelete, setOnDelete] = useState<string | null>(null);
   const [onEdit, setOnEdit] = useState<boolean>(false);
-  const [onForAll, setOnForAll] = useState<boolean>(false)
+  const [, setOnForAll] = useState<boolean>(false)
 
   console.log(props);
   
@@ -62,8 +62,8 @@ const OptionItem = ({ ...props }: OptionProps) => {
     }
   );
 
-  const [updateOptionTop, { loading: updateOptionIsLoading }] =
-    useMutation(UPDATE_OPTION_TOP);
+  // const [updateOptionTop, { loading: updateOptionIsLoading }] =
+  //   useMutation(UPDATE_OPTION_TOP);
 
   const handleDeleteOption = async () => {
     try {
@@ -102,7 +102,7 @@ const OptionItem = ({ ...props }: OptionProps) => {
     }
   );
 
-  const [optionForAll, {error}] = useMutation(UPDATE_OPTION_FORALL)
+  const [optionForAll] = useMutation(UPDATE_OPTION_FORALL)
 
   const handleChangeImg = async () => {
     if (selectedImage === null) {

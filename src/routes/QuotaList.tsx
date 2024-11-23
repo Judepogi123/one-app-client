@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 //ui
 import Modal from "../components/custom/Modal";
@@ -28,7 +28,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "../components/ui/form";
 //type
 import {
@@ -80,11 +79,11 @@ const QuotaList = () => {
   const form = useForm<FormProps>();
   const {
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
     control,
   } = form;
 
-  const { data, error, loading, refetch } = useQuery<{
+  const { data, refetch } = useQuery<{
     ageList: AgeBracket[];
     barangay: BarangayProps;
     genderList: GenderProps[];
@@ -100,9 +99,9 @@ const QuotaList = () => {
   });
 
   const [createQuota] = useMutation(CREATE_QUOTA);
-  const [createGenderQuota, { error: genderQuotaError }] =
+  const [createGenderQuota] =
     useMutation(CREATE_GENDER_QUOTA);
-  const [removeGenderQuota, { error: newError }] =
+  const [removeGenderQuota] =
     useMutation(REMOVE_GENDER_QUOTRA);
   const [resetBarangayQuota, { loading: quotaReseting }] =
     useMutation(RESET_BARANGAY_QUOTA);

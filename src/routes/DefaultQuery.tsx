@@ -47,7 +47,6 @@ const DefaultQuery = () => {
 
   const {
     data: genderList,
-    loading: genderIsLoading,
     refetch: refetchGender,
   } = useQuery<{
     genderList: { id: string; name: string }[];

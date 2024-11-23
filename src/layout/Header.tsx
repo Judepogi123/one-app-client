@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+//import React, { useState } from "react";
 //ui
 import {
   Breadcrumb,
@@ -13,7 +13,7 @@ import useSignOut from "react-auth-kit/hooks/useSignOut";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import z from "zod";
 //types
-import { HomeLayoutProps } from "../interface/layout";
+//import { HomeLayoutProps } from "../interface/layout";
 
 //icons
 import { CiUser } from "react-icons/ci";
@@ -25,15 +25,15 @@ interface HeaderProps {
   currentMenu: string | null;
 }
 
-const homeMenu: HomeLayoutProps[] = [
-  { title: "Home", value: "/" },
-  { title: "Data", value: "/data" },
-  { title: "Survey", value: "/survey" },
-];
+// const homeMenu: HomeLayoutProps[] = [
+//   { title: "Home", value: "/" },
+//   { title: "Data", value: "/data" },
+//   { title: "Survey", value: "/survey" },
+// ];
 
 type UserType = z.infer<typeof AuthUser>;
 
-const Header = ({ handleChangeMenu, currentMenu }: HeaderProps) => {
+const Header = ({ }: HeaderProps) => {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
   const signOut = useSignOut();

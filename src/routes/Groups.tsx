@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 //ui
 import {
@@ -41,7 +41,7 @@ const Groups = () => {
   const { teamId } = useParams();
   const navigate = useNavigate();
 
-  const { data, loading, error, refetch } = useQuery<{
+  const { data, loading, refetch } = useQuery<{
     team: TeamProps | null;
   }>(GET_TEAM_INFO, {
     variables: { id: teamId },
@@ -53,7 +53,7 @@ const Groups = () => {
 
   console.log(updateError?.message);
 
-  const [updateLeader, { loading: updatingLeader, error: updateLeaderError }] =
+  const [updateLeader, { loading: updatingLeader}] =
     useMutation(UPDATE_LEADER);
 
   useEffect(() => {

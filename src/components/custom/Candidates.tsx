@@ -15,9 +15,9 @@ import { CandidatesProps } from "../../interface/data";
 import { GET_CANDIDATES } from "../../GraphQL/Queries";
 
 //props
-interface CandidateProps {
+// interface CandidateProps {
   
-}
+// }
 
 const Candidates = () => {
   const { data, loading } = useQuery<{ candidates: CandidatesProps[] }>(

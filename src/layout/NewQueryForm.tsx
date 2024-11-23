@@ -1,4 +1,3 @@
-import React from "react";
 
 //ui
 import {
@@ -29,7 +28,7 @@ import z from "zod";
 import { CREATE_QUERY } from "../GraphQL/Mutation";
 import { GET_SELECTED_DRAFT_SURVEY } from "../GraphQL/Queries";
 //provider
-import { useUserData } from "../provider/UserDataProvider";
+//import { useUserData } from "../provider/UserDataProvider";
 import { toast } from "sonner";
 
 //props

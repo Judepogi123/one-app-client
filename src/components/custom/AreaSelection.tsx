@@ -1,18 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 //ui
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
 import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+//import { Input } from "../ui/input";
 //graphql
 import { useQuery } from "@apollo/client";
 import {
@@ -42,7 +41,7 @@ const AreaSelection = ({
   currentMunicipal,
   currentPurok
 }: AreaProps) => {
-  const { data, loading, error } = useQuery<{ municipals: MunicipalProps[] }>(
+  const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
   );
 

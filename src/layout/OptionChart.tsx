@@ -1,12 +1,12 @@
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+//import { useParams } from "react-router-dom";
 
 //props
 import { AgeBracket, GenderProps, SurveyOptionProps } from "../interface/data";
 //graphql
-import { OPTION_AGE_RANK, SURVEY_OPTION_RANK } from "../GraphQL/Queries";
-import { useQuery } from "@apollo/client";
+// import { OPTION_AGE_RANK, SURVEY_OPTION_RANK } from "../GraphQL/Queries";
+// import { useQuery } from "@apollo/client";
 
 //
 import OptionAgeItem from "../components/item/OptionAgeItem";
@@ -31,18 +31,17 @@ const OptionChart = ({
   selectedBaragnay,
   selectGender,
   selectedMunicipal,
-  type,
   genderList
 }: OptionChartProps) => {
   const [dataList, setResponseList] = useState<DataList>([]);
 
-  const handleGetPlus = ()=> {
-    const copy = [...responseList]
-    return copy.filter((item)=> item.forAll)[0].overAllResponse
-  }
+  // const handleGetPlus = ()=> {
+  //   const copy = [...responseList]
+  //   return copy.filter((item)=> item.forAll)[0].overAllResponse
+  // }
   const main = () => {
     try {
-      const temp: DataList = responseList.map((item, index) => [
+      const temp: DataList = responseList.map((item) => [
         `${item.title} - (${item.overAllResponse})`,
         item.overAllResponse,
       ]);

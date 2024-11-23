@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 //ui
 import {
   Table,
@@ -19,7 +19,7 @@ import { GET_SURVEYOR } from "../GraphQL/Queries";
 import { UserProps } from "../interface/data";
 
 const Surveyor = () => {
-  const { data, loading, error } = useQuery<{ users: UserProps[] }>(
+  const { data } = useQuery<{ users: UserProps[] }>(
     GET_SURVEYOR
   );
 

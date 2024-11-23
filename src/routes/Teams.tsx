@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
 //ui
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+// import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import {
   Table,
   TableBody,
@@ -15,14 +15,14 @@ import {
   TableRow,
   TableCell,
 } from "../components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectLabel,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../components/ui/select";
 import { Skeleton } from "../components/ui/skeleton";
 //props
 import { TeamProps } from "../interface/data";
@@ -34,7 +34,6 @@ import {
   handleLevel,
   handleVoterColor,
   handleSanitizeChar,
-  handleReverseSanitizeChar,
 } from "../utils/helper";
 //layout
 import AreaSelection from "../components/custom/AreaSelection";
@@ -66,7 +65,7 @@ const Teams = () => {
   const currentPurok = params.get("purok") || "all";
   const currentLevel = params.get("level") || "all";
   const currentPage = params.get("page") || "1";
-  const currentOthers = params.get("others") || "0";
+  //const currentOthers = params.get("others") || "0";
   const currentQuery = params.get("query");
 
   const navigate = useNavigate();

@@ -1,4 +1,3 @@
-import React from 'react'
 
 //ui
 import { Progress as ProgressCon } from '../ui/progress'

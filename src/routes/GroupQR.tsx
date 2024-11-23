@@ -4,17 +4,17 @@ import { useParams } from "react-router-dom";
 //ui
 import { Button } from "../components/ui/button";
 import Modal from "../components/custom/Modal";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+//import jsPDF from "jspdf";
+//import html2canvas from "html2canvas";
 import Img from "../components/custom/Img";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCell,
-} from "../components/ui/table";
+// import {
+//   Table,
+//   TableBody,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+//   TableCell,
+// } from "../components/ui/table";
 import {
   Popover,
   PopoverTrigger,
@@ -35,7 +35,7 @@ import { TeamProps } from "../interface/data";
 //icons
 import { FaEllipsisVertical } from "react-icons/fa6";
 import { exportPDF } from "../utils/generate";
-import { GoVerified } from "react-icons/go";
+//import { GoVerified } from "react-icons/go";
 import { handleLevel } from "../utils/helper";
 //imp
 //import { exportPDF } from "../utils/generate";
@@ -45,7 +45,7 @@ const GroupQR = () => {
   const [onOpenModal, setOnOpenModal] = useState(0);
   const { teamId } = useParams();
 
-  const [generatedTeamQRCode, { loading, error }] = useMutation(
+  const [generatedTeamQRCode, { loading }] = useMutation(
     GENERATE_TEAM_QRCODE,
     {
       refetchQueries: [GET_TEAM_INFO],
@@ -162,7 +162,7 @@ const VotersList = ({
   setSelectedList: React.Dispatch<React.SetStateAction<string[]>>;
   selectedList: string[];
 }) => {
-  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [selectAll] = useState<boolean>(false);
   const { data, loading } = useQuery<{ team: TeamProps | null }>(
     GET_TEAM_INFO,
     {

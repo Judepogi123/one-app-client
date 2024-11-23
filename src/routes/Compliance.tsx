@@ -84,7 +84,7 @@ const Compliance = () => {
     }
   }, [munData]);
 
-  const { data, loading, error, refetch } = useQuery<{
+  const { data, loading, refetch } = useQuery<{
     allSurveyResponse: SurveyResponseProps[];
   }>(SURVEY_RESPONSE_LIST, {
     variables: {
@@ -183,7 +183,7 @@ const Compliance = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              [...data.allSurveyResponse].reverse().map((item,i) => (
+              [...data.allSurveyResponse].reverse().map((item) => (
                 <TableRow
                   onClick={() => navigate(`${item.id}`)}
                   className=" cursor-pointer hover:bg-slate-200"

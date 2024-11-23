@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom";
-import { QueryProps, AgeBracket,QuotaProps } from "../interface/data";
+//import { useParams } from "react-router-dom";
+import { AgeBracket } from "../interface/data";
 //graphql
-import { OPTION_AGE_RANK } from "../GraphQL/Queries";
-import { useQuery } from "@apollo/client";
+// import { OPTION_AGE_RANK } from "../GraphQL/Queries";
+// import { useQuery } from "@apollo/client";
 
 //layout
 import SurveyAgeOption from "./SurveyAgeOption";

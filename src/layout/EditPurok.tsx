@@ -133,7 +133,7 @@ const DraftedPurokItem = ({
   selectedID: string[];
   setSelectedID: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  //const [isChecked, setIsChecked] = useState<boolean>(false);
   const [purokName, setPurokName] = useState<string>("");
 
   console.log(selectedID);

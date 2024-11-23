@@ -2,9 +2,9 @@
 import { useState } from "react";
 
 //lib
-import { useParams, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
-import z from "zod";
+//import z from "zod";
 //ui
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
@@ -19,16 +19,16 @@ import { GET_DRAFT } from "../GraphQL/Queries";
 import { DRAFT_MUTATION } from "../GraphQL/Mutation";
 
 //props
-import { DraftSchema } from "../zod/data";
+//import { DraftSchema } from "../zod/data";
 import { DraftedBatchProps } from "../interface/data";
-type BatchType = z.infer<typeof DraftSchema>;
+//type BatchType = z.infer<typeof DraftSchema>;
 
 const NewVoterDraft = () => {
   const [selectedDraft, setSelectedDraft] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const { data, error, loading } = useQuery<{
+  const { data, loading } = useQuery<{
     drafts: DraftedBatchProps[];
   }>(GET_DRAFT);
 

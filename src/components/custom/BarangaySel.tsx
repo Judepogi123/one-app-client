@@ -29,7 +29,7 @@ const BarangaySel = ({
   className,
   value,
 }: Props) => {
-  const { data, loading, error, refetch } = useQuery<{
+  const { data, loading, refetch } = useQuery<{
     barangayList: BarangayProps[];
   }>(GET_BARANGAYS, {
     variables: {

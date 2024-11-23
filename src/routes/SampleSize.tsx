@@ -121,7 +121,6 @@ const SampleSize = () => {
   const {
     data: bardata,
     loading: barLoading,
-    error: barError,
     refetch: refetchBarangays,
   } = useQuery<{ barangayList: BarangayProps[] }>(GET_BARANGAYS, {
     variables: {

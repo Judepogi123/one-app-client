@@ -1,7 +1,7 @@
-import React from "react";
+//import React from "react";
 
 //lib
-import { ErrorOption, useForm } from "react-hook-form";
+import {useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useMutation } from "@apollo/client";
@@ -46,7 +46,7 @@ const AuthPage = () => {
 
   const onSubmit = async (value: UserType) => {
     try {
-      const { data, errors: loginError } = await adminLogin({
+      const { data } = await adminLogin({
         variables: {
           user: {
             phoneNumber: value.phoneNumber,

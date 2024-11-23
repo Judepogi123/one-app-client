@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate, Outlet } from "react-router-dom";
 //ui
 import { Button } from "../components/ui/button";
-import Alert from "../components/custom/Alert";
+//import Alert from "../components/custom/Alert";
 import Modal from "../components/custom/Modal";
 //graphql
 import { useMutation, useQuery } from "@apollo/client";
@@ -17,7 +17,7 @@ import { RiFolderReceivedLine } from "react-icons/ri";
 import { GrScorecard } from "react-icons/gr";
 import { toast } from "sonner";
 import { CiWarning } from "react-icons/ci";
-import { MdOutlinePercent } from "react-icons/md";
+//import { MdOutlinePercent } from "react-icons/md";
 
 const optionList: SurveyStateList[] = [
   { name: "Info", link: "info", icon: FaInfo },
@@ -31,7 +31,7 @@ const LiveSurvey = () => {
   const { surveyID } = useParams();
   const navigate = useNavigate();
 
-  const { data, loading: dataLoading} = useQuery<{ survey: DraftedSurvey }>(
+  const { data} = useQuery<{ survey: DraftedSurvey }>(
     GET_SELECTED_DRAFT_SURVEY,
     {
       variables: {

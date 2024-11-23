@@ -3,13 +3,12 @@
 import { MdDeleteOutline } from "react-icons/md";
 //lib
 import { useNavigate } from "react-router-dom";
-import z from "zod";
+//import z from "zod";
 //utils
 import { formatTimestamp } from "../../utils/date";
 //props
 import {
   BarangayProps,
-  PurokProps,
   MunicipalProps,
 } from "../../interface/data";
 

@@ -43,8 +43,8 @@ const Modal = ({
   loading,
   className
 }: ModalProps) => {
-  const isSmall = useMediaQuery({ query: `(max-width: 600px)` });
-  const isMedium = useMediaQuery({ query: `(min-width: 764px)` });
+  // const isSmall = useMediaQuery({ query: `(max-width: 600px)` });
+  // const isMedium = useMediaQuery({ query: `(min-width: 764px)` });
   const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
 
   if (isDesktop) {

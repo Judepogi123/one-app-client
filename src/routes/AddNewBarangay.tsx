@@ -24,7 +24,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 //interface
-import { BarangaySchema } from "../zod/data";
+// import { BarangaySchema } from "../zod/data";
 
 //props
 interface AddNewUserProps {

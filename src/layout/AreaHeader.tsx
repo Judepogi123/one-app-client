@@ -1,15 +1,15 @@
-import { useSearchParams } from "react-router-dom";
+// import { useSearchParams } from "react-router-dom";
 
-//ui
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbSeparator,
-} from "../components/ui/breadcrumb";
+// //ui
+// import {
+//   Breadcrumb,
+//   BreadcrumbList,
+//   BreadcrumbItem,
+//   BreadcrumbSeparator,
+// } from "../components/ui/breadcrumb";
 
 //lib
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 const AreaHeader = () => {
   const location = useLocation();

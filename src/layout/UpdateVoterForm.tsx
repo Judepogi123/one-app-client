@@ -7,7 +7,6 @@ import {
   Form,
   FormField,
   FormControl,
-  FormDescription,
   FormItem,
   FormLabel,
 } from "../components/ui/form";
@@ -43,7 +42,6 @@ const UpdateVoterForm = () => {
   const {
     handleSubmit,
     register,
-    setError,
     formState: { isSubmitting },
   } = form;
 
@@ -122,6 +120,10 @@ const UpdateVoterForm = () => {
                   <FormItem>
                     <FormControl>
                       <MunicipalSel
+                        value={""}
+                        handleChangeArea={function (): void {
+                          throw new Error("Function not implemented.");
+                        }}
                         {...register("municipalsId")}
                         onChange={field.onChange}
                         defaultValue={selectedVoter.municipal.id?.toString()}
@@ -274,7 +276,7 @@ const UpdateVoterForm = () => {
 
               <FormField
                 name="level"
-                render={({ field }) => (
+                render={({ }) => (
                   <FormItem className="flex items-center gap-2">
                     <FormLabel>Level</FormLabel>
                     <h1 className="hover:underline cursor-pointer">

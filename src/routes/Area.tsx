@@ -10,30 +10,28 @@ import BarangayList from "../layout/BarangayList";
 import VotersList from "../layout/VotersList";
 //lib
 import {
-  ApolloQueryResult,
-  OperationVariables,
   useQuery,
 } from "@apollo/client";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import z from "zod";
 //interface
-import { VotersSchema, MunicipalVoterListSchema } from "../zod/data";
+import { MunicipalVoterListSchema } from "../zod/data";
 
 //queryAndMutation
 import { GET_MUNICIPAL_VOTERS } from "../GraphQL/Queries";
 
 //icon
-import { CiFilter } from "react-icons/ci";
-import { IoMdAdd } from "react-icons/io";
-import { IoPersonAddOutline } from "react-icons/io5";
+// import { CiFilter } from "react-icons/ci";
+// import { IoMdAdd } from "react-icons/io";
+// import { IoPersonAddOutline } from "react-icons/io5";
 import { AiOutlineExperiment } from "react-icons/ai";
 import { BsBuildingAdd } from "react-icons/bs";
 //
-import { BarangaySchema } from "../zod/data";
+// import { BarangaySchema } from "../zod/data";
 
 //layout
 
-type BarangayType = z.infer<typeof BarangaySchema>;
+// type BarangayType = z.infer<typeof BarangaySchema>;
 type MunicipalVoterList = z.infer<typeof MunicipalVoterListSchema>;
 
 const Area = () => {
@@ -44,9 +42,9 @@ const Area = () => {
   const id = parseInt(municipalID || "", 10);
   const currentField = selected.get("field");
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-  const { data, loading, error } = useQuery<MunicipalVoterList>(
+  const { loading } = useQuery<MunicipalVoterList>(
     GET_MUNICIPAL_VOTERS,
     {
       variables: { id },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 //graphql
 import { GET_OPTION_AGE_COUNT } from "../../GraphQL/Queries";
@@ -14,7 +14,7 @@ interface SurveyAgeResponseProps {
 }
 
 const SurveyAgeResponse = ({ age, selectedOption }: SurveyAgeResponseProps) => {
-  const { data, loading, error, refetch } = useQuery<{
+  const { data, refetch } = useQuery<{
     optionCountAge: number;
   }>(GET_OPTION_AGE_COUNT, {
     variables: {

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+//import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
 //props
-import { AgeBracket, MediaUrl } from "../interface/data";
+import { AgeBracket } from "../interface/data";
 //props
 import { OPTION_AGE_RANK } from "../GraphQL/Queries";
 import { useQuery } from "@apollo/client";

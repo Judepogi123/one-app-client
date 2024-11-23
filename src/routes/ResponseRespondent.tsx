@@ -1,4 +1,4 @@
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState } from "react";
 //ui
 import { Button } from "../components/ui/button";
@@ -37,7 +37,7 @@ import { RESPONSE_INFO,SURVEY_RESPONSE_INFO } from "../GraphQL/Queries";
 import { MdDeleteOutline } from "react-icons/md";
 const ResponseRespondent = () => {
   const [onDelete, setOnDelete] = useState<boolean>(false);
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
   const { responseID, surveyResponseID } = useParams();
 
   const { data, loading } = useQuery<{

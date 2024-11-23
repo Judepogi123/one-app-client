@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+//import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 //props
-import { AgeBracket, GenderProps, OptionProps } from "../../interface/data";
+import { AgeBracket, GenderProps } from "../../interface/data";
 //graphql
 import { SURVEY_OPTION_RANK } from "../../GraphQL/Queries";
 import { useQuery } from "@apollo/client";

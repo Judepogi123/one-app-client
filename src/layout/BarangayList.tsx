@@ -1,10 +1,10 @@
-import React from "react";
+//import React from "react";
 
 //ui
 import { Skeleton } from "../components/ui/skeleton";
 
 //lib
-import { ApolloQueryResult, OperationVariables, useQuery } from "@apollo/client";
+import {  useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
 //query
@@ -17,9 +17,9 @@ import { BarangaySchema } from "../zod/data";
 import Barangay from "../components/item/Barangay";
 
 //props
-interface BarangayListProps {
+// interface BarangayListProps {
   
-}
+// }
 
 type BarangayType = z.infer<typeof BarangaySchema>;
 
@@ -28,7 +28,7 @@ const BarangayList = () => {
   const zipCode = parseInt(municipalID || "", 10);
   console.log(zipCode);
   
-  const { data, loading ,refetch} = useQuery<{ barangayList: BarangayType[] | [] }>(
+  const { data, loading } = useQuery<{ barangayList: BarangayType[] | [] }>(
     GET_BARANGAYS,
     {
       variables: {

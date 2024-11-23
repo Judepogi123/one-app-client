@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //lib
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 
 //ui
-import { Input } from "../components/ui/input";
-import {
-  Form,
-  FormField,
-  FormControl,
-  FormLabel,
-  FormItem,
-} from "../components/ui/form";
+// import { Input } from "../components/ui/input";
+// import {
+//   Form,
+//   FormField,
+//   FormControl,
+//   FormLabel,
+//   FormItem,
+// } from "../components/ui/form";
 import {
   Tabs,
   TabsContent,
@@ -43,7 +43,7 @@ const VoterProfile = () => {
   const [onRemove, setOnRemove] = useState(false);
   const [openModal, setOpenModal] = useState<number>(0);
 
-  const { data, loading, error } = useQuery<{ voter: VotersProps }>(
+  const { data, loading } = useQuery<{ voter: VotersProps }>(
     GET_VOTERS_PROFILE,
     {
       variables: {
@@ -52,7 +52,7 @@ const VoterProfile = () => {
       fetchPolicy: "no-cache",
     }
   );
-  const [removeVoter, { data: response, loading: removing }] =
+  const [removeVoter, { loading: removing }] =
     useMutation(REMOVE_VOTER);
 
   if (loading) {
