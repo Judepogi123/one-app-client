@@ -14,6 +14,6 @@ export default defineConfig({
     include: ['axios'],
   },
   build: {
-    outDir: 'public',
+    outDir: 'build',
   }
 })
