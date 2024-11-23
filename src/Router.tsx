@@ -1,18 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  from,
-  HttpLink,
-} from "@apollo/client";
-import { onError } from "@apollo/client/link/error";
+// import React from "react";
+// import ReactDOM from "react-dom/client";
+// import {
+//   ApolloClient,
+//   InMemoryCache,
+//   ApolloProvider,
+//   from,
+//   HttpLink,
+// } from "@apollo/client";
+// import { onError } from "@apollo/client/link/error";
 
 // Routes
 import Home from "./routes/Home";
 import Data from "./routes/Data";
-import Survey from "./routes/Survey";
+// import Survey from "./routes/Survey";
 import Analytics from "./routes/Analytics";
 import Area from "./routes/Area";
 // Styles

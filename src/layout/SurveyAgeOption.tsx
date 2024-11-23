@@ -36,7 +36,7 @@ const SurveyAgeOption = ({
   selectGender,
 }: SurveyAgeOptionProps) => {
   const { surveyID } = useParams();
-  const { data, loading, refetch } = useQuery<{ queries: QueryProps }>(
+  const { data, refetch } = useQuery<{ queries: QueryProps }>(
     OPTION_AGE_RANK,
     {
       variables: {

@@ -27,7 +27,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { CiEdit } from "react-icons/ci";
 import { RiPresentationFill } from "react-icons/ri";
 //layout
-import SurveyResult from "./SurveyResult";
+//import SurveyResult from "./SurveyResult";
 import SurveyList from "../layout/SurveyList";
 const Results = () => {
   const [onSelect, setOnSelect] = useState<boolean>(false);
