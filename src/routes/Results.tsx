@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 //ui
 import { Button } from "../components/ui/button";
 import {
@@ -9,12 +9,10 @@ import {
 import Modal from "../components/custom/Modal";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import {
   Popover,
   PopoverTrigger,

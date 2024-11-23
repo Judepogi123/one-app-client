@@ -12,7 +12,7 @@ import VotersList from "../layout/VotersList";
 import {
   useQuery,
 } from "@apollo/client";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import z from "zod";
 //interface
 import { MunicipalVoterListSchema } from "../zod/data";

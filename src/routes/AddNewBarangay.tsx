@@ -62,7 +62,7 @@ const AddNewBarangay = ({ setOnAdd }: AddNewUserProps) => {
 
   const onsubmit = async (value: BarangayType) => {
     try {
-      const { data, errors } = await createBarangay({
+      const { errors } = await createBarangay({
         variables: {
           barangay: {
             municipalId: parseInt(municipalID as string, 10),

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import axios from "./api/axios";
 
 import { Button } from "./components/ui/button";
@@ -11,7 +11,7 @@ interface ExcelResponse {
   [sheetName: string]: ExcelData[];
 }
 
-const tableHeader: {title: string}[] = [{title: "Number"},{title: "Age Ranged"},{title: ""}]
+//const tableHeader: {title: string}[] = [{title: "Number"},{title: "Age Ranged"},{title: ""}]
 
 const App = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -46,14 +46,14 @@ const App = () => {
     }
   };
 
-  const handleSave = async()=>{
-    try {
+  // const handleSave = async()=>{
+  //   try {
       
-    } catch (error) {
-     console.log("Error: ",error);
+  //   } catch (error) {
+  //    console.log("Error: ",error);
       
-    }
-  }
+  //   }
+  // }
 
   return (
     <div>
