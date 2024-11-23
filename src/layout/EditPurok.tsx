@@ -142,7 +142,7 @@ const DraftedPurokItem = ({
     console.log("Click");
 
     const matchedIndex = selectedID.findIndex((item) => item === props.id);
-    let listCopy = [...selectedID];
+    const listCopy = [...selectedID];
 
     if (matchedIndex !== -1) {
       listCopy[matchedIndex] = "";

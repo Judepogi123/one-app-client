@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 export const handleGender = (value: string) => {
   if (value === "M") {
     return "Male";
