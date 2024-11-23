@@ -13,4 +13,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['axios'],
   },
+  build: {
+    outDir: 'public',
+  }
 })
