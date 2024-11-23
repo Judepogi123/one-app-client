@@ -206,7 +206,7 @@ const VotersList = ({
     main();
   }, [selectAll]);
 
-  const handleMutilRemoveQR = () => {};
+  //const handleMutilRemoveQR = () => {};
 
   if (loading) {
     return (

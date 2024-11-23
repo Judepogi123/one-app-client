@@ -1,17 +1,17 @@
-import React from 'react'
+// import React from 'react'
 
-//props
-interface VoterProps  {
-    lastname: string;
-    firstname: string;
-    uid: string;
-    municipalsId: number;
-    barangaysId: string;
-    precentsId: string;
-    purok: string;
-    status: number;
-    level: number
-}
+// //props
+// interface VoterProps  {
+//     lastname: string;
+//     firstname: string;
+//     uid: string;
+//     municipalsId: number;
+//     barangaysId: string;
+//     precentsId: string;
+//     purok: string;
+//     status: number;
+//     level: number
+// }
 
 const Voter = () => {
   return (

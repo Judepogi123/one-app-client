@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 
 //props
 import { DraftedSurvey } from "../../interface/data";
