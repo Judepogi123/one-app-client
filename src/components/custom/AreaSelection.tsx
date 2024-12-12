@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect } from "react";
-
+import { twMerge } from "tailwind-merge";
 //ui
 import {
   Select,
@@ -33,13 +33,15 @@ interface AreaProps {
   currentMunicipal: string;
   currentBarangay: string;
   currentPurok: string;
+  className?: string
 }
 
 const AreaSelection = ({
   handleChangeOption,
   currentBarangay,
   currentMunicipal,
-  currentPurok
+  currentPurok,
+  className
 }: AreaProps) => {
   const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
@@ -103,7 +105,7 @@ const AreaSelection = ({
     return;
   }
   return (
-    <div className="w-full h-auto p-2 flex items-center gap-2">
+    <div className={twMerge(" h-auto p-2 flex items-center gap-2",className )}>
       <Label htmlFor="municipal">Municipal:</Label>
       <Select
         defaultValue="all"

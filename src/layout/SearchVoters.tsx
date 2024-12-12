@@ -105,6 +105,7 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
             <TableHeader>
               {[
                 "No",
+                "Tag ID",
                 "Lastname",
                 "Firstname",
                 "Level",
@@ -126,6 +127,7 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
                   key={item.id}
                 >
                   <TableCell>{i + 1}</TableCell>
+                  <TableCell>{handleElements(value, item.idNumber)}</TableCell>
                   <TableCell>{handleElements(value, item.lastname)} </TableCell>
                   <TableCell>{handleElements(value, item.firstname)}</TableCell>
                   <TableCell>{handleLevel(item.level)}</TableCell>

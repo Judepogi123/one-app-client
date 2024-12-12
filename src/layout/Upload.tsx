@@ -52,7 +52,6 @@ const Upload = ({ draftData }: DraftReq) => {
   const [onViewCounter, setOnViewCounter] = useState<boolean>(false);
   const [prevLoading, setPrevLoading] = useState<boolean>(false);
 
-  // Initialize the cancel token using useCancelToken hook
   const { cancelRequest } = useCancelToken(`${localhost}/draft`);
 
   console.log(data);
@@ -192,6 +191,7 @@ const Upload = ({ draftData }: DraftReq) => {
         <Table className=" w-full px-4">
           <TableHeader className="w-full z-10 bg-white">
             {[
+              "No.",
               "Lastname",
               "Firstname",
               "Gender",
@@ -214,6 +214,9 @@ const Upload = ({ draftData }: DraftReq) => {
               <TableBody className=" overflow-y-auto">
                 {data[sheetName].map((row: UploadProps, index) => (
                   <TableRow key={index}>
+                    <TableCell className="font-medium text-[#333]">
+                      {row.No}
+                    </TableCell>
                     <TableCell>{row.lastname}</TableCell>
                     <TableCell>{row.firstname}</TableCell>
                     <TableCell>{row.Gender}</TableCell>

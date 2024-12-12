@@ -41,6 +41,7 @@ export interface CandidatesProps {
   candidateBatchId: string;
   mediaUrlId?: string | null;
   positionId?: string | null;
+  supporters: number;
 }
 
 export interface ValidationProps {
@@ -58,35 +59,36 @@ export interface VotersProps {
   id: string;
   lastname: string;
   firstname: string;
-  gender?: string; // Optional, default is "Unknown"
-  barangay: BarangayProps; // Relation to Barangays
-  municipal: MunicipalProps; // Relation to Municipals
-  status: number; // Default is 1
+  idNumber: string;
+  gender?: string;
+  barangay: BarangayProps;
+  municipal: MunicipalProps;
+  status: number;
   calcAge: number;
   birthYear: string;
-  level: number; // Default is 0
+  level: number;
   barangaysId: string;
   municipalsId: number;
-  precintsId?: string | null; // Optional
-  saveStatus: string; // Default is "drafted"
-  mobileNumber?: string | null; // Optional, default is "Unknown"
-  houseHoldId?: string | null; // Optional
-  newBatchDraftId?: string | null; // Optional
+  precintsId?: string | null;
+  saveStatus: string;
+  mobileNumber?: string | null;
+  houseHoldId?: string | null;
+  newBatchDraftId?: string | null;
   purok?: PurokProps | null;
-  pwd?: string | null; // Optional
-  oor?: string | null; // Optional
-  inc?: string | null; // Optional
-  illi?: string | null; // Optional
-  inPurok?: boolean | null; // Optional
-  senior?: boolean | null; // Optional
-  youth?: boolean | null; // Optional
-  hubId?: string | null; // Optional
-  qrCode?: string | null; // Optional, default is "None"
-  candidatesId?: string | null; // Optional
+  pwd?: string | null;
+  oor?: string | null;
+  inc?: string | null;
+  illi?: string | null;
+  inPurok?: boolean | null;
+  senior?: boolean | null;
+  youth?: boolean | null;
+  hubId?: string | null;
+  qrCode?: string | null;
+  candidatesId?: string | null;
   qrCodes: QRCodeProps[];
-  qrCodeNumber: number
+  qrCodeNumber: number;
   teamId?: string;
-  leader?: TeamLeaderProps
+  leader?: TeamLeaderProps;
 }
 
 export interface PurokProps {
@@ -98,6 +100,7 @@ export interface PurokProps {
 export interface BarangayProps {
   name: string;
   id: string;
+  number: number;
   barangayVotersCount: number;
   puroks: PurokProps[];
   purokCount: number;
@@ -138,7 +141,8 @@ export interface UploadProps {
   gender: string;
   __EMPTY?: string | null;
   Address: string;
-  Birthday?: string| number | null;  DL: string;
+  Birthday?: string | number | null;
+  DL: string;
   PWD: string;
   IL: string;
   INC: string;
@@ -147,6 +151,7 @@ export interface UploadProps {
   purok: PurokProps;
   birthYear: string;
   "18-30": string;
+  candidateId?: string;
 }
 
 export interface DraftedProps {
@@ -416,4 +421,40 @@ export interface TeamLeaderProps {
   level: number;
   candidate?: CandidatesProps;
   candidatesId?: string;
+}
+
+// export interface TeamMember {
+//   barangayCoorID: string,
+//   purokCoorID: string,
+//   teamLeaderID: string,
+//   [key: string[]]: string[]
+// }
+
+export interface ValidatedTeams {
+  id: string;
+  teamLeader?: TeamLeaderProps | null;
+  teamLeaderId?: string | null;
+  barangay: BarangayProps;
+  barangaysId: string;
+  municipal: MunicipalProps;
+  municipalsId: number;
+  purokId: string;
+  validatedTeamMembers: ValidatedTeamMembers[];
+  timestamp: string;
+  purok: PurokProps;
+}
+
+export interface ValidatedTeamMembers {
+  idNumber: string;
+  voter: VotersProps | null;
+  votersId?: string | null;
+  purok: PurokProps;
+  barangay: BarangayProps;
+  municipal: MunicipalProps;
+  barangayId: string;
+  municipalsId?: number | null;
+  purokId: string;
+  teamLeaderId: string | null;
+  validatedTeamsId: string | null;
+  remark: string | null;
 }

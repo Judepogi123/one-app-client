@@ -26,16 +26,12 @@ const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
   );
 
   const { teamId } = useParams();
-  console.log(teamId, head);
-  
 
   useEffect(() => {
-    // Clear `selectedVoter` initially if needed
     setSelectedVoter(undefined);
   }, []);
 
   useEffect(() => {
-    // Only proceed if `selectedVoter` is defined
     if (!selectedVoter) return;
 
     const main = async () => {
@@ -72,7 +68,6 @@ const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
       toast("Select at least one voter as member");
       return;
     }
-    console.log(head, level);
     
     const teamIdList = selectedList.map((item) => {
       return {

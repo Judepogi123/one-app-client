@@ -53,6 +53,9 @@ import Groups from "./routes/Groups";
 import UpdateVoterList from "./routes/UpdateVoterList";
 import BarangayValidationList from "./routes/BarangayValidationList";
 import GroupQR from "./routes/GroupQR";
+import TeamValidatedRecords from "./routes/TeamValidatedRecords";
+import ValidatedTeamReport from "./routes/ValidatedTeamReport";
+import TeamInput from "./layout/TeamInput";
 // Styles
 import "./index.css";
 
@@ -90,10 +93,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <BrowserRouter>
             <Routes>
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/team-input-page" element={<TeamInput />} />
               <Route element={<AuthOutlet fallbackPath="/auth" />}>
                 <Route path="result" element={<Results />}>
                   <Route index={true} element={<Results />} />
-                  <Route path="voters" element={<Voters/>}/>
+                  <Route path="voters" element={<Voters />} />
                 </Route>
                 <Route path="/" element={<Home />}>
                   <Route index={true} element={<Data />} />
@@ -109,7 +113,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   />
                   <Route
                     path="survey/draft/:surveyID"
-                    element={<EditSurvey />}  
+                    element={<EditSurvey />}
                   />
                   <Route path="survey/live/:surveyID" element={<LiveSurvey />}>
                     <Route index={true} element={<SurveyInfo />} />
@@ -137,9 +141,26 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   <Route path="manage/draft" element={<NewVoterDraft />} />
                   <Route path="manage/update" element={<UpdateVoters />} />
                   <Route path="manage/candidates" element={<Candidates />} />
-                  <Route path="manage/update/voter" element={<UpdateOption />} />
-                  <Route path="manage/update/voter-list" element={<UpdateVoterList />} />
-                  <Route path="manage/update/voter-list/validation-list" element={<BarangayValidationList />} />
+                  <Route
+                    path="manage/update/voter"
+                    element={<UpdateOption />}
+                  />
+                  <Route
+                    path="manage/update/voter/records"
+                    element={<TeamValidatedRecords />}
+                  />
+                  <Route
+                    path="manage/update/voter/records/:recordID"
+                    element={<ValidatedTeamReport />}
+                  />
+                  <Route
+                    path="manage/update/voter-list"
+                    element={<UpdateVoterList />}
+                  />
+                  <Route
+                    path="manage/update/voter-list/validation-list"
+                    element={<BarangayValidationList />}
+                  />
                   <Route
                     path="manage/draft/:draftID"
                     element={<AddNewVoter />}

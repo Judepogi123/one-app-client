@@ -793,6 +793,7 @@ export const SEARCH_VOTER = gql`
       firstname
       lastname
       gender
+      idNumber
       barangay {
         name
         id
@@ -811,6 +812,7 @@ export const SEARCH_VOTER = gql`
       inc
       illi
       oor
+      idNumber
     }
   }
 `;
@@ -938,8 +940,10 @@ export const GET_TEAM_LIST = gql`
       barangay {
         name
         id
+        number
       }
       municipal {
+        id
         name
       }
       teamLeader {
@@ -948,6 +952,7 @@ export const GET_TEAM_LIST = gql`
           id
           firstname
           lastname
+          idNumber
         }
       }
       candidate {
@@ -972,6 +977,7 @@ export const GET_CANDIDATES = gql`
       lastname
       code
       colorCode
+      supporters
     }
   }
 `;
@@ -1001,6 +1007,7 @@ export const GET_TEAM_INFO = gql`
           firstname
           lastname
           level
+          idNumber
         }
       }
       candidate {
@@ -1013,7 +1020,15 @@ export const GET_TEAM_INFO = gql`
         lastname
         level
         teamId
+        idNumber
         qrCodeNumber
+        purok {
+          purokNumber
+          id
+        }
+        municipal {
+          name
+        }
         qrCodes {
           id
           number
@@ -1060,6 +1075,105 @@ export const BARANGAY_VALIDATION_LIST = gql`
       id
       name
       barangayVotersCount
+    }
+  }
+`;
+
+export const GET_ALL_VALIDATED_TEAM = gql`
+  #graphql
+  query SurveyInfo(
+    $query: String!
+    $barangay: String!
+    $municipal: String!
+    $skip: Int!
+  ) {
+    teamRecord(
+      query: $query
+      barangay: $barangay
+      municipal: $municipal
+      skip: $skip
+    ) {
+      id
+      timestamp
+      barangay {
+        name
+        id
+      }
+      municipal {
+        name
+        id
+      }
+      purok {
+        purokNumber
+        id
+      }
+      teamLeader {
+        level
+        voter {
+          firstname
+          lastname
+        }
+      }
+    }
+  }
+`;
+
+export const GET_TEAM_RECORD_INFO = gql`
+  #graphql
+  query Team($id: String!) {
+    getTeamRecord(id: $id) {
+      id
+      id
+      timestamp
+      barangay {
+        name
+        id
+      }
+      municipal {
+        name
+        id
+      }
+      purok {
+        purokNumber
+        id
+      }
+      teamLeader {
+        level
+        voter {
+          firstname
+          lastname
+        }
+      }
+      validatedTeamMembers {
+        id
+        idNumber
+        voter {
+          firstname
+          lastname
+          purok {
+            purokNumber
+          }
+          barangay {
+            name
+          }
+          municipal {
+            name
+          }
+        }
+        municipal {
+          id
+          name
+        }
+        barangay {
+          name
+          id
+        }
+        purok {
+          purokNumber
+          id
+        }
+        remark
+      }
     }
   }
 `;

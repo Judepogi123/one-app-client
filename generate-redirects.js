@@ -17,4 +17,3 @@ const buildPath = path.join(__dirname, 'build', '_redirects');
 // Write the content to the _redirects file in the build folder
 fs.writeFileSync(buildPath, redirectsContent, 'utf8');
 
-console.log('_redirects file created successfully in build folder.');

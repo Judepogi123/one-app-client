@@ -5,7 +5,12 @@ import { useSearchParams } from "react-router-dom";
 //graphql
 import { SEARCH_VOTER } from "../GraphQL/Queries";
 import { SET_VOTER_LEVEL } from "../GraphQL/Mutation";
-import { ApolloQueryResult, OperationVariables, useLazyQuery, useMutation } from "@apollo/client";
+import {
+  ApolloQueryResult,
+  OperationVariables,
+  useLazyQuery,
+  useMutation,
+} from "@apollo/client";
 import { toast } from "sonner";
 //ui
 import {
@@ -37,12 +42,13 @@ import { z } from "zod";
 import { Checkbox } from "../components/ui/checkbox";
 import Modal from "../components/custom/Modal";
 import UpdateSelectedList from "../layout/UpdateSelectedList";
+import TeamInput from "../layout/TeamInput";
 //icons
 import { TbManualGearbox } from "react-icons/tb";
-import { MdOutlineDocumentScanner } from "react-icons/md";
 import { CiBoxList } from "react-icons/ci";
 import { RiCheckboxMultipleLine } from "react-icons/ri";
 import { RiFunctionAddLine } from "react-icons/ri";
+import { FaWpforms } from "react-icons/fa";
 //props
 import { VotersProps } from "../interface/data";
 import { BarangayCoorSchema } from "../zod/data";
@@ -82,7 +88,7 @@ const UpdateOption = () => {
               <TbManualGearbox /> Manually
             </TabsTrigger>
             <TabsTrigger value="scan" className="flex gap-2">
-              <MdOutlineDocumentScanner /> Scan
+              <FaWpforms /> Form
             </TabsTrigger>
             <TabsTrigger value="list" className="flex gap-2">
               <CiBoxList /> Selected List
@@ -92,7 +98,7 @@ const UpdateOption = () => {
             <Manually />
           </TabsContent>
           <TabsContent value="scan">
-            <h1>Can</h1>
+            <TeamInput />
           </TabsContent>
           <TabsContent className="w-full max-h-max" value="list">
             <UpdateSelectedList />
@@ -122,6 +128,9 @@ const Manually = () => {
   });
   const [value] = useDebounce(searchParams, 1000);
   const LIMIT = 10;
+
+  console.log(data);
+  
 
   //const [setVoterLevel] = useMutation(SET_VOTER_LEVEL);
 
@@ -171,7 +180,6 @@ const Manually = () => {
       fetchVoters();
     }
   }, [page, value]);
-  
 
   const handleSelect = () => {
     if (!select) {
@@ -264,7 +272,7 @@ const Manually = () => {
             <Table>
               <TableHeader>
                 {onMultiSelect && <TableHead>Select</TableHead>}
-
+                <TableHead>Tag ID</TableHead>
                 <TableHead>Lastname</TableHead>
                 <TableHead>Firstname</TableHead>
                 <TableHead>Level</TableHead>
@@ -307,7 +315,7 @@ const Manually = () => {
                         )}
                       </TableCell>
                     )}
-
+                    <TableCell>{item.idNumber}</TableCell>
                     <TableCell>
                       {handleElements(value, item.lastname)}{" "}
                     </TableCell>
@@ -416,11 +424,15 @@ const Manually = () => {
         title={`Set ${select?.fullname} as Barangay Coor.`}
         open={onOpenModal === 2}
         children={
-          <BarangayCoorForm refetch={refetch} select={select} setOnOpenModal={setOnOpenModal} />
+          <BarangayCoorForm
+            refetch={refetch}
+            select={select}
+            setOnOpenModal={setOnOpenModal}
+          />
         }
         className="max-w-xl"
         onOpenChange={() => {
-          setSelect(undefined)
+          setSelect(undefined);
           setOnOpenModal(0);
         }}
       />
@@ -431,7 +443,7 @@ const Manually = () => {
 const BarangayCoorForm = ({
   setOnOpenModal,
   select,
-  refetch
+  refetch,
 }: {
   setOnOpenModal: (value: React.SetStateAction<number>) => void;
   select:
@@ -440,9 +452,11 @@ const BarangayCoorForm = ({
         id: string;
       }
     | undefined;
-    refetch: (variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<{
+  refetch: (variables?: Partial<OperationVariables> | undefined) => Promise<
+    ApolloQueryResult<{
       searchVoter: VotersProps[];
-  }>>
+    }>
+  >;
 }) => {
   const [setVoterLevel, { error }] = useMutation(SET_VOTER_LEVEL);
   const form = useForm<BarangayCoorFormProps>({
@@ -466,16 +480,16 @@ const BarangayCoorForm = ({
         code: value.code,
       },
     });
-    
+
     if (response.data) {
       setOnOpenModal(0);
-      refetch()
+      refetch();
     }
   };
 
   useEffect(() => {
     console.log(error?.message);
-    
+
     if (error) {
       setError("code", { message: error.message });
     }

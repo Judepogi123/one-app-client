@@ -6,6 +6,11 @@ import { useDebouncedCallback } from "use-debounce";
 //ui
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "../components/ui/popover";
 // import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import {
   Table,
@@ -30,11 +35,7 @@ import { TeamProps } from "../interface/data";
 import { useQuery } from "@apollo/client";
 import { GET_TEAM_LIST } from "../GraphQL/Queries";
 //utils
-import {
-  handleLevel,
-  handleVoterColor,
-  handleSanitizeChar,
-} from "../utils/helper";
+import { handleLevel, handleSanitizeChar } from "../utils/helper";
 //layout
 import AreaSelection from "../components/custom/AreaSelection";
 import Candidates from "../components/custom/Candidates";
@@ -42,6 +43,8 @@ import { toast } from "sonner";
 
 //icons
 import { TbReport } from "react-icons/tb";
+import { SlOptionsVertical } from "react-icons/sl";
+
 const options: { name: string; value: string }[] = [
   { name: "All", value: "all" },
   { name: "TL", value: "TL" },
@@ -94,7 +97,7 @@ const Teams = () => {
         barangayId: currentBarangay,
         purokId: currentPurok,
         level: currentLevel,
-        page: currentPage,
+        page: (parseInt(currentPage, 10) - 1) * 50,
         skip: 1,
         query: "",
       },
@@ -113,7 +116,7 @@ const Teams = () => {
       purokId: currentPurok,
       level: currentLevel,
       page: currentPage,
-      skip: 1,
+      skip: (parseInt(currentPage, 10) - 1) * 50,
       query: currentQuery,
     });
   }, [
@@ -155,7 +158,9 @@ const Teams = () => {
             placeholder="Search"
             className="border border-slate-600"
           />
-          <Button><TbReport fontSize={20}/></Button>
+          <Button>
+            <TbReport fontSize={20} />
+          </Button>
         </div>
       </div>
       {loading ? (
@@ -171,7 +176,7 @@ const Teams = () => {
       ) : (
         <Table>
           <TableHeader>
-            <TableHead>Status</TableHead>
+            <TableHead>Tag ID</TableHead>
             <TableHead>Level</TableHead>
             <TableHead>Figure Head </TableHead>
             <TableHead>Handled</TableHead>
@@ -185,7 +190,7 @@ const Teams = () => {
             {data?.teamList.map((item) => (
               <TableRow
                 onClick={() => {
-                  if (item.level !== 1) {
+                  if (item.level !== 0) {
                     navigate(`/teams/${item.id}`);
                     return;
                   }
@@ -193,11 +198,8 @@ const Teams = () => {
                 className="border border-gray-200 cursor-pointer hover:bg-slate-200"
               >
                 <TableCell>
-                  <div
-                    className={`w-32 h-6 border bg-[${handleVoterColor(
-                      item.voters.length
-                    )}]`}
-                  ></div>
+                  {item.municipal.id}-{item.barangay.number}-
+                  {item.teamLeader?.voter?.idNumber}
                 </TableCell>
                 <TableCell>{handleLevel(item.level)}</TableCell>
                 <TableCell
@@ -210,10 +212,33 @@ const Teams = () => {
                   {`${item.teamLeader?.voter?.lastname}, ${item.teamLeader?.voter?.firstname}` ||
                     "Vacant"}
                 </TableCell>
-                <TableCell>{item.voters.length}({handleLevel(item.level - 1)})</TableCell>
-                <TableCell>{item.purok.purokNumber}</TableCell>
+
+                <TableCell>
+                  {item.voters.length}(
+                  {handleLevel(item.level - 1)})
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell>{item.purok?.purokNumber}</TableCell>
                 <TableCell>{item.barangay.name}</TableCell>
                 <TableCell>{item.municipal.name}</TableCell>
+                <TableCell>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <SlOptionsVertical />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      
+                    </PopoverContent>
+                  </Popover>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

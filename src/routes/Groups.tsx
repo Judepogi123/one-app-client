@@ -26,7 +26,12 @@ import { TeamProps, VotersProps } from "../interface/data";
 
 //Graphql
 import { GET_TEAM_INFO } from "../GraphQL/Queries";
-import { CHANGE_LEADER, UPDATE_LEADER } from "../GraphQL/Mutation";
+import {
+  CHANGE_LEADER,
+  UPDATE_LEADER,
+  UDPATE_TEAM_MEMBERS,
+  REMOVE_TEAM,
+} from "../GraphQL/Mutation";
 import { useQuery, useMutation } from "@apollo/client";
 
 //utils
@@ -37,6 +42,8 @@ const Groups = () => {
   const [selectedVoters, setSelectedVoters] = useState<VotersProps | undefined>(
     undefined
   );
+  const [selectedList, setSelectedList] = useState<string[]>([]);
+  const [onMultiSelect, setOnMultiSelect] = useState(false);
   const [onOpenModal, setOnOpenModal] = useState(0);
   const { teamId } = useParams();
   const navigate = useNavigate();
@@ -51,10 +58,16 @@ const Groups = () => {
   const [changeLeader, { loading: updating, error: updateError }] =
     useMutation(CHANGE_LEADER);
 
-  console.log(updateError?.message);
-
-  const [updateLeader, { loading: updatingLeader}] =
+  const [updateLeader, { loading: updatingLeader }] =
     useMutation(UPDATE_LEADER);
+
+  const [
+    multiSelectVoter,
+    { loading: multiSelectIsLoading, error: multiSelectError },
+  ] = useMutation(UDPATE_TEAM_MEMBERS);
+
+  const [removeTeam, { loading: removing, }] =
+    useMutation(REMOVE_TEAM);
 
   useEffect(() => {
     if (selectedVoters) {
@@ -62,6 +75,48 @@ const Groups = () => {
       return;
     }
   }, [selectedVoters]);
+
+  const handleCheckState = (id: string) => {
+    const copyList = [...selectedList];
+    return copyList.includes(id);
+  };
+
+  const handleSelectMultipleVoter = (id: string, checked: boolean) => {
+    let updatedList = [...selectedList];
+    if (checked) {
+      // Remove the item if it exists
+      updatedList = updatedList.filter((item) => item !== id);
+    } else {
+      // Add the item if it does not exist
+      updatedList.push(id);
+    }
+    setSelectedList(updatedList);
+  };
+
+  const handleMultilSelect = async () => {
+    if (!selectedList.length) {
+      toast("Select at least one voter");
+      return;
+    }
+    try {
+      const response = await multiSelectVoter({
+        variables: { teamId, members: selectedList, method: 0 },
+      });
+      if (response.errors) {
+        toast("Team udpate failed!", {
+          closeButton: false,
+        });
+        throw new Error(multiSelectError?.message);
+      }
+      refetch();
+      toast("Team updated successfully");
+      setSelectedList([]);
+    } catch (error) {
+      toast("Error updating voters", {
+        description: "An error occurred",
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -144,12 +199,38 @@ const Groups = () => {
       });
     }
   };
+
+  const handleRemove = async () => {
+    if (!teamId) {
+      toast("Team ID is missing!");
+      return;
+    }
+    try {
+      const response = await removeTeam({
+        variables: { id: teamId },
+      });
+      if (response.errors) {
+        toast("Failed to remove team!", {
+          closeButton: false,
+        });
+        throw new Error(updateError?.message);
+      }
+      navigate(-1);
+      toast("Team removed successfully");
+    } catch (error) {
+      toast("Error removing team", {
+        description: "An error occurred",
+      });
+    }
+  };
+
   return (
     <div className="w-full h-auto">
       <div className="w-full p-2 border bg-slate-200 relative">
         <Popover>
           <PopoverTrigger>
             <h1 className="font-medium text-slate-600 text-xl hover:underline">
+              {data.team?.teamLeader?.voter?.lastname},{" "}
               {handleAltText(data.team?.teamLeader?.voter?.firstname, "Vacant")}
             </h1>
           </PopoverTrigger>
@@ -187,6 +268,21 @@ const Groups = () => {
             </PopoverTrigger>
 
             <PopoverContent className="flex flex-col gap-1">
+              <Button
+                onClick={() => setOnMultiSelect(!onMultiSelect)}
+                variant="outline"
+              >
+                {onMultiSelect ? "Cancel" : "Multi select"}
+              </Button>
+              {onMultiSelect && (
+                <Button
+                  onClick={() => setOnOpenModal(7)}
+                  disabled={!selectedList.length}
+                  variant="outline"
+                >
+                  Remove
+                </Button>
+              )}
               <Button onClick={() => setOnOpenModal(4)} variant="outline">
                 Add {handleLevel((team.level as number) - 1)}
               </Button>
@@ -197,7 +293,7 @@ const Groups = () => {
               >
                 QR codes
               </Button>
-              <Button variant="destructive" onClick={() => setOnOpenModal(3)}>
+              <Button variant="destructive" onClick={() => setOnOpenModal(8)}>
                 Disband
               </Button>
             </PopoverContent>
@@ -206,13 +302,16 @@ const Groups = () => {
       </div>
       <Table>
         <TableHeader>
-          <TableHead className="flex items-center gap-2">
-            <Checkbox />
-            Select all
-          </TableHead>
+          {onMultiSelect && (
+            <TableHead className="flex items-center gap-2">
+              <Checkbox />
+              Select all
+            </TableHead>
+          )}
+          <TableHead>Tag ID</TableHead>
           <TableHead>Member ({team?.voters.length})</TableHead>
+          <TableHead>Purok</TableHead>
           <TableHead>Level</TableHead>
-          <TableHead>Action</TableHead>
         </TableHeader>
 
         <TableBody>
@@ -220,7 +319,17 @@ const Groups = () => {
             .filter((item) => item.id !== team?.teamLeader?.voter?.id)
             .map((item) => (
               <TableRow
+                className={` cursor-pointer hover:bg-slate-200 ${
+                  handleCheckState(item.id) ? "bg-slate-300" : ""
+                }`}
                 onClick={() => {
+                  if (onMultiSelect) {
+                    handleSelectMultipleVoter(
+                      item.id,
+                      handleCheckState(item.id)
+                    );
+                    return;
+                  }
                   if (item.level !== 0) {
                     navigate(`/teams/${item.leader?.teamId}`);
                     return;
@@ -228,12 +337,13 @@ const Groups = () => {
                 }}
                 key={item.id}
               >
-                <TableCell>
-                  <Checkbox />
-                </TableCell>
+                <TableCell>{item.idNumber}</TableCell>
+
                 <TableCell>
                   {item.lastname}, {item.firstname}
                 </TableCell>
+                <TableCell>{item.purok?.purokNumber}</TableCell>
+
                 <TableCell>{handleLevel(item.level as number)}</TableCell>
               </TableRow>
             ))}
@@ -304,6 +414,29 @@ const Groups = () => {
           />
         }
         open={onOpenModal === 4}
+        onOpenChange={() => {
+          setOnOpenModal(0);
+        }}
+      />
+
+      <Modal
+        title="Update team members"
+        onFunction={handleMultilSelect}
+        loading={multiSelectIsLoading}
+        footer={true}
+        open={onOpenModal === 7}
+        onOpenChange={() => {
+          setOnOpenModal(0);
+        }}
+      />
+
+      <Modal
+        title="Remove team"
+        className="min-w-40"
+        onFunction={handleRemove}
+        loading={removing}
+        footer={true}
+        open={onOpenModal === 8}
         onOpenChange={() => {
           setOnOpenModal(0);
         }}

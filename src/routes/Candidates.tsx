@@ -112,12 +112,13 @@ const Candidates = () => {
                 <TableCell>{item.lastname}</TableCell>
                 <TableCell>{item.firstname}</TableCell>
                 <TableCell>{item.code}</TableCell>
+
                 <TableCell>
                   <div
                     className={`w-32 h-6 border border-gray-900 bg-[${item.colorCode}]`}
                   ></div>
                 </TableCell>
-                <TableCell>{item.position?.title}</TableCell>
+                <TableCell>{item.supporters}</TableCell>
               </TableRow>
             ))}
         </TableBody>

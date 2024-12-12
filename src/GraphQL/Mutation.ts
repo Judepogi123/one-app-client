@@ -94,6 +94,7 @@ export const CREATE_QUERY = gql`
       queries
       id
       type
+      style
     }
   }
 `;
@@ -518,5 +519,25 @@ export const REMOVE_MULTI_QROCODE = gql`
   #graphql
   mutation ($id: [String!]) {
     removeQRcode(id: $id)
+  }
+`;
+
+export const CREATE_TEAM = gql`
+  #graphql
+  mutation Team($team: NewTeamInput!) {
+    composeTeam(team: $team)
+  }
+`;
+export const UDPATE_TEAM_MEMBERS = gql`
+  #graphql
+  mutation TeamMembers($teamId: String!, $members: [String!], $method: Int!) {
+    multiSelectVoter(teamId: $teamId, members: $members, method: $method)
+  }
+`;
+
+export const REMOVE_TEAM = gql`
+  #graphql
+  mutation Team($id: String!) {
+    removeTeam(id: $id)
   }
 `;

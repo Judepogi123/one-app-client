@@ -1,4 +1,3 @@
-
 //ui
 import {
   Form,
@@ -36,6 +35,10 @@ const formSchema = z.object({
   queries: z.string().min(3, "Must have at least 3 characters"),
   type: z.string(),
   onTop: z.boolean(),
+  style: z
+    .number()
+    .min(1, { message: "Minimum value is 1" })
+    .max(2, { message: "Maximum value is 2" }),
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -60,7 +63,6 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
   });
 
   const onSubmit = async (value: FormType) => {
-
     try {
       const response = await createQuery({
         variables: {
@@ -68,12 +70,13 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
             surveyId: surveyId,
             queries: value.queries,
             type: value.type,
-            onTop: value.onTop
+            onTop: value.onTop,
+            style: value.style
           },
         },
       });
       if (response.data) {
-        resetField("queries")
+        resetField("queries");
         toast("New query created successfully.");
         return;
       }
@@ -144,6 +147,28 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
               </FormItem>
             )}
           />
+
+          <FormField
+            name="style"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Style</FormLabel>
+                <FormControl>
+                  <Input
+                  defaultValue={1}
+                    {...field}
+                    type="number"
+                    placeholder="Enter style number"
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                </FormControl>
+                {errors.style && (
+                  <FormMessage>{errors.style.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+
           <div className="w-full pt-4">
             <Button type="submit" className=" rounded-full w-full">
               {isSubmitting ? "Please wait" : "Add"}
