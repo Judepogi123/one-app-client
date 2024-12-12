@@ -25,13 +25,13 @@ import { GrValidate } from "react-icons/gr";
 import { CiViewList } from "react-icons/ci";
 
 import { Input } from "../components/ui/input";
-import axios, { localhost } from "../api/axios";
+import axios, { production } from "../api/axios";
 import { toast } from "sonner";
 
 //props
 import { RejectListProps } from "../interface/data";
 
-const socket = io(localhost);
+const socket = io(production);
 const UpdateVoterList = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [onOpenModal, setOnOpenModal] = useState(0);
