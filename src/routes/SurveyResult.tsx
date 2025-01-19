@@ -21,6 +21,7 @@ import {
   AgeBracket,
   QueryProps,
   MunicipalProps,
+  CustomOptionProps,
 } from "../interface/data";
 
 // components
@@ -35,7 +36,9 @@ import { CiExport } from "react-icons/ci";
 //layout
 import SurveyAgeResult from "../layout/SurveyAgeResult";
 import Modal from "../components/custom/Modal";
+import { exportPDF } from "../utils/generate";
 import { toast } from "sonner";
+//import { Item } from "@radix-ui/react-select";
 interface SurveyInfoProps {
   id: string;
   tagID: string;
@@ -48,8 +51,10 @@ interface SurveyInfoProps {
     queries: string;
     onTop: boolean;
     access: string;
-    type :string
+    type: string;
     options: SurveyOptionProps[];
+    withCustomOption: boolean;
+    customOption: CustomOptionProps[];
   }[];
 }
 
@@ -81,9 +86,10 @@ const SurveyResult = () => {
       barangayId: selectedBaragnay,
       genderId: selectGender,
     },
-    fetchPolicy: "no-cache"
+    fetchPolicy: "no-cache",
   });
-  
+
+  console.log({ data });
 
   useEffect(() => {
     refetch();
@@ -96,10 +102,7 @@ const SurveyResult = () => {
     presentationMode,
   ]);
 
-  const {
-    data: responseData,
-    loading: responseIsLoading,
-  } = useQuery<{
+  const { data: responseData, loading: responseIsLoading } = useQuery<{
     barangayList: SurveyResultProps[];
   }>(SURVEY_RESPONSE, {
     variables: {
@@ -108,6 +111,8 @@ const SurveyResult = () => {
     },
     skip: !selectedMunicipal,
   });
+
+  console.log({ responseData });
 
   useEffect(() => {
     if (!responseData?.barangayList) return;
@@ -143,7 +148,7 @@ const SurveyResult = () => {
     return <div>Loading...</div>;
   }
 
-  const { survey } = data;  
+  const { survey } = data;
 
   const options = {
     title: "Barangay responses",
@@ -196,7 +201,7 @@ const SurveyResult = () => {
           variant="outline"
           onClick={() => setPresentationMode(!presentationMode)}
         >
-          {presentationMode? "On Presenation" : "Present"}
+          {presentationMode ? "On Presenation" : "Present"}
         </Button>
         <Button
           className="w-auto flex gap-2"
@@ -205,6 +210,9 @@ const SurveyResult = () => {
         >
           <CiExport />
           Export
+        </Button>
+        <Button onClick={() => exportPDF(`${data.survey.tagID}.pdf`)}>
+          Print
         </Button>
       </div>
       <div className="w-full h-auto">
@@ -258,13 +266,20 @@ const SurveyResult = () => {
       </div>
       <SurveyAgeResult ageData={survey.ageCount} />
 
-      <div className="w-full h-auto flex flex-col gap-2 px-2">
+      <div className="w-full h-auto p-2">
+        <h1 className="text-center text-lg font-medium">
+          Overall Respondents: {data.survey.responseCount}
+        </h1>
+      </div>
+
+      <div id="qr-container" className="w-full h-auto flex flex-col gap-2 px-2">
         {survey.queries
           .filter((query) => {
-            if(presentationMode){
-              return query.access === "regular" && query.onTop
+            if (presentationMode) {
+              return query.access === "regular" && query.onTop;
             }
-            return query.onTop
+            
+            return query.onTop;
           })
           .map((item) => (
             <div
@@ -273,8 +288,8 @@ const SurveyResult = () => {
             >
               <div className="">
                 <OptionChart
-                genderList={genderList}
-                type={item.type}
+                  genderList={genderList}
+                  type={item.type}
                   selectGender={selectGender}
                   selectedBaragnay={selectedBaragnay}
                   selectedMunicipal={selectedMunicipal as string}
@@ -282,6 +297,9 @@ const SurveyResult = () => {
                   queryId={item.id}
                   title={item.queries}
                   responseList={item.options}
+                  withCustomOption={item.withCustomOption}
+                  customOptions={item.customOption}
+                  queryType={item.type}
                 />
               </div>
             </div>
@@ -298,8 +316,8 @@ const SurveyResult = () => {
             >
               <div className="w-full">
                 <OptionChart
-                genderList={genderList}
-                type={item.type}
+                  genderList={genderList}
+                  type={item.type}
                   selectGender={selectGender}
                   selectedBaragnay={selectedBaragnay}
                   selectedMunicipal={selectedMunicipal as string}
@@ -307,21 +325,24 @@ const SurveyResult = () => {
                   queryId={item.id}
                   title={item.queries}
                   responseList={item.options}
+                  withCustomOption={item.withCustomOption}
+                  customOptions={item.customOption}
+                  queryType={item.type}
                 />
               </div>
             </div>
           ))}
       </div>
-        <div className="w-full p-2 mt-2">
-          <h1 className="text-gray-800 font-semibold text-xl">Age Segment</h1>
-        </div>
+      <div className="w-full p-2 mt-2">
+        <h1 className="text-gray-800 font-semibold text-xl">Age Segment</h1>
+      </div>
       <div className="w-full flex flex-col gap-2 py-4">
         {surveyQueriesList
           .filter((query) => {
-            if(presentationMode){
-              return query.access === "regular" && query.onTop
+            if (presentationMode) {
+              return query.access === "regular" && query.onTop;
             }
-            return query.onTop
+            return query.onTop;
           })
           .map((item) => (
             <SurveyOption
@@ -338,7 +359,7 @@ const SurveyResult = () => {
         onOpenChange={() => setOnExport(false)}
         children={
           <SurveyExport
-          surveyQueriesList={surveyQueriesList}
+            surveyQueriesList={surveyQueriesList}
             barangayList={barangayList}
             municipals={municipals}
             setOnExport={setOnExport}

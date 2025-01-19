@@ -95,7 +95,7 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
       ) : data?.searchVoter.length === 0 ? (
         <div className="w-full flex justify-center">
           <div className="text-gray-600 text-lg flex gap-2">
-            No voter found with query of{" "}
+            No voter found with query of
             <h1 className="font-medium text-gray-800">"{query}"</h1>
           </div>
         </div>

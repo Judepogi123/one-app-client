@@ -20,14 +20,13 @@ import {
   TableRow,
   TableCell,
 } from "../components/ui/table";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectLabel,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import { Skeleton } from "../components/ui/skeleton";
 //props
 import { TeamProps } from "../interface/data";
@@ -38,12 +37,14 @@ import { GET_TEAM_LIST } from "../GraphQL/Queries";
 import { handleLevel, handleSanitizeChar } from "../utils/helper";
 //layout
 import AreaSelection from "../components/custom/AreaSelection";
-import Candidates from "../components/custom/Candidates";
 import { toast } from "sonner";
 
 //icons
 import { TbReport } from "react-icons/tb";
 import { SlOptionsVertical } from "react-icons/sl";
+import { handleElements } from "../utils/element";
+import { Label } from "../components/ui/label";
+import { Checkbox } from "../components/ui/checkbox";
 
 const options: { name: string; value: string }[] = [
   { name: "All", value: "all" },
@@ -61,6 +62,7 @@ const Teams = () => {
     page: "1",
     others: "0",
     query: "",
+    withIssues: "false",
   });
 
   const currentMunicipal = params.get("zipCode") || "all";
@@ -70,6 +72,7 @@ const Teams = () => {
   const currentPage = params.get("page") || "1";
   //const currentOthers = params.get("others") || "0";
   const currentQuery = params.get("query");
+  const currentWithIssues = params.get("withIssues");
 
   const navigate = useNavigate();
   const handleChangeOption = (params: string, value: string) => {
@@ -99,7 +102,8 @@ const Teams = () => {
         level: currentLevel,
         page: (parseInt(currentPage, 10) - 1) * 50,
         skip: 1,
-        query: "",
+        query: currentQuery,
+        withIssues: currentWithIssues === "true",
       },
       fetchPolicy: "cache-and-network",
       onError: (error) => {
@@ -144,12 +148,34 @@ const Teams = () => {
             {item.name}
           </Button>
         ))}
-        <Candidates />
+        <Label htmlFor="members">Members: </Label>
+        <Select defaultValue="all">
+          <SelectTrigger id="members" className="w-auto">
+            <SelectValue placeholder="Handle" />
+          </SelectTrigger>
+
+          <SelectContent className="w-auto">
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="<5">Below 5 members</SelectItem>
+            <SelectItem value="=5">With 5 members</SelectItem>
+            <SelectItem value=">=5">With 5 members and above</SelectItem>
+            <SelectItem value="<=10">With 10 members and below</SelectItem>
+            <SelectItem value=">10">10 members above</SelectItem>
+          </SelectContent>
+        </Select>
         <AreaSelection
           currentPurok={currentPurok}
           currentBarangay={currentBarangay}
           currentMunicipal={currentMunicipal}
           handleChangeOption={handleChangeOption}
+        />
+        <Label htmlFor="issues">W/issues</Label>
+        <Checkbox
+          id="issues"
+          checked={currentWithIssues === "true"}
+          onCheckedChange={(check) =>
+            handleChangeOption("withIssues", check ? "true" : "false")
+          }
         />
 
         <div className="flex items-center absolute right-0 mr-2 gap-2">
@@ -176,18 +202,19 @@ const Teams = () => {
       ) : (
         <Table>
           <TableHeader>
+            <TableHead>No</TableHead>
             <TableHead>Tag ID</TableHead>
             <TableHead>Level</TableHead>
             <TableHead>Figure Head </TableHead>
             <TableHead>Handled</TableHead>
-            <TableHead>Stamp(Qr Code)</TableHead>
+            <TableHead>Issues</TableHead>
             <TableHead>Purok</TableHead>
             <TableHead>Barangay</TableHead>
             <TableHead>Municipal</TableHead>
           </TableHeader>
 
           <TableBody>
-            {data?.teamList.map((item) => (
+            {data?.teamList.map((item, i) => (
               <TableRow
                 onClick={() => {
                   if (item.level !== 0) {
@@ -197,9 +224,13 @@ const Teams = () => {
                 }}
                 className="border border-gray-200 cursor-pointer hover:bg-slate-200"
               >
+                <TableCell>{i + 1}</TableCell>
                 <TableCell>
                   {item.municipal.id}-{item.barangay.number}-
-                  {item.teamLeader?.voter?.idNumber}
+                  {handleElements(
+                    currentQuery as string,
+                    item.teamLeader?.voter?.idNumber as string
+                  )}
                 </TableCell>
                 <TableCell>{handleLevel(item.level)}</TableCell>
                 <TableCell
@@ -214,11 +245,12 @@ const Teams = () => {
                 </TableCell>
 
                 <TableCell>
-                  {item.voters.length}(
-                  {handleLevel(item.level - 1)})
+                  {item.voters.length}({handleLevel(item.level - 1)})
                 </TableCell>
-                <TableCell></TableCell>
-                <TableCell>{item.purok?.purokNumber}</TableCell>
+                <TableCell>{item._count.voters}</TableCell>
+                <TableCell>
+                  {item.teamLeader?.voter?.purok?.purokNumber}
+                </TableCell>
                 <TableCell>{item.barangay.name}</TableCell>
                 <TableCell>{item.municipal.name}</TableCell>
                 <TableCell>
@@ -234,9 +266,7 @@ const Teams = () => {
                         <SlOptionsVertical />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent>
-                      
-                    </PopoverContent>
+                    <PopoverContent></PopoverContent>
                   </Popover>
                 </TableCell>
               </TableRow>

@@ -118,5 +118,51 @@ export const TeamInputSchema = z.object({
   purokCoorId: z.string().min(1, "Barangay Coor Tag ID is required"),
   barangayID: z.string().min(1, "Barangay ID is required"),
   teamLeaderID: z.string().min(1, "Team Leader ID is required"),
-  dynamicMembers: z.record(z.string()).optional()
+  dynamicMembers: z.record(z.string()).optional(),
 });
+
+export const NewAccountSchema = z
+  .object({
+    username: z.string(),
+    password: z.string().min(8, "Must have at least 8 characters"),
+    role: z.string(),
+    purpose: z
+      .string()
+      .min(1, "Minimum role of 1")
+      .max(4, "Maximum role of 4")
+      .optional(),
+    adminPassword: z
+      .string()
+      .min(8, "Must have at least 8 characters")
+      .optional(),
+  })
+  .refine(
+    (data) =>
+      data.role !== "100" ||
+      (data.adminPassword && data.adminPassword.length >= 8),
+    {
+      message:
+        "Admin password is required and must be at least 8 characters when role is for creating Super Account.",
+      path: ["adminPassword"],
+    }
+  );
+
+export const NewVoterSchema = z.object({
+  idNumber: z.string().min(1, "ID Number is required"),
+  firstname: z.string().min(1, "First name is required").min(2, "At least 2 characters"),
+  lastname: z.string().min(1, "Last name is required").min(2, "At least 2 characters"),
+  municipalsId: z.number(),
+  barangaysId: z.string(),
+  purokId: z.string().optional(),
+  purokName: z.string(),
+  gender: z.string(),
+  or: z.string(),
+  status: z.number(),
+  level: z.string(),
+  pwd: z.string(),
+  illi: z.string(),
+  inc: z.string(),
+  youth: z.string(),
+  senior: z.string(),
+  supporting: z.string(),
+})

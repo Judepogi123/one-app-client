@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 //grpahql
 import { GET_TEAM_RECORD_INFO } from "../GraphQL/Queries";
@@ -33,6 +32,7 @@ const ValidatedTeamReport = () => {
   });
 
   if (!data) return;
+  console.log({ data });
 
   const issues = data.getTeamRecord?.validatedTeamMembers.reduce(
     (acc, team) => {
@@ -63,7 +63,7 @@ const ValidatedTeamReport = () => {
           label={"Leader"}
         />
         <InfoKey
-          className={issues && issues > 0 ? "text-red-500":""}
+          className={issues && issues > 0 ? "text-red-500" : ""}
           title={`${issues}`}
           label={"Issues"}
         />

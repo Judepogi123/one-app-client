@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChromePicker, ColorResult } from "react-color";
 //ui
@@ -70,6 +71,8 @@ type PositionProps = z.infer<typeof PositionSchema>;
 const Candidates = () => {
   const [onModal, setOnModal] = useState(0);
 
+  const navigate = useNavigate();
+
   const { data, refetch } = useQuery<{
     candidates: CandidatesProps[];
   }>(GET_CANDIDATES);
@@ -101,24 +104,29 @@ const Candidates = () => {
           <TableHead>Lastname</TableHead>
           <TableHead>Firstname</TableHead>
           <TableHead>Code</TableHead>
-          <TableHead>Color code</TableHead>
-          <TableHead>Supporters</TableHead>
+          <TableHead>Overall</TableHead>
+          <TableHead>Figure Heads</TableHead>
+          <TableHead>BC</TableHead>
+          <TableHead>PC</TableHead>
+          <TableHead>TL</TableHead>
+          <TableHead>W/Team</TableHead>
+          <TableHead>W/oTeam</TableHead>
         </TableHeader>
 
         <TableBody>
           {data &&
             data.candidates.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.id} onClick={() => navigate(`/manage/candidates/${item.id}`)}>
                 <TableCell>{item.lastname}</TableCell>
                 <TableCell>{item.firstname}</TableCell>
                 <TableCell>{item.code}</TableCell>
-
-                <TableCell>
-                  <div
-                    className={`w-32 h-6 border border-gray-900 bg-[${item.colorCode}]`}
-                  ></div>
-                </TableCell>
                 <TableCell>{item.supporters}</TableCell>
+                <TableCell>{item.inTeam.figureHeads}</TableCell>
+                <TableCell>{item.inTeam.bc}</TableCell>
+                <TableCell>{item.inTeam.pc}</TableCell>
+                <TableCell>{item.inTeam.tl}</TableCell>
+                <TableCell>{item.inTeam.withTeams}</TableCell>
+                <TableCell>{item.inTeam.voterWithoutTeam}</TableCell>
               </TableRow>
             ))}
         </TableBody>
@@ -146,146 +154,145 @@ const Candidates = () => {
 export default Candidates;
 
 const NewCandidates = ({
-    refetch,
-  }: {
-    refetch: (variables?: Partial<OperationVariables> | undefined) => Promise<
-      ApolloQueryResult<{
-        candidates: CandidatesProps[];
-      }>
-    >;
-  }) => {
-    const form = useForm<FormProps>({
-      resolver: zodResolver(FormSchema),
-      defaultValues: { colorCode: "#ffffff" },
+  refetch,
+}: {
+  refetch: (variables?: Partial<OperationVariables> | undefined) => Promise<
+    ApolloQueryResult<{
+      candidates: CandidatesProps[];
+    }>
+  >;
+}) => {
+  const form = useForm<FormProps>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: { colorCode: "#ffffff" },
+  });
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+    setError,
+    setValue,
+  } = form;
+
+  const [addNewCandidate, { error }] = useMutation(ADD_NEW_CANDIDATE);
+
+  useEffect(() => {
+    if (error) {
+      setError("code", { message: error.message });
+      return;
+    }
+  }, [error]);
+
+  const submit = async (value: FormProps) => {
+    console.log("click");
+
+    const response = await addNewCandidate({
+      variables: {
+        firstname: value.firstname,
+        lastname: value.lastname,
+        code: value.code,
+        colorCode: value.colorCode,
+      },
     });
-    const {
-      handleSubmit,
-      register,
-      formState: { errors, isSubmitting },
-      setError,
-      setValue,
-    } = form;
-  
-    const [addNewCandidate, { error }] = useMutation(ADD_NEW_CANDIDATE);
-  
-    useEffect(() => {
-      if (error) {
-        setError("code", { message: error.message });
-        return;
-      }
-    }, [error]);
-  
-    const submit = async (value: FormProps) => {
-        console.log("click");
-        
-      const response = await addNewCandidate({
-        variables: {
-          firstname: value.firstname,
-          lastname: value.lastname,
-          code: value.code,
-          colorCode: value.colorCode,
-        },
-      });
-  
-      if (response.data) {
-        refetch();
-        toast("Success!");
-      }
-    };
-  
-    const handleColorChange = (color: ColorResult) => {
-      setValue("colorCode", color.hex);
-    };
-  
-    return (
-      <div className="w-full">
-        <form onSubmit={handleSubmit(submit)}>
-          <Form {...form}>
-            <FormField
-              name="firstname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="firstname">Firstname</FormLabel>
-                  <FormControl id="firstname">
-                    <Input
-                      {...field}
-                      placeholder="Enter first name"
-                      {...register("firstname")}
-                    />
-                  </FormControl>
-                  {errors.firstname && (
-                    <FormMessage>{errors.firstname.message}</FormMessage>
-                  )}
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="lastname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="lastname">Lastname</FormLabel>
-                  <FormControl id="lastname">
-                    <Input
-                      {...field}
-                      placeholder="Enter last name"
-                      {...register("lastname")}
-                    />
-                  </FormControl>
-                  {errors.lastname && (
-                    <FormMessage>{errors.lastname.message}</FormMessage>
-                  )}
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="code">Code</FormLabel>
-                  <FormControl id="code">
-                    <Input
-                      {...field}
-                      placeholder="Enter code"
-                      {...register("code")}
-                    />
-                  </FormControl>
-                  {errors.code && (
-                    <FormMessage>{errors.code.message}</FormMessage>
-                  )}
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="colorCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="colorCode">Color code</FormLabel>
-                  <FormControl id="colorCode">
-                    <ChromePicker
-                      color={field.value || "#ffffff"}
-                      onChange={(color) => {
-                        handleColorChange(color);
-                        field.onChange(color.hex);
-                      }}
-                    />
-                  </FormControl>
-                  {errors.colorCode && (
-                    <FormMessage>{errors.colorCode.message}</FormMessage>
-                  )}
-                </FormItem>
-              )}
-            />
-          </Form>
-          <div className="w-full py-2">
-            <Button type="submit" className="w-full rounded-full">
-              {isSubmitting ? "Adding, please wait..." : "Add"}
-            </Button>
-          </div>
-        </form>
-      </div>
-    );
+
+    if (response.data) {
+      refetch();
+      toast("Success!");
+    }
   };
-  
+
+  const handleColorChange = (color: ColorResult) => {
+    setValue("colorCode", color.hex);
+  };
+
+  return (
+    <div className="w-full">
+      <form onSubmit={handleSubmit(submit)}>
+        <Form {...form}>
+          <FormField
+            name="firstname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="firstname">Firstname</FormLabel>
+                <FormControl id="firstname">
+                  <Input
+                    {...field}
+                    placeholder="Enter first name"
+                    {...register("firstname")}
+                  />
+                </FormControl>
+                {errors.firstname && (
+                  <FormMessage>{errors.firstname.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="lastname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="lastname">Lastname</FormLabel>
+                <FormControl id="lastname">
+                  <Input
+                    {...field}
+                    placeholder="Enter last name"
+                    {...register("lastname")}
+                  />
+                </FormControl>
+                {errors.lastname && (
+                  <FormMessage>{errors.lastname.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="code"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="code">Code</FormLabel>
+                <FormControl id="code">
+                  <Input
+                    {...field}
+                    placeholder="Enter code"
+                    {...register("code")}
+                  />
+                </FormControl>
+                {errors.code && (
+                  <FormMessage>{errors.code.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="colorCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="colorCode">Color code</FormLabel>
+                <FormControl id="colorCode">
+                  <ChromePicker
+                    color={field.value || "#ffffff"}
+                    onChange={(color) => {
+                      handleColorChange(color);
+                      field.onChange(color.hex);
+                    }}
+                  />
+                </FormControl>
+                {errors.colorCode && (
+                  <FormMessage>{errors.colorCode.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+        </Form>
+        <div className="w-full py-2">
+          <Button type="submit" className="w-full rounded-full">
+            {isSubmitting ? "Adding, please wait..." : "Add"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 const NewPositions = ({
   setOnModal,

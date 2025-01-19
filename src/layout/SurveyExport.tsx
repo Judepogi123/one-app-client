@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+
+import axios from "../api/axios";
 //ui
 import {
   Select,
@@ -26,7 +27,7 @@ import { Button } from "../components/ui/button";
 // } from "../components/ui/table";
 import { toast } from "sonner";
 //graphql
-import {  GET_SELECTED_QUERY } from "../GraphQL/Queries";
+import { GET_SELECTED_QUERY } from "../GraphQL/Queries";
 import { useLazyQuery } from "@apollo/client";
 //props
 import {
@@ -70,7 +71,6 @@ const SurveyExport = ({
   //   title: string;
   //   id: string;
   // } | null>(null);
-  
 
   const [option, { data, loading }] = useLazyQuery<{
     option: SelectedOptionProps;
@@ -93,12 +93,12 @@ const SurveyExport = ({
         variables: {
           queryId: selectedQuery,
           zipCode: parseInt(selectedMunicipal as string, 10),
-          surveyId: surveyID as string
+          surveyId: surveyID as string,
         },
       });
       if (respone.data) {
         console.log("Data: ", respone.data);
-        
+
         console.log("Success!");
         handleControlPage();
       }
@@ -140,6 +140,12 @@ const SurveyExport = ({
       console.error("Error downloading the file:", error);
     }
   };
+
+  // const handleExportPdf = async () => {
+  //   try {
+  //     const response = await axios.post("/upload/export-pdf");
+  //   } catch (error) {}
+  // };
 
   const pages = [
     <div className="w-full h-auto flex flex-col gap-2">
@@ -219,7 +225,10 @@ const SurveyExport = ({
         <Button variant="outline" onClick={() => setOnExport(false)}>
           Cancel
         </Button>
-        <Button onClick={handleGetoption} disabled={loading}>{loading? "Please wait...": "Next"}</Button>
+        <Button>Print</Button>
+        <Button onClick={handleGetoption} disabled={loading}>
+          {loading ? "Please wait..." : "Next"}
+        </Button>
         <Button onClick={handleExportDoc}>Export</Button>
       </div>
     </div>

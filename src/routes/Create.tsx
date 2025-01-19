@@ -66,7 +66,7 @@ const optionList: DataLayoutProps[] = [
   },
   {
     title: "Accounts",
-    value: "/accounts",
+    value: "/manage/accounts",
     icon: MdOutlineManageAccounts,
     desc: "Manage accounts",
   },

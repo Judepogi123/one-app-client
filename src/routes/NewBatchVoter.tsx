@@ -193,13 +193,13 @@ const NewBatchVoter = () => {
                         required: "Please select barangay!",
                       })}
                     >
-                      <SelectTrigger className="w-full border border-gray-400">
+                      <SelectTrigger className="w-full border border-gray-400 max-h-60">
                         <SelectValue
                           placeholder={barLoading ? "Loading..." : "Select"}
                         />
                       </SelectTrigger>
                       {bardata ? (
-                        <SelectContent>
+                        <SelectContent className=" max-h-60">
                           {bardata.barangayList.map((item) => (
                             <SelectItem value={item.id.toString()}>
                               {item.name}

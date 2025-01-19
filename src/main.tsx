@@ -55,7 +55,10 @@ import BarangayValidationList from "./routes/BarangayValidationList";
 import GroupQR from "./routes/GroupQR";
 import TeamValidatedRecords from "./routes/TeamValidatedRecords";
 import ValidatedTeamReport from "./routes/ValidatedTeamReport";
+import BarangaySupporters from "./routes/BarangaySupporters";
 import TeamInput from "./layout/TeamInput";
+import Accounts from "./routes/Accounts";
+import AddVoter from "./routes/AddVoter";
 // Styles
 import "./index.css";
 
@@ -140,7 +143,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   <Route path="manage/new" element={<NewBatchVoter />} />
                   <Route path="manage/draft" element={<NewVoterDraft />} />
                   <Route path="manage/update" element={<UpdateVoters />} />
+                  <Route
+                    path="manage/addvoter"
+                    element={<AddVoter />}
+                  />
                   <Route path="manage/candidates" element={<Candidates />} />
+                  <Route path="manage/candidates/:candidateID" element={<BarangaySupporters />} />
+                  <Route path="manage/accounts" element={<Accounts />} />
                   <Route
                     path="manage/update/voter"
                     element={<UpdateOption />}

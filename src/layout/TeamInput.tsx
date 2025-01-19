@@ -41,8 +41,22 @@ import { ValidatedTeamMembers } from "../interface/data";
 import { toast } from "sonner";
 type TeamInputProps = z.infer<typeof TeamInputSchema>;
 
+interface JSONProps {
+  id: string;
+  purok_Id: string;
+  barangay_id: string;
+  municipal_id: string;
+  purokCoorID: string;
+  teamLeaderID: string;
+  barangayCoorID: string;
+  members: { id: string; idNumber: string }[];
+}
+
 const TeamInput = () => {
   const [onOpenModal, setOnOpenModal] = useState(0);
+  const [counter, setCounter] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [listCount, setListCount] = useState(0)
   const navigate = useNavigate();
   const form = useForm<TeamInputProps>({
     resolver: zodResolver(TeamInputSchema),
@@ -56,7 +70,7 @@ const TeamInput = () => {
     handleSubmit,
     register,
     formState: { errors },
-    reset,
+    resetField,
   } = form;
 
   const [composeTeam, { data: results, error: teamError, loading }] =
@@ -64,24 +78,25 @@ const TeamInput = () => {
       composeTeam: string;
     }>(CREATE_TEAM, {
       onCompleted: () => {
-        reset(
-          {
-            dynamicMembers: {}, // Reset this field to an empty object
-            teamLeaderID: "", // Reset this field to an empty string
-          },
-          {
-            keepValues: false, // Ensures form state fully resets
-            keepErrors: false, // Clears validation errors for these fields
-            keepDirty: false, // Clears "dirty" state
-            keepTouched: false, // Resets the touched state
-          }
-        );
-
+        resetField("teamLeaderID");
+        resetField("dynamicMembers.member1");
+        resetField("dynamicMembers.member2");
+        resetField("dynamicMembers.member3");
+        resetField("dynamicMembers.member4");
+        resetField("dynamicMembers.member5");
+        resetField("dynamicMembers.member6");
+        resetField("dynamicMembers.member7");
+        resetField("dynamicMembers.member8");
+        resetField("dynamicMembers.member9");
+        resetField("dynamicMembers.member10");
         toast("Team created successfully", {
           closeButton: false,
         });
+        setCounter((prev) => prev + 1);
       },
     });
+
+  console.log("Counter updated to:", counter);
 
   const onSubmit = async (value: TeamInputProps) => {
     const { dynamicMembers } = value;
@@ -105,11 +120,116 @@ const TeamInput = () => {
     }
   };
 
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleImportJsonFile = async () => {
+    if (!selectedFile) {
+      toast("Please select a JSON file to IMPORT");
+      return;
+    }
+
+    // Use an object to group data by bNumber (barangay_id)
+    const groupedData: {
+      [bNumber: string]: {
+        tl: number;
+        members: number;
+        bc: number;
+        pc: number;
+      };
+    } = {};
+
+    try {
+      const fileReader = new FileReader();
+      fileReader.onload = async (event) => {
+        const fileContent = event.target?.result;
+        if (typeof fileContent === "string") {
+          const jsonData: JSONProps[] = JSON.parse(fileContent);
+
+          setListCount(jsonData.length)
+          jsonData.forEach(async (item) => {
+            console.log({ item });
+
+            //const bNumber = item.barangay_id;
+
+            // // Initialize the group if it doesn't exist
+            // if (!groupedData[bNumber]) {
+            //   groupedData[bNumber] = {
+            //     tl: 0,
+            //     members: 0,
+            //     bc: 0,
+            //     pc: 0,
+            //   };
+            // }
+
+            // if (item.teamLeaderID) {
+            //   groupedData[bNumber].tl += 1;
+            // }
+
+            // if (item.purokCoorID === jsonData[i + 1]?.purokCoorID) {
+            //   groupedData[bNumber].pc += 1;
+            // }
+
+            // // Check if the current and next barangay coordinator IDs are the same
+            // if (item.barangayCoorID === jsonData[i + 1]?.barangayCoorID) {
+            //   groupedData[bNumber].bc += 1;
+            // }
+
+            // // Add the number of members to the total
+            // groupedData[bNumber].members += item.members.length;
+
+            await composeTeam({
+              variables: {
+                team: {
+                  zipCode: parseInt(item.municipal_id, 10),
+                  barangayId: item.barangay_id,
+                  teamLeaderId: item.teamLeaderID,
+                  members: item.members.map((member) => member.idNumber),
+                  purokCoorId: item.purokCoorID,
+                  barangayCoorId: item.barangayCoorID,
+                },
+              },
+            });
+          });
+
+          // Log the grouped data to the console
+          console.log("Grouped Data:", groupedData);
+
+          // Optional: Uncomment if you want to transform the object into an array
+          /*
+          const groupedArray = Object.keys(groupedData).map((bNumber) => ({
+            bNumber,
+            data: groupedData[bNumber],
+          }));
+          console.log(groupedArray);
+          */
+        }
+      };
+
+      // Handle file reading error
+      fileReader.onerror = () => {
+        toast("Error reading file.");
+      };
+
+      // Read the file as text
+      fileReader.readAsText(selectedFile);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full h-auto">
-      <div className="w-full p-2 flex justify-end">
+      <div className="w-full p-2 flex justify-end gap-2">
+        <Button size="sm" variant="outline" onClick={() => setOnOpenModal(2)}>
+          Import JSON file
+        </Button>
         <Button
-          disabled
           onClick={() => navigate(`/manage/update/voter/records`)}
           className="w-auto flex gap-2"
           size="sm"
@@ -298,6 +418,47 @@ const TeamInput = () => {
         onOpenChange={() => {
           setOnOpenModal(0);
         }}
+      />
+      <Modal
+        title="Import JSON file"
+        open={onOpenModal === 2}
+        onOpenChange={() => {
+          if (loading) return;
+          setOnOpenModal(0);
+        }}
+        children={
+          <div className="w-full h-auto">
+            {loading ? (
+              <div>
+                <h1 className="text-lg font-medium">Uploaded: {counter}/{listCount}</h1>
+              </div>
+            ) : (
+              <div className="">
+                <Input type="file" accept=".json" onChange={handleFileChange} />
+              </div>
+            )}
+
+            <div className="w-full flex justify-end gap-2 mt-4">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  if (loading) return;
+                  setOnOpenModal(0);
+                }}
+              >
+                Close
+              </Button>
+              <Button
+                disabled={loading}
+                size="sm"
+                onClick={handleImportJsonFile}
+              >
+                {loading ? "Please wait..." : "Confirm"}
+              </Button>
+            </div>
+          </div>
+        }
       />
     </div>
   );

@@ -1,4 +1,3 @@
- 
 export const handleGender = (value: string) => {
   if (value === "M") {
     return "Male";
@@ -75,3 +74,35 @@ export const handleAltText = (
   if (value) return value;
   return alt;
 };
+
+export const handleGetPurposeList = (value: number): string => {
+  const purposeList = [
+    { name: "Scanner", key: 1 },
+    { name: "Team", key: 2 },
+    { name: "Verification", key: 3 },
+    { name: "Survey", key: 4 },
+  ];
+
+  const keys = new Set(value.toString().split("").map(Number));
+
+  const purposes = purposeList
+    .filter((item) => keys.has(item.key))
+    .map((item) => item.name);
+
+  return purposes.join(", ");
+};
+
+export const handleGetRole = (index: number) => {
+  const roles = [
+    "Portal Admin",
+    "One-App Admin",
+    "One-App User",
+    "Super Account",
+  ];
+  return roles[index] || "Unknown";
+};
+
+export const calculatePercentage = (part: number, total: number): string => {
+  return ((part / total) * 100).toFixed(2);
+};
+

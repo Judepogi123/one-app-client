@@ -28,12 +28,14 @@ import {
   UPDATE_QUERY,
   UPDATE_QUERY_TYPE,
   UPDATE_QUERY_ACCESS,
+  CREATE_CUSTOM_OPTION,
 } from "../GraphQL/Mutation";
 import { Input } from "../components/ui/input";
 import { useParams } from "react-router-dom";
 
 const Option = () => {
   const [onNew, setOnNew] = useState<boolean>(false);
+  const [onOpen, setOnOpen] = useState(0);
   const [onRemove, setOnRemove] = useState<boolean>(false);
   const [onDelete, setOnDelete] = useState<string | null>(null);
   const [onEdit, setOnEdit] = useState<boolean>(false);
@@ -51,12 +53,15 @@ const Option = () => {
     }
   );
 
+  console.log(error);
+  
 
-  const [removeQuery, { loading: removeLoading }] =
-    useMutation(REMOVE_QUERY, {
-      refetchQueries: [GET_SELECTED_DRAFT_SURVEY],
-      variables: { id: surveyID },
-    });
+  const [removeQuery, { loading: removeLoading }] = useMutation(REMOVE_QUERY, {
+    refetchQueries: [GET_SELECTED_DRAFT_SURVEY],
+    variables: { id: surveyID },
+  });
+  const [createCustomOption, { loading: creating, error: errroring }] =
+    useMutation(CREATE_CUSTOM_OPTION);
 
   const [updateQuery] = useMutation(UPDATE_QUERY);
   const [updateQueryType, { loading: typeIsLoading }] =
@@ -83,22 +88,22 @@ const Option = () => {
     }
   };
 
-  const handleUpdateQueryAccess = async()=>{
-    if(!queryID){
-      toast("Required query id is missing!")
-      return
+  const handleUpdateQueryAccess = async () => {
+    if (!queryID) {
+      toast("Required query id is missing!");
+      return;
     }
     const response = await updateQueryAccess({
-      variables:{
-        id: queryID
-      }
-    })
+      variables: {
+        id: queryID,
+      },
+    });
 
-    if(response.data){
+    if (response.data) {
       refetch();
-      toast("Query access updated.")
+      toast("Query access updated.");
     }
-  }
+  };
 
   const handleRemoveQuery = async () => {
     if (!data) {
@@ -145,6 +150,26 @@ const Option = () => {
     setOnUpdateType(true);
   }, [selectedType]);
 
+  const handleCreateOptions = async () => {
+    if (!data) {
+      toast("Invalid ID!");
+      return;
+    }
+    const response = await createCustomOption({
+      variables: {
+        id: data.queries.id,
+      },
+    });
+    if (errroring) {
+      toast("Faild to craete new !");
+      return;
+    }
+    if (response.data) {
+      refetch();
+      toast("Option created successfully!");
+    }
+  };
+
   if (!data || error) {
     return (
       <div className="w-full px-8">
@@ -188,7 +213,12 @@ const Option = () => {
                   </SelectContent>
                 </Select>
 
-                <Button onClick={handleUpdateQueryAccess} disabled={queryAccessLoading}>{queryAccessLoading? "Updating..." : data.queries.access}</Button>
+                <Button
+                  onClick={handleUpdateQueryAccess}
+                  disabled={queryAccessLoading}
+                >
+                  {queryAccessLoading ? "Updating..." : data.queries.access}
+                </Button>
               </div>
             ) : (
               <h1 className="font-semibold">{data.queries.queries}</h1>
@@ -231,14 +261,25 @@ const Option = () => {
           {onNew ? (
             <NewQuery setOnNew={setOnNew} />
           ) : (
-            <Button
-              onClick={() => setOnNew(true)}
-              size="sm"
-              variant="default"
-              className="w-full rounded"
-            >
-              New
-            </Button>
+            <div className="w-full">
+              <Button
+                onClick={() => setOnNew(true)}
+                size="sm"
+                variant="default"
+                className="w-full rounded"
+              >
+                New
+              </Button>
+
+              <Button
+                onClick={() => setOnOpen(1)}
+                size="sm"
+                variant="default"
+                className="w-full rounded mt-2"
+              >
+                New Option Input
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -274,6 +315,20 @@ const Option = () => {
         }}
         loading={typeIsLoading}
         onFunction={handleUpdateQueryType}
+      />
+
+      <Modal
+        title="Add new custom option."
+        loading={creating}
+        onFunction={handleCreateOptions}
+        footer={true}
+        open={onOpen === 1}
+        onOpenChange={() => {
+          if (creating) {
+            return;
+          }
+          setOnOpen(0);
+        }}
       />
     </div>
   );

@@ -95,6 +95,7 @@ export const CREATE_QUERY = gql`
       id
       type
       style
+      withCustomOption
     }
   }
 `;
@@ -539,5 +540,43 @@ export const REMOVE_TEAM = gql`
   #graphql
   mutation Team($id: String!) {
     removeTeam(id: $id)
+  }
+`;
+
+export const CREATE_NEW_USER = gql`
+  #grahpql
+  mutation Account($user: NewUserInput!) {
+    newUser(user: $user)
+  }
+`;
+
+export const CREATE_CUSTOM_OPTION = gql`
+  #graphql
+  mutation Option($id: String!) {
+    createCustomOption(id: $id)
+  }
+`;
+
+export const SUBMIT_ALL_RESPONSE = gql`
+  #grahpql
+  mutation SubmitSuveyResponse(
+    $surveyResponse: [NewSurveyResponseInput!]!
+    $respondentResponse: [NewRespondentResponseInput!]!
+    $response: [NewResponseInput!]!
+    $customOptions: [NewCustomOptionsInput!]
+  ) {
+    harvestResponse(
+      surveyResponse: $surveyResponse
+      respondentResponse: $respondentResponse
+      response: $response
+      customOptions: $customOptions
+    )
+  }
+`;
+
+export const RESET_TEAM_LIST = gql`
+  #grahpql
+  mutation ResetTeamList($zipCode: String!, $barangayId: String!) {
+    resetTeamList(zipCode: $zipCode, barangayId: $barangayId)
   }
 `;

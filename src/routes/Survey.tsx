@@ -73,7 +73,7 @@ const Survey = () => {
 
       if (response.data) {
         refetch();
-        navigate(`/survey/${response.data.createSurvey.id}`);
+        // navigate(`/survey/${response.data.createSurvey.id}`);
         return;
       }
       toast("Failed to create new survey.");

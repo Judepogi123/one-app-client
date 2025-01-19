@@ -1,5 +1,48 @@
 import { gql } from "@apollo/client";
 
+export const GET_SUPPORTERS = gql`
+  #graphql
+  query BarangayQuery($zipCode: Int!, $id: String!) {
+    barangayList(zipCode: $zipCode) {
+      municipalId
+      name
+      id
+      population
+      population
+      sampleSize
+      sampleRate
+      femaleSize
+      maleSize
+      surveyor
+      activeSurveyor
+      barangayVotersCount
+      supporters(id: $id) {
+        figureHeads
+        bc
+        pc
+        tl
+        withTeams
+        voterWithoutTeam
+      }
+      teamStat {
+        aboveMax
+        belowMax
+        equalToMax
+        aboveMin
+        equalToMin
+        belowMin
+        threeAndBelow
+      }
+    }
+    candidate(id: $id) {
+      id
+      firstname
+      lastname
+      code
+    }
+  }
+`;
+
 export const GET_VOTERS = gql`
   #graphql
   query {
@@ -67,7 +110,7 @@ export const GET_BARANGAY = gql`
 
 export const GET_BARANGAYS = gql`
   #graphql
-  query BarangayQuery($zipCode: Int!) {
+  query BarangayQuery($zipCode: Int!, $id: String) {
     barangayList(zipCode: $zipCode) {
       municipalId
       name
@@ -80,6 +123,24 @@ export const GET_BARANGAYS = gql`
       maleSize
       surveyor
       activeSurveyor
+      barangayVotersCount
+      supporters(id: $id) {
+        figureHeads
+        bc
+        pc
+        tl
+        withTeams
+        voterWithoutTeam
+      }
+      teamStat {
+        aboveMax
+        belowMax
+        equalToMax
+        aboveMin
+        equalToMin
+        belowMin
+        threeAndBelow
+      }
     }
   }
 `;
@@ -339,6 +400,7 @@ export const GET_QUERIES = gql`
         desc
         onExit
         forAll
+        customizable
         fileUrl {
           url
           filename
@@ -405,6 +467,10 @@ export const SURVEY_RESPONSE_LIST = gql`
       id
       barangaysId
       municipalsId
+      users {
+        uid
+        username
+      }
       barangay {
         name
         sampleSize
@@ -605,12 +671,22 @@ export const SURVEY_RESULT_INFO = gql`
         onTop
         access
         type
+        withCustomOption
+        customOption(
+          surveyId: $id
+          barangayId: $barangayId
+          zipCode: $zipCode
+        ) {
+          id
+          value
+        }
         options {
           id
           title
           desc
           onTop
           forAll
+          order
           overAllResponse(
             id: $id
             zipCode: $zipCode
@@ -889,6 +965,7 @@ export const GET_VOTER_LIST = gql`
         firstname
         lastname
         gender
+        idNumber
         barangay {
           name
           id
@@ -933,6 +1010,9 @@ export const GET_TEAM_LIST = gql`
     ) {
       id
       level
+      _count {
+        voters
+      }
       purok {
         purokNumber
         id
@@ -946,13 +1026,30 @@ export const GET_TEAM_LIST = gql`
         id
         name
       }
+
       teamLeader {
         id
+        barangayCoor {
+          id
+          voter {
+            firstname
+            lastname
+          }
+        }
+        purokCoors {
+          voter {
+            firstname
+            lastname
+          }
+        }
         voter {
           id
           firstname
           lastname
           idNumber
+          purok {
+            purokNumber
+          }
         }
       }
       candidate {
@@ -978,6 +1075,14 @@ export const GET_CANDIDATES = gql`
       code
       colorCode
       supporters
+      inTeam {
+        figureHeads
+        bc
+        pc
+        tl
+        withTeams
+        voterWithoutTeam
+      }
     }
   }
 `;
@@ -1002,6 +1107,21 @@ export const GET_TEAM_INFO = gql`
       teamLeader {
         id
         votersId
+        barangayCoor {
+          id
+          voter {
+            firstname
+            lastname
+            idNumber
+          }
+        }
+        purokCoors {
+          voter {
+            firstname
+            lastname
+            idNumber
+          }
+        }
         voter {
           id
           firstname
@@ -1022,6 +1142,15 @@ export const GET_TEAM_INFO = gql`
         teamId
         idNumber
         qrCodeNumber
+        barangay {
+          name
+        }
+        record {
+          id
+          questionable
+          desc
+          timestamp
+        }
         purok {
           purokNumber
           id
@@ -1095,6 +1224,7 @@ export const GET_ALL_VALIDATED_TEAM = gql`
     ) {
       id
       timestamp
+      issues
       barangay {
         name
         id
@@ -1125,6 +1255,7 @@ export const GET_TEAM_RECORD_INFO = gql`
       id
       id
       timestamp
+      issues
       barangay {
         name
         id
@@ -1173,6 +1304,24 @@ export const GET_TEAM_RECORD_INFO = gql`
           id
         }
         remark
+      }
+    }
+  }
+`;
+
+export const GET_USER_LIST = gql`
+  #graphql
+
+  query Users {
+    userList {
+      uid
+      username
+      privilege
+      purpose
+      role
+      userQRCodeId
+      qrCode {
+        qrCode
       }
     }
   }

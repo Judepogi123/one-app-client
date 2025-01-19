@@ -39,6 +39,7 @@ const formSchema = z.object({
     .number()
     .min(1, { message: "Minimum value is 1" })
     .max(2, { message: "Maximum value is 2" }),
+  withCustomOption: z.boolean(),
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -71,13 +72,16 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
             queries: value.queries,
             type: value.type,
             onTop: value.onTop,
-            style: value.style
+            style: value.style,
+            withCustomOption: value.withCustomOption,
           },
         },
       });
       if (response.data) {
         resetField("queries");
-        toast("New query created successfully.");
+        toast("New query created successfully.", {
+          closeButton: false,
+        });
         return;
       }
       toast("Failed to create new query");
@@ -108,7 +112,6 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
             name="onTop"
             render={({ field }) => (
               <FormItem className="mt-3 flex gap-2 items-center">
-                <FormLabel>On Top</FormLabel>
                 <FormControl defaultChecked={true}>
                   <Checkbox
                     defaultChecked={true}
@@ -116,6 +119,23 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
+                <FormLabel>On Top</FormLabel>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="withCustomOption"
+            render={({ field }) => (
+              <FormItem className="mt-3 flex gap-2 items-center">
+                <FormControl defaultChecked={true}>
+                  <Checkbox
+                    defaultChecked={true}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>With Customizable Option</FormLabel>
               </FormItem>
             )}
           />
@@ -155,7 +175,7 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
                 <FormLabel>Style</FormLabel>
                 <FormControl>
                   <Input
-                  defaultValue={1}
+                    defaultValue={1}
                     {...field}
                     type="number"
                     placeholder="Enter style number"

@@ -60,7 +60,6 @@ import {
 import {
   handleLevel,
   handleSanitizeChar,
-  handleReverseSanitizeChar,
 } from "../utils/helper";
 //layout
 const typeOptions: { name: string; value: string }[] = [
@@ -130,11 +129,6 @@ const GenerateList = () => {
 
   //query params
   //const currentQueryParas = queryParams.get("search");
-
-  const sanitizedQuery = handleSanitizeChar("Jude DEmnuvar%");
-  console.log("X", sanitizedQuery);
-  console.log(handleReverseSanitizeChar(sanitizedQuery));
-
   const handleQueryParams = (value: string) => {
     if (!value) {
       return;
@@ -549,6 +543,7 @@ const GenerateList = () => {
           <Table>
             <TableHeader>
               <TableHead>No</TableHead>
+              <TableHead>Tag ID</TableHead>
               <TableHead>Lastname</TableHead>
               <TableHead>Firsname</TableHead>
               <TableHead>Level/Handled</TableHead>
@@ -567,6 +562,9 @@ const GenerateList = () => {
                       {parseInt(currentPage, 10) <= 1
                         ? index + 1
                         : (parseInt(currentPage, 10) - 1) * LIMIT + index + 1}
+                    </TableCell>
+                    <TableCell>
+                      {item.idNumber}
                     </TableCell>
                     <TableCell>
                       {handleElements(query, item.lastname)}

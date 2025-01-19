@@ -40,13 +40,20 @@ const ResponseRespondent = () => {
   //const navigate = useNavigate()
   const { responseID, surveyResponseID } = useParams();
 
-  const { data, loading } = useQuery<{
+  const { data, loading,error } = useQuery<{
     getRespondentResponseById: RespondentResponseByIdProps;
   }>(RESPONSE_INFO, {
     variables: {
       id: responseID,
     },
+    onError:(err)=>{
+      console.log(err.message,error);
+      
+    }
   });
+
+  console.log(data);
+  
 
   const [removeResponse, {loading: removeIsLoading}] = useMutation(REMOVE_RESPONSE, {
     refetchQueries: [SURVEY_RESPONSE_INFO],

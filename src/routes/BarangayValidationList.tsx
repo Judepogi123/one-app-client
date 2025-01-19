@@ -30,8 +30,6 @@ const BarangayValidationList = () => {
     }
   );
 
-  console.log(data);
-
   const handleChangeArea = (value: string, key?: string) => {
     if (!value || !key) return;
     setParams(

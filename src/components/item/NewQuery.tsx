@@ -29,6 +29,7 @@ const NewQuery = ({ setOnNew }: NewOptionProps) => {
   const [optionContent, setOptionContent] = useState<string>("");
   const [optionDesc, setOptionDesc] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [customizable, setCustomizable] = useState(false);
 
   const { queryID, surveyID } = useParams();
 
@@ -92,7 +93,8 @@ const NewQuery = ({ setOnNew }: NewOptionProps) => {
             desc: optionDesc,
             queryId: queryID,
             onExit: onExit,
-            onTop: onTop
+            onTop: onTop,
+            customizable: customizable
           },
         },
       });
@@ -128,13 +130,8 @@ const NewQuery = ({ setOnNew }: NewOptionProps) => {
         </div>
 
         <div className="flex items-center gap-2 mt-2">
-          <Checkbox
-            checked={onTop}
-            onCheckedChange={() => setOnTop(!onTop)}
-          />
-          <span className="text-sm font-medium">
-            On Top
-          </span>
+          <Checkbox checked={onTop} onCheckedChange={() => setOnTop(!onTop)} />
+          <span className="text-sm font-medium">On Top</span>
         </div>
 
         <div className="flex items-center gap-2 mt-2">
@@ -145,6 +142,13 @@ const NewQuery = ({ setOnNew }: NewOptionProps) => {
           <span className="text-sm font-medium">
             On exit (Exit when respondent click this option)
           </span>
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <Checkbox
+            checked={customizable}
+            onCheckedChange={() => setCustomizable(!customizable)}
+          />
+          <span className="text-sm font-medium">Title Editable</span>
         </div>
         {withDesc && (
           <div className="">

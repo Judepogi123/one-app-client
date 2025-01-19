@@ -2,9 +2,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-//import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 // UI components
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormItem,
+  FormField,
+  FormLabel,
+  FormMessage,
+} from "../components/ui/form";
 // import {
 //   Select,
 //   SelectContent,
@@ -51,16 +62,26 @@ import { MdDeselect } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
 import { IoQrCodeSharp } from "react-icons/io5";
 import { MdOutlineDeleteSweep } from "react-icons/md";
+import { IoPersonAddOutline } from "react-icons/io5";
 //graphql
 import {
   REMOVE_MULTI_VOTER,
   REMOVE_AREA_VOTERS,
   GENERATE_BUNLE_QRCODE,
+  RESET_TEAM_LIST,
 } from "../GraphQL/Mutation";
 import { GrDocumentUpdate } from "react-icons/gr";
 import { toast } from "sonner";
 import { handleLevel } from "../utils/helper";
 
+//
+const FORMSCHEMA = z.object({
+  password: z.string().min(1, "Password is required"),
+  zipCode: z.string().optional(),
+  barangayId: z.string().optional(),
+});
+
+type FormProps = z.infer<typeof FORMSCHEMA>;
 const UpdateVoters = () => {
   const [onSearch, setOnSearch] = useState(false);
   const [onRefine, setOnRefine] = useState(false);
@@ -70,6 +91,7 @@ const UpdateVoters = () => {
   const [onDeleteArea, setOnDeleteArea] = useState(false);
   const [onGenerate, setGenerate] = useState<boolean>(false);
   const [isCorrect, setIsCorrect] = useState<boolean>(false);
+  const [onOpen, setOnOpen] = useState(0);
 
   const [selectedList, setSeelectedList] = useState<string[]>([]);
   const [offset, setOffset] = useSearchParams({ page: "0" });
@@ -87,6 +109,17 @@ const UpdateVoters = () => {
   const currentBarangay = barangay.get("barangay") || "all";
   const currentPurok = barangay.get("purok") || "all";
   //const currentCandidate = barangay.get("candidate") || "all";
+
+  const form = useForm<FormProps>({
+    resolver: zodResolver(FORMSCHEMA),
+  });
+
+  const {
+    formState: { isSubmitting, errors },
+    setError,
+    handleSubmit,
+    register,
+  } = form;
 
   const LIMIT = 20;
 
@@ -172,8 +205,20 @@ const UpdateVoters = () => {
   const [removeVotersArea, { loading: areaRemoving }] =
     useMutation(REMOVE_AREA_VOTERS);
 
-  const [genderBundleQrCode, { loading: generating }] =
-    useMutation(GENERATE_BUNLE_QRCODE);
+  const [genderBundleQrCode, { loading: generating }] = useMutation(
+    GENERATE_BUNLE_QRCODE
+  );
+
+  const [resetTeamList] = useMutation(RESET_TEAM_LIST, {
+    onError: (err) => {
+      toast(`Error resetting team list. ${err.message}`);
+      console.log(err.message);
+    },
+    onCompleted: () => {
+      toast("Team list reset successfully.");
+      setOnOpen(0);
+    },
+  });
 
   const handleBundleQrcodeGenerating = async () => {
     if (selectedList.length === 0) {
@@ -243,6 +288,20 @@ const UpdateVoters = () => {
     }
   };
 
+  const handleResetTeamList = async (data: FormProps) => {
+    if (data.password !== "password") {
+      setError("password", { message: "Invalid password" });
+      return;
+    }
+
+   await resetTeamList({
+      variables: {
+        zipCode: data.zipCode,
+        barangayId: data.barangayId,
+      },
+    });
+  };
+
   return (
     <div className="w-full h-auto">
       <div className="w-full p-2 flex gap-2">
@@ -297,6 +356,13 @@ const UpdateVoters = () => {
                 <Button
                   className="flex gap-2"
                   variant="outline"
+                  onClick={() => navigate(`/manage/addvoter`)}
+                >
+                  <IoPersonAddOutline /> Add Voter
+                </Button>
+                <Button
+                  className="flex gap-2"
+                  variant="outline"
                   onClick={() => {
                     setOnSelect(!onSelect);
                     setSeelectedList([]);
@@ -329,10 +395,17 @@ const UpdateVoters = () => {
                 className="flex gap-2 items-center"
                 variant="outline"
               >
-                <GrDocumentUpdate/>
+                <GrDocumentUpdate />
                 Update List
               </Button>
-
+              <Button
+                onClick={() => setOnOpen(1)}
+                className="flex gap-2 items-center"
+                variant="destructive"
+              >
+                <MdOutlineDeleteSweep fontSize={22} />
+                Reset team list
+              </Button>
               <Button
                 onClick={() => setOnDeleteArea(true)}
                 className="flex gap-2 items-center"
@@ -587,6 +660,94 @@ const UpdateVoters = () => {
             <DeleteConfirm setIsCorrect={setIsCorrect} isCorrect={isCorrect} />
           </>
         }
+      />
+
+      <Modal
+        title="Reset team list"
+        footer={true}
+        children={
+          <div className="w-full h-auto">
+            <h1 className="text-lg font-medium text-gray-800">
+              Are you sure you want to reset the team list?
+            </h1>
+            <h1 className="text-red-500 font-medium">
+              This action cannot be undo afterward.
+            </h1>
+            <h1 className=" font-light text-sm italic">
+              Warning: All important data will be permanently remove as well
+              such as team records, validation and etc.
+            </h1>
+
+            <div>
+              <form>
+                <Form {...form}>
+                  <FormField
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="mt-8">
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            {...register("password")}
+                            placeholder="Enter your password"
+                            type="password"
+                          />
+                        </FormControl>
+                        {errors.password && (
+                          <FormMessage className="text-red-500">
+                            {errors.password.message}
+                          </FormMessage>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="zipCode"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormLabel>Municipal ZipCode</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            {...register("zipCode")}
+                            placeholder="Type Zipcode here (Optional)"
+                            type="number"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="barangayId"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormLabel>Municipal ZipCode</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            {...register("barangayId")}
+                            placeholder="Type Zipcode here (Optional)"
+                            type="number"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </Form>
+              </form>
+            </div>
+          </div>
+        }
+        loading={isSubmitting}
+        open={onOpen === 1}
+        onFunction={handleSubmit(handleResetTeamList)}
+        onOpenChange={() => {
+          if (isSubmitting) return;
+          setOnOpen(0);
+        }}
       />
     </div>
   );

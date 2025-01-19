@@ -20,7 +20,7 @@ import {
   UPDATE_OPTION_IMAGE,
   DELETE_OPTION_MEDIA,
   UPDATE_OPTION,
-  UPDATE_OPTION_FORALL
+  UPDATE_OPTION_FORALL,
 } from "../../GraphQL/Mutation";
 import { GET_QUERIES } from "../../GraphQL/Queries";
 //icon
@@ -37,10 +37,7 @@ const OptionItem = ({ ...props }: OptionProps) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [onDelete, setOnDelete] = useState<string | null>(null);
   const [onEdit, setOnEdit] = useState<boolean>(false);
-  const [, setOnForAll] = useState<boolean>(false)
-
-  console.log(props);
-  
+  const [, setOnForAll] = useState<boolean>(false);
 
   const [optionContent, setOptionContent] = useState<string | "">(
     props.title && props.title
@@ -102,7 +99,7 @@ const OptionItem = ({ ...props }: OptionProps) => {
     }
   );
 
-  const [optionForAll] = useMutation(UPDATE_OPTION_FORALL)
+  const [optionForAll] = useMutation(UPDATE_OPTION_FORALL);
 
   const handleChangeImg = async () => {
     if (selectedImage === null) {
@@ -206,10 +203,10 @@ const OptionItem = ({ ...props }: OptionProps) => {
       const response = await optionForAll({
         variables: {
           id: props.id,
-          value: value, // Pass the value directly instead of using onForAll
+          value: value,
         },
       });
-  
+
       if (response.data) {
         toast("Update Success!");
         return;
@@ -218,12 +215,11 @@ const OptionItem = ({ ...props }: OptionProps) => {
       toast("An error occurred.");
     }
   };
-  
 
   return (
     <div className="w-full p-4 border border-slate-600 rounded">
       <div className="flex gap-2">
-        <h1>{props.index}. -{props.id}</h1>
+        <h1>{props.index}.</h1>
         {onEdit ? (
           <div className="w-full flex flex-col gap-2">
             <Input
@@ -235,7 +231,11 @@ const OptionItem = ({ ...props }: OptionProps) => {
               onChange={(e) => setOptionDesc(e.target.value)}
             />
             <div className="flex items-center space-x-2">
-              <Switch defaultChecked={props.forAll} onCheckedChange={(value)=> handleChagneForAll(value)} id="airplane-mode" />
+              <Switch
+                defaultChecked={props.forAll}
+                onCheckedChange={(value) => handleChagneForAll(value)}
+                id="airplane-mode"
+              />
               <Label htmlFor="airplane-mode">For all</Label>
             </div>
           </div>

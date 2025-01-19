@@ -1,10 +1,10 @@
-//import React from "react";
+import { useState } from "react";
 
 //lib
-import {useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { useMutation } from "@apollo/client";
+import { ServerError, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 //ui
@@ -18,17 +18,24 @@ import {
   FormMessage,
 } from "../components/ui/form";
 import { Button } from "../components/ui/button";
-import Alert from "../components/custom/Alert";
+//import Alert from "../components/custom/Alert";
 //shcema
 import { UserSchema, AuthUser } from "../zod/data";
 
 //mutation
 import { LOGIN_ADMIN } from "../GraphQL/Mutation";
 
+//layout
+import Modal from "../components/custom/Modal";
+
 type UserType = z.infer<typeof UserSchema>;
 type AuthType = z.infer<typeof AuthUser>;
 
 const AuthPage = () => {
+  //const [onOpen, setOnOpen] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<
+    Error | ServerError | string | string[] | null
+  >(null);
   const navigate = useNavigate();
   const signIn = useSignIn();
   const form = useForm<UserType>({ resolver: zodResolver(UserSchema) });
@@ -39,10 +46,25 @@ const AuthPage = () => {
     setError,
   } = form;
 
-  const [adminLogin, { error }] = useMutation<{ adminLogin: AuthType }>(
-    LOGIN_ADMIN
+  const [adminLogin] = useMutation<{ adminLogin: AuthType }>(
+    LOGIN_ADMIN,
+    {
+      onError: (error) => {
+        if (error.networkError) {
+          setErrorMessage(error.networkError);
+          return;
+        }
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+        if (error.graphQLErrors) {
+          setErrorMessage(error.graphQLErrors.map((error) => error.message));
+          return;
+        }
+      },
+    }
   );
-
 
   const onSubmit = async (value: UserType) => {
     try {
@@ -53,14 +75,15 @@ const AuthPage = () => {
             password: value.password,
           },
         },
-      })
+      });
 
-      if(!data){
-        setError("root", {message: "Incorrect number or password"})
-        return
+      if (!data) {
+        setError("root", { message: "Incorrect number or password" });
+        return;
       }
 
-      if (signIn({
+      if (
+        signIn({
           auth: {
             token: data.adminLogin.accessToken,
             type: "Bearer",
@@ -77,28 +100,25 @@ const AuthPage = () => {
         navigate("/auth");
       }
     } catch (error) {
-      setError("root", {message: "Sorry something went wrong."})
+      setError("root", { message: "Sorry something went wrong." });
     }
   };
   return (
     <div className=" w-full h-screen grid">
-      <div className="w-full h-full lg:w-1/3 lg:h-[70%] m-auto border border-gray-500 rounded">
+      <div className="w-full h-full lg:w-2/6 lg:h-3/5 xl:1/4 xl:h-3/5 2xl:w-2/6 2xl:h-3/6 m-auto border border-gray-500 rounded">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full h-full relative"
         >
           <div className="w-full h-16 px-4 flex items-center">
-            {error && (
-              <Alert variant="destructive" title="An Error occured" desc={error.message} />
-            )}
           </div>
-          <div className="w-full h-auto px-3 mt-8">
+          <div className="w-full h-auto px-8 mt-8">
             <Form {...form}>
               <FormField
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone number</FormLabel>
+                    <FormLabel>Username or Phone number</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -138,7 +158,7 @@ const AuthPage = () => {
             </Form>
           </div>
 
-          <div className="w-full p-2 py-6 absolute bottom-0">
+          <div className="w-full px-8 py-6 absolute bottom-0">
             <Button
               disabled={isSubmitting}
               className="w-full rounded-full"
@@ -149,6 +169,31 @@ const AuthPage = () => {
           </div>
         </form>
       </div>
+      <Modal
+        title="Internal server error"
+        children={
+          errorMessage && (
+            <div className="w-full">
+              <h1>Sorry something went wrong</h1>
+              <p>{errorMessage?.toString()}</p>
+              <div className="w-full flex justify-center">
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setErrorMessage(null);
+                  }}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )
+        }
+        open={errorMessage ? true : false}
+        onOpenChange={() => {
+          setErrorMessage(null);
+        }}
+      />
     </div>
   );
 };

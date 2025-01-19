@@ -37,6 +37,7 @@ import { useQuery, useMutation } from "@apollo/client";
 //utils
 import { handleLevel, handleAltText } from "../utils/helper";
 import { toast } from "sonner";
+import HeaderInfo from "../components/custom/HeaderInfo";
 
 const Groups = () => {
   const [selectedVoters, setSelectedVoters] = useState<VotersProps | undefined>(
@@ -55,6 +56,8 @@ const Groups = () => {
     skip: !teamId,
   });
 
+  console.log({ data });
+
   const [changeLeader, { loading: updating, error: updateError }] =
     useMutation(CHANGE_LEADER);
 
@@ -66,8 +69,7 @@ const Groups = () => {
     { loading: multiSelectIsLoading, error: multiSelectError },
   ] = useMutation(UDPATE_TEAM_MEMBERS);
 
-  const [removeTeam, { loading: removing, }] =
-    useMutation(REMOVE_TEAM);
+  const [removeTeam, { loading: removing }] = useMutation(REMOVE_TEAM);
 
   useEffect(() => {
     if (selectedVoters) {
@@ -227,6 +229,24 @@ const Groups = () => {
   return (
     <div className="w-full h-auto">
       <div className="w-full p-2 border bg-slate-200 relative">
+        {data.team?.teamLeader?.barangayCoor && (
+          <HeaderInfo
+          title={`${team.barangay.name} Barangay Coor."`}
+            fullname={`${
+              data.team.teamLeader?.barangayCoor.voter?.lastname as string
+            }, ${
+              data.team.teamLeader?.barangayCoor.voter?.firstname as string
+            }-(${data.team.teamLeader.barangayCoor.voter?.idNumber})`}
+          />
+        )}
+        {data.team?.teamLeader?.purokCoors && (
+          <HeaderInfo
+            title={`${team.barangay.name} Purok Coor."`}
+            fullname={`${
+              data.team.teamLeader.purokCoors.voter?.lastname as string
+            }, ${data.team.teamLeader.purokCoors.voter?.firstname as string}-(${data.team.teamLeader.purokCoors.voter?.idNumber})`}
+          />
+        )}
         <Popover>
           <PopoverTrigger>
             <h1 className="font-medium text-slate-600 text-xl hover:underline">
@@ -308,16 +328,18 @@ const Groups = () => {
               Select all
             </TableHead>
           )}
+          <TableHead>No.</TableHead>
           <TableHead>Tag ID</TableHead>
           <TableHead>Member ({team?.voters.length})</TableHead>
           <TableHead>Purok</TableHead>
           <TableHead>Level</TableHead>
+          <TableHead>Issues</TableHead>
         </TableHeader>
 
         <TableBody>
           {team?.voters
             .filter((item) => item.id !== team?.teamLeader?.voter?.id)
-            .map((item) => (
+            .map((item, i) => (
               <TableRow
                 className={` cursor-pointer hover:bg-slate-200 ${
                   handleCheckState(item.id) ? "bg-slate-300" : ""
@@ -337,6 +359,7 @@ const Groups = () => {
                 }}
                 key={item.id}
               >
+                <TableCell>{i + 1}</TableCell>
                 <TableCell>{item.idNumber}</TableCell>
 
                 <TableCell>
@@ -345,6 +368,15 @@ const Groups = () => {
                 <TableCell>{item.purok?.purokNumber}</TableCell>
 
                 <TableCell>{handleLevel(item.level as number)}</TableCell>
+                <TableCell
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOnOpenModal(10);
+                  }}
+                  className="hover:underline"
+                >
+                  {[...item.record].at(0)?.desc ?? "None"}
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>
@@ -437,6 +469,16 @@ const Groups = () => {
         loading={removing}
         footer={true}
         open={onOpenModal === 8}
+        onOpenChange={() => {
+          setOnOpenModal(0);
+        }}
+      />
+      <Modal
+        title="Voter's Records"
+        className="min-w-40"
+        onFunction={handleRemove}
+        loading={removing}
+        open={onOpenModal === 10}
         onOpenChange={() => {
           setOnOpenModal(0);
         }}

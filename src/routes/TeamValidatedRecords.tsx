@@ -129,6 +129,7 @@ const TeamValidatedRecords = () => {
           <TableHead>Purok</TableHead>
           <TableHead>Baranagay</TableHead>
           <TableHead>Municipal</TableHead>
+          <TableHead>Issues</TableHead>
         </TableHeader>
         <TableBody>
           {data &&
@@ -151,6 +152,7 @@ const TeamValidatedRecords = () => {
                 <TableCell>{item.purok.purokNumber}</TableCell>
                 <TableCell>{item.barangay.name}</TableCell>
                 <TableCell>{item.municipal.name}</TableCell>
+                <TableCell>{item.issues}</TableCell>
               </TableRow>
             ))}
         </TableBody>

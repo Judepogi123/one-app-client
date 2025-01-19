@@ -1,13 +1,13 @@
 // import React from "react";
 //ui
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/ui/table";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "../components/ui/table";
 
 //lib
 import { useQuery } from "@apollo/client";
@@ -28,7 +28,7 @@ const Surveyor = () => {
   }
   return (
     <div className="w-full h-auto">
-      <Table>
+      {/* <Table>
         <TableHeader>
           <TableHead>Lastname</TableHead>
           <TableHead>First</TableHead>
@@ -53,7 +53,7 @@ const Surveyor = () => {
             ))
           )}
         </TableBody>
-      </Table>
+      </Table> */}
     </div>
   );
 };

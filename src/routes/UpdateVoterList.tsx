@@ -16,6 +16,7 @@ import BarangaySel from "../components/custom/BarangaySel";
 import MunicipalSel from "../components/custom/MunicipalSel";
 import Modal from "../components/custom/Modal";
 import Validation from "../layout/Validation";
+import NewVoterListUpdate from "../layout/NewVoterListUpdate";
 //icons
 import { FaRegFileExcel } from "react-icons/fa";
 import { CiFileOff } from "react-icons/ci";
@@ -23,6 +24,7 @@ import { MdOutlineCloudUpload } from "react-icons/md";
 import { TbManualGearbox } from "react-icons/tb";
 import { GrValidate } from "react-icons/gr";
 import { CiViewList } from "react-icons/ci";
+import { RiRestartFill } from "react-icons/ri";
 
 import { Input } from "../components/ui/input";
 import axios, { production } from "../api/axios";
@@ -193,6 +195,12 @@ const UpdateVoterList = () => {
             </Button>
           </>
         )}
+        <Button variant="outline">
+          <RiRestartFill />
+        </Button>
+        <Button variant="outline" onClick={() => setOnOpenModal(3)}>
+          <RiRestartFill />
+        </Button>
         <Button className="w-auto flex gap-2">
           <TbManualGearbox /> Manual
         </Button>
@@ -283,6 +291,16 @@ const UpdateVoterList = () => {
         title="Validation Records"
         children={<Validation barangayId={currentBarangay} />}
         open={onOpenModal === 2}
+        onOpenChange={() => {
+          setOnOpenModal(0);
+        }}
+      />
+
+      <Modal
+        className="max-w-xl max-h-xl overflow-auto p-8"
+        children={<NewVoterListUpdate />}
+        title="Revise Voter list"
+        open={onOpenModal === 3}
         onOpenChange={() => {
           setOnOpenModal(0);
         }}

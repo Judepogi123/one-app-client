@@ -120,7 +120,7 @@ const Upload = ({ draftData }: DraftReq) => {
       toast("Invalid data!");
       return;
     }
-
+    setOnViewCounter(true);
     try {
       const response = await axios.post("upload/draft", {
         data: data,
@@ -138,8 +138,6 @@ const Upload = ({ draftData }: DraftReq) => {
       setOnError(`${error}`);
     }
   };
-
-  console.log(data);
 
   return (
     <div className=" w-full h-auto relative">
@@ -178,7 +176,7 @@ const Upload = ({ draftData }: DraftReq) => {
         <div className="w-full px-8">
           <Alert
             title="An error occured"
-            desc="Sorry something went wrong, please report to the developers. Try to refresh the page."
+            desc={`Sorry something went wrong, please report to the developers. Try to refresh the page. ${onError}`}
             variant="destructive"
           />
         </div>

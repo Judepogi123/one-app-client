@@ -12,12 +12,21 @@ export interface AdminUser {
 }
 
 export interface UserProps {
-  lastname: string;
-  firstname: string;
-  address: string;
-  phoneNumber: string;
-  password: string;
   uid: string;
+  username: string;
+  password: string;
+  role: number;
+  purpose: number;
+  status: number;
+  timestamp: Date;
+  privilege: number[];
+  userQRCodeId?: string | null; // Optional unique identifier for QR Code
+  qrCode?: UserQRCodeProps | null; // Single optional relation
+}
+export interface UserQRCodeProps {
+  id: string;
+  qrCode: string;
+  Users: UserProps;
 }
 
 export interface ExcelResponse {
@@ -42,6 +51,26 @@ export interface CandidatesProps {
   mediaUrlId?: string | null;
   positionId?: string | null;
   supporters: number;
+  inTeam: AllSupporters;
+}
+
+interface AllSupporters {
+  figureHeads: number;
+  bc: number;
+  pc: number;
+  tl: number;
+  withTeams: number;
+  voterWithoutTeam: number;
+}
+
+export interface TeamStatProps {
+  aboveMax: number;
+  belowMax: number;
+  equalToMax: number;
+  aboveMin: number;
+  equalToMin: number;
+  belowMin: number;
+  threeAndBelow: number;
 }
 
 export interface ValidationProps {
@@ -89,8 +118,18 @@ export interface VotersProps {
   qrCodeNumber: number;
   teamId?: string;
   leader?: TeamLeaderProps;
+  record: VoterRecord[];
 }
-
+export interface VoterRecord {
+  id: string;
+  desc: string;
+  questionable: boolean;
+  timestamp: string; // Use string for DateTime fields to align with GraphQL responses
+  voter?: VotersProps; // Optional relation to Voter
+  votersId?: string; // Optional votersId field
+  user?: UserProps; // Optional relation to User
+  usersUid?: string; // Optional usersUid field
+}
 export interface PurokProps {
   purokNumber: string;
   barangaysId: string;
@@ -112,6 +151,8 @@ export interface BarangayProps {
   femaleSize: number;
   maleSize: number;
   validationList: ValidationProps[];
+  supporters: AllSupporters;
+  teamStat: TeamStatProps
 }
 
 export interface MunicipalProps {
@@ -213,6 +254,7 @@ export interface OptionProps {
     url: string;
     id: string;
   };
+  customizable: boolean;
 }
 
 export interface QueryProps {
@@ -225,6 +267,15 @@ export interface QueryProps {
   options: OptionProps[];
   type: string;
   onTop: boolean;
+  customOption: CustomOptionProps[];
+  withCustomOption: boolean;
+}
+
+export interface CustomOptionProps {
+  id: string; // Unique identifier
+  value: string; // Value field
+  Queries?: QueryProps; // Optional relationship to Queries
+  queriesId?: string; // Foreign key to Queries
 }
 
 export interface DraftedSurveyInfo {
@@ -272,6 +323,7 @@ export interface SurveyResponseProps {
   barangay: BarangayProps;
   respondentResponses: RespondentResponses[];
   timestamp: string;
+  users: UserProps;
 }
 
 export interface SurveyResultProps {
@@ -340,6 +392,7 @@ export interface SurveyOptionProps {
   onTop: boolean;
   overAllResponse: number;
   forAll: boolean;
+  order: number;
 }
 
 export interface SurveyAgeCountProps {
@@ -400,6 +453,11 @@ export interface TeamProps {
   candidate?: CandidatesProps | null;
   candidatesId?: string | null;
   teamLeader: TeamLeaderProps | null;
+  barangayCoor: TeamLeaderProps | null;
+  purokCoors: TeamLeaderProps | null;
+  _count: {
+    voters: number;
+  };
 }
 
 export interface TeamLeaderProps {
@@ -421,6 +479,14 @@ export interface TeamLeaderProps {
   level: number;
   candidate?: CandidatesProps;
   candidatesId?: string;
+  barangayCoor: {
+    id: string;
+    voter?: VotersProps | null;
+  };
+  purokCoors: {
+    id: string;
+    voter?: VotersProps | null;
+  };
 }
 
 // export interface TeamMember {
@@ -442,6 +508,7 @@ export interface ValidatedTeams {
   validatedTeamMembers: ValidatedTeamMembers[];
   timestamp: string;
   purok: PurokProps;
+  issues: number;
 }
 
 export interface ValidatedTeamMembers {
@@ -457,4 +524,48 @@ export interface ValidatedTeamMembers {
   teamLeaderId: string | null;
   validatedTeamsId: string | null;
   remark: string | null;
+}
+
+export interface SurveyResponse {
+  id: string;
+  timestamp: string;
+  responsePath: string;
+  survey_id: string;
+  barangay_id: string;
+  municipal_id: string;
+  account_id: string;
+}
+
+export interface RespondentResponse {
+  id: string;
+  gender_id: string;
+  ageBracket_id: string;
+  survey_id: string;
+  surveyResponse_id: string;
+  barangay_id: string;
+  municipal_id: number;
+  account_id: string;
+  valid: number;
+}
+
+export interface QueryResponseProps {
+  id: string;
+  option_id: string;
+  queries_id: string;
+  gender_id: string;
+  ageBracket_id: string;
+  survey_id: string;
+  barangay_id: string;
+  municipal_id: number;
+  respondentResponse_id: string;
+  surveyResponse_id: string;
+}
+
+export interface CustomOption {
+  id: string;
+  value: string;
+  queriesId: string;
+  queryResponse_id: string;
+  survey_id: string;
+  respondentResponse_id: string;
 }

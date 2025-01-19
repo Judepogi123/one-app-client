@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Label } from "../ui/label";
+import { twMerge } from "tailwind-merge";
 //grphql
 import { useQuery } from "@apollo/client";
 
@@ -15,28 +16,30 @@ import { CandidatesProps } from "../../interface/data";
 import { GET_CANDIDATES } from "../../GraphQL/Queries";
 
 //props
-// interface CandidateProps {
-  
-// }
+interface Props {
+  className?: string;
+  label?: string | "Candidate";
+  select: boolean;
+}
 
-const Candidates = () => {
+const Candidates = ({ className, label, select }: Props) => {
   const { data, loading } = useQuery<{ candidates: CandidatesProps[] }>(
     GET_CANDIDATES
   );
   return (
-    <div className="flex gap-2 items-center">
-      <Label htmlFor="candidate"> Candidate</Label>
+    <div className={twMerge("flex gap-2 items-center", className)}>
+      {!select && <Label htmlFor="candidate"> {label}</Label>}
       <Select defaultValue="all" disabled={loading}>
         <SelectTrigger id="candidate">
-          <SelectValue placeholder={loading && "Loading..."} />
+          <SelectValue placeholder={select && "Select Candidate"} />
         </SelectTrigger>
 
         <SelectContent>
-          <SelectItem value="all">All</SelectItem>
+          {!select && <SelectItem value="all">All</SelectItem>}
           {data?.candidates?.map((candidate) => (
             <SelectItem value={candidate.id}>
-              {candidate.firstname} {candidate.lastname}
-              ({candidate.code?.toUpperCase()})
+              {candidate.firstname} {candidate.lastname}(
+              {candidate.code?.toUpperCase()})
             </SelectItem>
           ))}
         </SelectContent>

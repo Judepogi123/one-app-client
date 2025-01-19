@@ -130,7 +130,6 @@ const Manually = () => {
   const LIMIT = 10;
 
   console.log(data);
-  
 
   //const [setVoterLevel] = useMutation(SET_VOTER_LEVEL);
 
@@ -260,8 +259,8 @@ const Manually = () => {
         )}
       </div>
       {loading ? (
-        <div>
-          <h1>Loading</h1>
+        <div className="w-full grid">
+          <h1 className="m-auto">Loading</h1>
         </div>
       ) : (
         data && (
