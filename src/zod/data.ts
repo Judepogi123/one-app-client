@@ -3,12 +3,13 @@ import z from "zod";
 export const UserSchema = z.object({
   phoneNumber: z.string(),
   password: z.string().min(8, "Must have at least characters"),
+  showPassword: z.boolean().optional()
 });
 
 export const AuthUser = z.object({
-  phoneNumber: z.string(),
-  lastname: z.string(),
-  firstname: z.string(),
+  username: z.string(),
+  role: z.number(),
+  forMunicipal: z.number(),
   accessToken: z.string(),
   uid: z.string(),
 });
@@ -126,6 +127,7 @@ export const NewAccountSchema = z
     username: z.string(),
     password: z.string().min(8, "Must have at least 8 characters"),
     role: z.string(),
+    forMunicipal: z.string().optional(),
     purpose: z
       .string()
       .min(1, "Minimum role of 1")
@@ -135,6 +137,7 @@ export const NewAccountSchema = z
       .string()
       .min(8, "Must have at least 8 characters")
       .optional(),
+    encryptPassword: z.boolean().optional()
   })
   .refine(
     (data) =>
@@ -149,8 +152,14 @@ export const NewAccountSchema = z
 
 export const NewVoterSchema = z.object({
   idNumber: z.string().min(1, "ID Number is required"),
-  firstname: z.string().min(1, "First name is required").min(2, "At least 2 characters"),
-  lastname: z.string().min(1, "Last name is required").min(2, "At least 2 characters"),
+  firstname: z
+    .string()
+    .min(1, "First name is required")
+    .min(2, "At least 2 characters"),
+  lastname: z
+    .string()
+    .min(1, "Last name is required")
+    .min(2, "At least 2 characters"),
   municipalsId: z.number(),
   barangaysId: z.string(),
   purokId: z.string().optional(),
@@ -165,4 +174,13 @@ export const NewVoterSchema = z.object({
   youth: z.string(),
   senior: z.string(),
   supporting: z.string(),
-})
+});
+
+export const ValidatedTeamsFormSchema = z.object({
+  zipCOde: z.string().min(4, "Municipal code is required"),
+  barangay: z.string().min(1, "Barangay number is required"),
+  from: z.string().min(1, "From number is required"),
+  take: z.string().min(1, "To number is required"),
+  minMembers: z.string().min(1, "Minimum members is required"),
+  maxMembers: z.string().min(1, "Maximum members is required"),
+});

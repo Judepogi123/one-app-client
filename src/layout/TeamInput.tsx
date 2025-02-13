@@ -56,7 +56,7 @@ const TeamInput = () => {
   const [onOpenModal, setOnOpenModal] = useState(0);
   const [counter, setCounter] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [listCount, setListCount] = useState(0)
+  const [listCount, setListCount] = useState(0);
   const navigate = useNavigate();
   const form = useForm<TeamInputProps>({
     resolver: zodResolver(TeamInputSchema),
@@ -151,7 +151,7 @@ const TeamInput = () => {
         if (typeof fileContent === "string") {
           const jsonData: JSONProps[] = JSON.parse(fileContent);
 
-          setListCount(jsonData.length)
+          setListCount(jsonData.length);
           jsonData.forEach(async (item) => {
             console.log({ item });
 
@@ -430,7 +430,9 @@ const TeamInput = () => {
           <div className="w-full h-auto">
             {loading ? (
               <div>
-                <h1 className="text-lg font-medium">Uploaded: {counter}/{listCount}</h1>
+                <h1 className="text-lg font-medium">
+                  Uploaded: {counter}/{listCount}
+                </h1>
               </div>
             ) : (
               <div className="">

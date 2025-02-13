@@ -24,7 +24,6 @@ import { UserProps } from "../interface/data";
 import Loading from "../components/custom/Loading";
 //layout
 import NewAccountForm from "../layout/NewAccountForm";
-
 //utils
 import { handleGetPurposeList, handleGetRole } from "../utils/helper";
 
@@ -34,13 +33,11 @@ const Accounts = () => {
 
   const { data, loading } = useQuery<{ userList: UserProps[] }>(GET_USER_LIST);
 
-  console.log(data);
-
   return (
     <div className="w-full h-auto">
-      <div className="w-full p-2">
+      <div className="w-full p-2 flex justify-end">
         <Button onClick={() => setOnOpen(1)} size="sm">
-          New
+          Create
         </Button>
       </div>
       {loading ? (
@@ -68,6 +65,15 @@ const Accounts = () => {
       <Modal
         className="min-w-96"
         open={onOpen === 1}
+        onOpenChange={() => {
+          setOnOpen(0);
+        }}
+        children={<NewAccountForm />}
+      />
+
+      <Modal
+        className="min-w-96"
+        open={onOpen === 2}
         onOpenChange={() => {
           setOnOpen(0);
         }}

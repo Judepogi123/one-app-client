@@ -23,7 +23,7 @@ import { useMediaQuery } from "react-responsive";
 
 //props
 interface ModalProps {
-  onOpenChange? :(open: boolean)=> void
+  onOpenChange?: (open: boolean) => void;
   onFunction?: () => Promise<void>;
   open?: boolean | undefined;
   children?: React.ReactNode;
@@ -41,7 +41,7 @@ const Modal = ({
   footer,
   onFunction,
   loading,
-  className
+  className,
 }: ModalProps) => {
   // const isSmall = useMediaQuery({ query: `(max-width: 600px)` });
   // const isMedium = useMediaQuery({ query: `(min-width: 764px)` });
@@ -51,14 +51,21 @@ const Modal = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className={className}>
-          <DialogHeader>
+          <DialogHeader className="">
             <DialogTitle className=" capitalize">{title}</DialogTitle>
           </DialogHeader>
-          <DialogDescription ></DialogDescription>
+          <DialogDescription></DialogDescription>
           <div className="w-full">{children}</div>
           {footer && (
-            <DialogFooter>
-              <Button onClick={onFunction} disabled={loading}>
+            <DialogFooter className="w-full flex justify-end gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onOpenChange?.(open ?? false)}
+              >
+                Cancel
+              </Button>
+              <Button size="sm" onClick={onFunction} disabled={loading}>
                 {loading ? "Please wait..." : "Confirm"}
               </Button>
             </DialogFooter>

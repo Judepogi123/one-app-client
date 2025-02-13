@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useUserData } from "../provider/UserDataProvider";
 //ui
 import {
   Form,
@@ -30,14 +31,20 @@ import { VotersProps } from "../interface/data";
 //icons
 import { CiSearch } from "react-icons/ci";
 import { handleLevel } from "../utils/helper";
+import { useSearchParams } from "react-router-dom";
 
 type VoterType = z.infer<typeof VoterSchema>;
 
 const UpdateVoterForm = () => {
+  const user = useUserData();
   const [onOpenModal, setOnOpenModal] = useState(0);
   const [selectedVoter, setSelectedVoter] = useState<VotersProps | undefined>(
     undefined
   );
+  const [params, setParams] = useSearchParams({
+    municipal: user?.forMunicipal ? user?.forMunicipal?.toString() : "none",
+  });
+  const currentZipCode = params.get("municipal") || "none";
   const form = useForm<VoterType>({ resolver: zodResolver(VoterSchema) });
   const {
     handleSubmit,
@@ -57,6 +64,17 @@ const UpdateVoterForm = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleChangeArea = (value: string, key?: string) => {
+    if (!value || !key) return;
+    setParams(
+      (prev) => {
+        prev.set(key, value);
+        return prev;
+      },
+      { replace: true }
+    );
   };
 
   return (
@@ -120,10 +138,13 @@ const UpdateVoterForm = () => {
                   <FormItem>
                     <FormControl>
                       <MunicipalSel
-                        value={""}
-                        handleChangeArea={function (): void {
-                          throw new Error("Function not implemented.");
-                        }}
+                        disabled={user?.forMunicipal ? true : false}
+                        value={
+                          user?.forMunicipal
+                            ? user?.forMunicipal.toString()
+                            : currentZipCode
+                        }
+                        handleChangeArea={handleChangeArea}
                         {...register("municipalsId")}
                         onChange={field.onChange}
                         defaultValue={selectedVoter.municipal.id?.toString()}
@@ -276,7 +297,7 @@ const UpdateVoterForm = () => {
 
               <FormField
                 name="level"
-                render={({ }) => (
+                render={({}) => (
                   <FormItem className="flex items-center gap-2">
                     <FormLabel>Level</FormLabel>
                     <h1 className="hover:underline cursor-pointer">

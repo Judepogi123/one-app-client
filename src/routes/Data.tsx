@@ -7,23 +7,23 @@ import { useNavigate } from "react-router-dom";
 import { DataLayoutProps } from "../interface/layout";
 
 //icons
-import { MdOutlineAnalytics } from "react-icons/md";
+//import { MdOutlineAnalytics } from "react-icons/md";
 import { RiTeamLine } from "react-icons/ri";
 import { CiViewList } from "react-icons/ci";
 import { IoCreateOutline } from "react-icons/io5";
 
 const dataListMenu: DataLayoutProps[] = [
-  {
-    title: "Area",
-    value: "/area",
-    icon: MdOutlineAnalytics,
-    desc: "Sort and Search",
-  },
+  // {
+  //   title: "Area",
+  //   value: "/area",
+  //   icon: MdOutlineAnalytics,
+  //   desc: "Sort and Search",
+  // },
   {
     title: "Manage",
     value: "/manage",
     icon: IoCreateOutline,
-    desc: "Sort and Search",
+    desc: "",
   },
   {
     title: "Voters",
@@ -46,7 +46,7 @@ const Data = () => {
       {dataListMenu.map((item) => (
         <div
           onClick={() => navigate(item.value)}
-          className=" w-full h-32 border border-gray-500 hover:border-gray-900 flex justify-center items-center flex-col rounded-md cursor-pointer text-center"
+          className=" w-full h-32 border border-gray-400 hover:border-gray-900 flex justify-center items-center flex-col rounded-md cursor-pointer text-center bg-white"
         >
           <div className=" w-auto p-2">
             {<item.icon className=" text-4xl" />}

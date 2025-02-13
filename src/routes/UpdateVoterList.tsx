@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useUserData } from "../provider/UserDataProvider";
 import { io } from "socket.io-client";
 //ui
 import { Button } from "../components/ui/button";
@@ -27,14 +28,15 @@ import { CiViewList } from "react-icons/ci";
 import { RiRestartFill } from "react-icons/ri";
 
 import { Input } from "../components/ui/input";
-import axios, { production } from "../api/axios";
+import axios, { localhost } from "../api/axios";
 import { toast } from "sonner";
 
 //props
 import { RejectListProps } from "../interface/data";
 
-const socket = io(production);
+const socket = io(localhost);
 const UpdateVoterList = () => {
+  const user = useUserData();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [onOpenModal, setOnOpenModal] = useState(0);
   const [isLoading, setIsLoading] = useState(0);
@@ -46,7 +48,7 @@ const UpdateVoterList = () => {
   } | null>(null);
   const [updateCounter, setUpdateCounter] = useState<number>(0);
   const [params, setParams] = useSearchParams({
-    municipal: "",
+    municipal: user?.forMunicipal ? user?.forMunicipal.toString() : "",
     barangay: "none",
   });
 
@@ -135,6 +137,7 @@ const UpdateVoterList = () => {
           <CiViewList fontSize={18} />
         </Button>
         <MunicipalSel
+          disabled={user?.forMunicipal ? true : false}
           handleChangeArea={handleChangeArea}
           defaultValue="none"
           value={currentMunicipal as string}

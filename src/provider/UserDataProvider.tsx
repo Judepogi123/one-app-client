@@ -13,16 +13,6 @@ const UserDataContext = createContext<AuthType | null>(null);
 const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
   const data = useAuthUser<AuthType>();
 
-  // if(!data){
-  //   return (
-  //     <div className="w-full h-screen grid place-content-center">
-  //       <div className="">
-  //         <h1>Required data is loading...</h1>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
   return (
     <UserDataContext.Provider value={data}>{children}</UserDataContext.Provider>
   );

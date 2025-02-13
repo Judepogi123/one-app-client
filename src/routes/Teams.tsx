@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
 //ui
@@ -31,14 +31,15 @@ import { Skeleton } from "../components/ui/skeleton";
 //props
 import { TeamProps } from "../interface/data";
 //graphql
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_TEAM_LIST } from "../GraphQL/Queries";
+import { MERGE_TEAM } from "../GraphQL/Mutation";
 //utils
 import { handleLevel, handleSanitizeChar } from "../utils/helper";
 //layout
 import AreaSelection from "../components/custom/AreaSelection";
 import { toast } from "sonner";
-
+import Modal from "../components/custom/Modal";
 //icons
 import { TbReport } from "react-icons/tb";
 import { SlOptionsVertical } from "react-icons/sl";
@@ -73,6 +74,15 @@ const Teams = () => {
   //const currentOthers = params.get("others") || "0";
   const currentQuery = params.get("query");
   const currentWithIssues = params.get("withIssues");
+
+  const [onUpdate, setOnUpdate] = useState<{
+    draggedId: string;
+    targetId: string;
+  } | null>({
+    draggedId: "",
+    targetId: "",
+  });
+  const [onOpen, setOnOpen] = useState(0);
 
   const navigate = useNavigate();
   const handleChangeOption = (params: string, value: string) => {
@@ -134,6 +144,70 @@ const Teams = () => {
     refetch,
   ]);
 
+  // const handleDragEnd = (event: DragEndEvent) => {
+  //   const { active, over } = event;
+
+  //   if (!over) return;
+
+  //   const rowId = active.id as string;
+  //   const targetId = over.id as string;
+  // };
+
+  // const handleRef =(id: string)=>{
+  //   const { setNodeRef } = useDroppable({
+  //     id
+  //   });
+  //   return setNodeRef
+  // }
+
+  const [mergeTeam, { loading: merging }] = useMutation(MERGE_TEAM, {
+    onCompleted: () => {
+      toast("Team merged successfully");
+      setOnUpdate(null);
+      refetch();
+    },
+  });
+
+  const handleDragStart = (
+    event: React.DragEvent<HTMLTableRowElement>,
+    id: string
+  ) => {
+    event.dataTransfer.setData("text/plain", id);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLTableRowElement>) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (
+    event: React.DragEvent<HTMLTableRowElement>,
+    targetId: string
+  ) => {
+    const draggedId = event.dataTransfer.getData("text/plain");
+
+    setOnUpdate(() => ({
+      draggedId: draggedId,
+      targetId: targetId,
+    }));
+    setOnOpen(1);
+  };
+
+  const hadnleMergeTeam = async () => {
+    if (!onUpdate) return;
+    await mergeTeam({
+      variables: {
+        firstId: onUpdate?.targetId,
+        secondId: onUpdate?.draggedId,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!onUpdate) {
+      setOnUpdate(null);
+    }
+  }, [onUpdate]);
+
   return (
     <div className="w-full">
       <div className="w-full flex gap-2 items-center px-2 border border-slate-400 border-l-0 border-r-0 sticky top-0 bg-white z-10">
@@ -189,6 +263,7 @@ const Teams = () => {
           </Button>
         </div>
       </div>
+      <div>{data?.teamList.length}</div>
       {loading ? (
         <div className="w-full flex flex-col gap-1 px-2">
           {Array.from({ length: 10 }).map((_, index) => (
@@ -214,63 +289,73 @@ const Teams = () => {
           </TableHeader>
 
           <TableBody>
-            {data?.teamList.map((item, i) => (
-              <TableRow
-                onClick={() => {
-                  if (item.level !== 0) {
-                    navigate(`/teams/${item.id}`);
-                    return;
+            {data?.teamList.map((item, i) => {
+              return (
+                <TableRow
+                  draggable
+                  onDragStart={(e) =>
+                    handleDragStart(e, item?.teamLeader?.id as string)
                   }
-                }}
-                className="border border-gray-200 cursor-pointer hover:bg-slate-200"
-              >
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  {item.municipal.id}-{item.barangay.number}-
-                  {handleElements(
-                    currentQuery as string,
-                    item.teamLeader?.voter?.idNumber as string
-                  )}
-                </TableCell>
-                <TableCell>{handleLevel(item.level)}</TableCell>
-                <TableCell
-                  className={
-                    item.teamLeader?.voter?.firstname
-                      ? "text-black"
-                      : "text-orange-500"
-                  }
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, item?.teamLeader?.id as string)}
+                  onClick={() => {
+                    if (item.level !== 0) {
+                      navigate(`/teams/${item.id}`);
+                      return;
+                    }
+                  }}
+                  className="border border-gray-200 cursor-pointer hover:bg-slate-200"
                 >
-                  {`${item.teamLeader?.voter?.lastname}, ${item.teamLeader?.voter?.firstname}` ||
-                    "Vacant"}
-                </TableCell>
+                  <TableCell>
+                    {(parseInt(currentPage, 10) - 1) * 50 + i + 1}
+                  </TableCell>
+                  <TableCell>
+                    {item.municipal.id}-{item.barangay.number}-
+                    {handleElements(
+                      currentQuery as string,
+                      item.teamLeader?.voter?.idNumber as string
+                    )}
+                  </TableCell>
+                  <TableCell>{handleLevel(item.level)}</TableCell>
+                  <TableCell
+                    className={
+                      item.teamLeader?.voter?.firstname
+                        ? "text-black"
+                        : "text-orange-500"
+                    }
+                  >
+                    {`${item.teamLeader?.voter?.lastname}, ${item.teamLeader?.voter?.firstname}` ||
+                      "Vacant"}
+                  </TableCell>
 
-                <TableCell>
-                  {item.voters.length}({handleLevel(item.level - 1)})
-                </TableCell>
-                <TableCell>{item._count.voters}</TableCell>
-                <TableCell>
-                  {item.teamLeader?.voter?.purok?.purokNumber}
-                </TableCell>
-                <TableCell>{item.barangay.name}</TableCell>
-                <TableCell>{item.municipal.name}</TableCell>
-                <TableCell>
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <SlOptionsVertical />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent></PopoverContent>
-                  </Popover>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell>
+                    {item.voters.length}({handleLevel(item.level - 1)})
+                  </TableCell>
+                  <TableCell>{item._count.voters}</TableCell>
+                  <TableCell>
+                    {item.teamLeader?.voter?.purok?.purokNumber}
+                  </TableCell>
+                  <TableCell>{item.barangay.name}</TableCell>
+                  <TableCell>{item.municipal.name}</TableCell>
+                  <TableCell>
+                    <Popover>
+                      <PopoverTrigger>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          variant="outline"
+                          size="sm"
+                        >
+                          <SlOptionsVertical />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent></PopoverContent>
+                    </Popover>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       )}
@@ -292,6 +377,21 @@ const Teams = () => {
           Next
         </Button>
       </div>
+      <Modal
+        onFunction={hadnleMergeTeam}
+        children={
+          <div>
+            <h1>1{onUpdate?.targetId}</h1>
+            <h1>2{onUpdate?.draggedId}</h1>
+          </div>
+        }
+        footer={true}
+        loading={merging}
+        open={onOpen === 1}
+        onOpenChange={() => {
+          setOnUpdate(null);
+        }}
+      />
     </div>
   );
 };

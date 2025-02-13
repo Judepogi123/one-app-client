@@ -49,14 +49,14 @@ const Groups = () => {
   const { teamId } = useParams();
   const navigate = useNavigate();
 
-  const { data, loading, refetch } = useQuery<{
+  const { data, loading, refetch,error } = useQuery<{
     team: TeamProps | null;
   }>(GET_TEAM_INFO, {
     variables: { id: teamId },
     skip: !teamId,
   });
 
-  console.log({ data });
+  console.log({ error });
 
   const [changeLeader, { loading: updating, error: updateError }] =
     useMutation(CHANGE_LEADER);

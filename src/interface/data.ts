@@ -20,9 +20,46 @@ export interface UserProps {
   status: number;
   timestamp: Date;
   privilege: number[];
-  userQRCodeId?: string | null; // Optional unique identifier for QR Code
+  userQRCodeId?: string | null; 
   qrCode?: UserQRCodeProps | null; // Single optional relation
+  accountHandleTeam: AccountHandleTeam[]
+  accessToken: string
 }
+export interface AccountHandleTeam {
+  id: string; 
+  account?: UserProps;
+  usersUid?: string;
+  team?: TeamProps; 
+  teamId: string; 
+  municipal?: MunicipalProps; 
+  municipalsId?: number;
+  barangay?: BarangayProps; 
+  barangaysId?: string;  
+  accountValidateTeamId?: string; 
+}
+
+export interface AccountValidateTeam {
+  id: string;
+  account?: UserProps;
+  usersUid?: string;
+  team?: TeamProps; // Optional because of `Team?`
+  teamId?: string;
+  municipal?: MunicipalProps; // Optional because of `Municipals?`
+  municipalsId?: number;
+  barangay?: BarangayProps; // Optional because of `Barangays?`
+  barangaysId?: string;
+  timstamp?: string; // `DateTime?` in Prisma corresponds to `Date` in TypeScript
+  AccountHandleTeam?: AccountHandleTeam; // Optional reference
+}
+export interface ValdilatedMember {
+  id: string;
+  voter?: VotersProps | null;
+  votersId?: string | null;
+  team?: TeamProps | null;
+  teamId?: string | null;
+  timestamp: string;
+}
+
 export interface UserQRCodeProps {
   id: string;
   qrCode: string;
@@ -119,7 +156,25 @@ export interface VotersProps {
   teamId?: string;
   leader?: TeamLeaderProps;
   record: VoterRecord[];
+  ValdilatedMember: ValdilatedMember
+  untracked: UntrackedVoter
 }
+export interface UntrackedVoter {
+  id: string;
+  note?: string;
+  voter?: VotersProps | null;
+  votersId?: string | null;
+  team?: TeamProps | null;
+  teamId?: string | null;
+  timestamp: string;
+  user?: UserProps | null;
+  usersUid?: string | null;
+  barangay?: BarangayProps | null;
+  barangaysId?: string | null;
+  municipal?: MunicipalProps | null;
+  municipalsId?: number | null;
+}
+
 export interface VoterRecord {
   id: string;
   desc: string;
@@ -153,8 +208,18 @@ export interface BarangayProps {
   validationList: ValidationProps[];
   supporters: AllSupporters;
   teamStat: TeamStatProps
+  leaders: TeamLeaderProps[]
+  barangayDelistedVoter: number
+  teamValidationStat: TeamValidationStat
+  teams: TeamProps[]
 }
-
+export interface TeamValidationStat {
+  teamLeadersCount: number;
+  members: number;
+  validatedTL: number;
+  validatedMembers: number;
+  untrackedMembers: number;
+}
 export interface MunicipalProps {
   id: number;
   name: string;
@@ -458,6 +523,11 @@ export interface TeamProps {
   _count: {
     voters: number;
   };
+  votersCount: number;
+  AccountHandleTeam: AccountHandleTeam
+  AccountValidateTeam: AccountValidateTeam
+  ValdilatedMember: ValdilatedMember | null
+  untrackedCount: number
 }
 
 export interface TeamLeaderProps {
@@ -487,6 +557,7 @@ export interface TeamLeaderProps {
     id: string;
     voter?: VotersProps | null;
   };
+  teamList: TeamProps[]
 }
 
 // export interface TeamMember {

@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { useUserData } from "../provider/UserDataProvider";
 //ui
 import {
   Table,
@@ -17,7 +18,10 @@ import { useQuery } from "@apollo/client";
 import { BarangayProps } from "../interface/data";
 
 const BarangayValidationList = () => {
-  const [params, setParams] = useSearchParams({ municipal: "none" });
+  const user = useUserData();
+  const [params, setParams] = useSearchParams({
+    municipal: user?.forMunicipal ? user?.forMunicipal?.toString() : "none",
+  });
   const currentZipCode = params.get("municipal") || "none";
 
   const { data, loading } = useQuery<{ barangayList: BarangayProps[] }>(
@@ -45,6 +49,7 @@ const BarangayValidationList = () => {
     <div className="w-full h-auto">
       <div className="w-full flex justify-end p-2 border border-gray-600">
         <MunicipalSel
+          disabled={user?.forMunicipal ? true : false}
           value={currentZipCode}
           defaultValue=""
           handleChangeArea={handleChangeArea}
@@ -53,7 +58,9 @@ const BarangayValidationList = () => {
       </div>
       {loading ? (
         <div className="w-full h-1/2 grid ">
-          <h1 className="m-auto text-lg font-medium text-gray-800">Loading...</h1>
+          <h1 className="m-auto text-lg font-medium text-gray-800">
+            Loading...
+          </h1>
         </div>
       ) : data?.barangayList?.length === 0 ? (
         <div>No data found.</div>

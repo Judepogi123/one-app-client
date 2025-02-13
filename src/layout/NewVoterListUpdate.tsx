@@ -59,7 +59,9 @@ const NewVoterListUpdate = () => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response.status === 200 && response.data);
+    if(response.status === 200){
+      toast("Voter list uploaded successfully!");
+    }
   };
   return (
     <div className="w-full p-2">

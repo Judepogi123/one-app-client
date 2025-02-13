@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "use-debounce";
+import { useUserData } from "../provider/UserDataProvider";
+import { useMutation } from "@tanstack/react-query";
 //graphql
 import { useQuery } from "@apollo/client";
 import {
@@ -38,9 +40,9 @@ import {
   TooltipTrigger,
 } from "../components/ui/tooltip";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+// import { Switch } from "../components/ui/switch";
 import Modal from "../components/custom/Modal";
 //icons
-import { GrAnalytics } from "react-icons/gr";
 import { MdRestartAlt } from "react-icons/md";
 import { CiSearch } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa6";
@@ -57,10 +59,7 @@ import {
   PurokProps,
   VotersProps,
 } from "../interface/data";
-import {
-  handleLevel,
-  handleSanitizeChar,
-} from "../utils/helper";
+import { handleLevel, handleSanitizeChar } from "../utils/helper";
 //layout
 const typeOptions: { name: string; value: string }[] = [
   { name: "All", value: "all" },
@@ -78,17 +77,20 @@ const capablityList: { name: string; value: string }[] = [
   { name: "DEAD", value: "dead" },
   { name: "18-30", value: "youth" },
   { name: "60+", value: "senior" },
+  { name: "W/o Team", value: "withoutTeam" },
 ];
 //utils
 import { handleElements } from "../utils/element";
+import axios from "../api/axios";
+import { toast } from "sonner";
 const GenerateList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [onOpen, setOnOpen] = useState<number>(0);
   const [query] = useDebounce(searchQuery, 1000);
-  const [selectedPurok, setSelectedPurok] = useState("all");
   const [onExtend, setOnExtend] = useState<boolean>(false);
 
   const navigate = useNavigate();
+  const user = useUserData();
   const [params, setParams] = useSearchParams({ type: "all" });
   const [, setQueryParams] = useSearchParams({
     search: "",
@@ -108,6 +110,8 @@ const GenerateList = () => {
     dead: "NO",
     youth: "NO",
     senior: "NO",
+    mode: "strict",
+    withOutTeam: "all",
   });
 
   const currentType = params.get("type") || "all";
@@ -125,6 +129,8 @@ const GenerateList = () => {
   const currentYouth = capParams.get("youth") || "NO";
   const currentSenior = capParams.get("senior") || "NO";
   const currentGender = capParams.get("gender") || "all";
+  const currentMode = capParams.get("mode") || "strict";
+  // const currentWithoutTeam = capParams.get("withOutTeam") || "all";
   const LIMIT = 50;
 
   //query params
@@ -191,11 +197,13 @@ const GenerateList = () => {
     {
       variables: {
         level: currentType,
-        zipCode: currentMunicipal,
+        zipCode: user.forMunicipal
+          ? user.forMunicipal.toString()
+          : currentMunicipal,
         barangayId: currentBarangay,
         purokId: currentPurok,
         take: LIMIT,
-        skip: parseInt(currentPage, 10) * LIMIT,
+        skip: (parseInt(currentPage, 10) - 1) * LIMIT,
         query,
         pwd: currentPwd,
         illi: currentIlli,
@@ -209,13 +217,19 @@ const GenerateList = () => {
   );
 
   useEffect(() => {
+    const page = parseInt(currentPage, 10) - 1;
+    if (user.forMunicipal) {
+      handleChangeArea("zipCode", user.forMunicipal.toString());
+    }
     refetch({
       level: currentType,
-      municipalsId: currentMunicipal,
+      zipCode: user.forMunicipal
+        ? user.forMunicipal.toString()
+        : currentMunicipal,
       barangaysId: currentBarangay,
       purokId: currentPurok,
       take: LIMIT,
-      skip: parseInt(currentPage, 10) * LIMIT,
+      skip: page * LIMIT,
       query,
       pwd: currentPwd,
       illi: currentIlli,
@@ -241,6 +255,7 @@ const GenerateList = () => {
     currentYouth,
     currentSenior,
     currentGender,
+    user,
   ]);
 
   const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
@@ -253,7 +268,9 @@ const GenerateList = () => {
     refetch: barFetch,
   } = useQuery<{ barangayList: BarangayProps[] }>(GET_BARANGAYS, {
     variables: {
-      zipCode: parseInt(currentMunicipal, 10),
+      zipCode: user.forMunicipal
+        ? user.forMunicipal
+        : parseInt(currentMunicipal, 10),
     },
     skip: currentMunicipal === "all",
   });
@@ -264,16 +281,17 @@ const GenerateList = () => {
         return;
       }
       barFetch({
-        zipCode: parseInt(currentMunicipal, 10),
+        zipCode: user.forMunicipal
+          ? user.forMunicipal
+          : parseInt(currentMunicipal, 10),
       });
     };
     hadleRefetch();
-  }, [currentMunicipal]);
+  }, [currentMunicipal, user]);
 
-  const {
-    data: purokData,
-    loading: purokLoading,
-  } = useQuery<{ getPurokList: PurokProps[] }>(GET_PUROKLIST, {
+  const { data: purokData, loading: purokLoading } = useQuery<{
+    getPurokList: PurokProps[];
+  }>(GET_PUROKLIST, {
     variables: {
       id: currentBarangay,
     },
@@ -305,6 +323,54 @@ const GenerateList = () => {
       }
     );
   };
+
+  const handleDownload = async () => {
+    if (currentBarangay === "all") {
+      toast.warning("Select a Barangay to download", {
+        closeButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "upload/custom-list",
+        {
+          barangayId: currentBarangay,
+          oor: currentOr,
+          inc: currentInc,
+          pwd: currentPwd,
+          illi: currentIlli,
+          dead: currentDead,
+          youth: currentYouth,
+          senior: currentSenior,
+        },
+        {
+          responseType: "blob",
+        }
+      );
+
+      // Create a URL for the blob and trigger a download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentBarangay}${Date.now()}.xlsx`; // Set the file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: handleDownload,
+    onError: () => {
+      toast.error("Failed to download the file", {
+        closeButton: false,
+        description: "Please check your internet connection and try again",
+      });
+    },
+  });
 
   if (loading || barLoading || purokLoading) {
     return (
@@ -354,11 +420,18 @@ const GenerateList = () => {
             </Label>
             <Select
               onValueChange={(value) => handleChangeArea("zipCode", value)}
-              value={currentMunicipal}
-              disabled={loading}
+              value={
+                user.forMunicipal
+                  ? user.forMunicipal.toString()
+                  : currentMunicipal
+              }
+              disabled={loading || user.forMunicipal ? true : false}
               defaultValue="all"
             >
-              <SelectTrigger id="municipal">
+              <SelectTrigger
+                id="municipal"
+                disabled={loading || user.forMunicipal ? true : false}
+              >
                 <SelectValue placeholder={loading ? "Loading..." : "Select"} />
               </SelectTrigger>
 
@@ -452,14 +525,10 @@ const GenerateList = () => {
               placeholder="Search voter"
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-
-            <Button>
-              <GrAnalytics />
-            </Button>
           </div>
         </div>
         {onExtend && (
-          <div className="w-full flex items-center gap-2">
+          <div className="w-full flex items-center gap-2 py-2">
             <div className="flex gap-4 ">
               {capablityList.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
@@ -474,6 +543,7 @@ const GenerateList = () => {
                 </div>
               ))}
             </div>
+
             <RadioGroup
               defaultValue="all"
               value={currentGender}
@@ -489,7 +559,21 @@ const GenerateList = () => {
               <RadioGroupItem value="Female" id="r3" />
               <Label htmlFor="r3">Female</Label>
             </RadioGroup>
-            <Label htmlFor="purok" className="font-mono ml-4">
+
+            <RadioGroup
+              defaultValue="strict"
+              value={currentMode}
+              onValueChange={(value) => handleChangeArea("mode", value)}
+              className="flex gap-2 ml-6"
+            >
+              <Label className="mr-2">Mode:</Label>
+
+              <RadioGroupItem value="strict" id="strict" />
+              <Label htmlFor="strict">Strict</Label>
+              <RadioGroupItem value="mixed" id="mixed" />
+              <Label htmlFor="mixed">Mixed</Label>
+            </RadioGroup>
+            {/* <Label htmlFor="purok" className="font-mono ml-4">
               Candidate
             </Label>
             <Select
@@ -509,12 +593,14 @@ const GenerateList = () => {
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
 
             <Button
               variant="default"
               size="sm"
               className="flex gap-1 absolute right-0 mr-2"
+              onClick={() => mutateAsync()}
+              disabled={isPending}
             >
               <TbReport fontSize={20} />
               Report
@@ -563,9 +649,7 @@ const GenerateList = () => {
                         ? index + 1
                         : (parseInt(currentPage, 10) - 1) * LIMIT + index + 1}
                     </TableCell>
-                    <TableCell>
-                      {item.idNumber}
-                    </TableCell>
+                    <TableCell>{item.idNumber}</TableCell>
                     <TableCell>
                       {handleElements(query, item.lastname)}
                     </TableCell>
@@ -580,7 +664,12 @@ const GenerateList = () => {
                     <TableCell className="flex gap-2">
                       <Tooltip delayDuration={1.5}>
                         <TooltipTrigger>
-                          <Button size="sm" variant="outline">
+                          <Button
+                            disabled={item.teamId ? false : true}
+                            size="sm"
+                            variant="outline"
+                            onClick={() => navigate(`/teams/${item.teamId}`)}
+                          >
                             <RiOrganizationChart />
                           </Button>
                         </TooltipTrigger>
@@ -640,7 +729,10 @@ const GenerateList = () => {
       {!voterLoading && voter && (
         <div className="w-full flex gap-2 justify-center items-center p-2">
           <Button
-            disabled={voter.getVotersList.results <= LIMIT || voter.getVotersList.results === 0}
+            disabled={
+              voter.getVotersList.results <= LIMIT ||
+              voter.getVotersList.results === 0
+            }
             onClick={() => {
               if (currentPage === "1") {
                 return;
@@ -661,7 +753,10 @@ const GenerateList = () => {
             First
           </Button>
           <Button
-            disabled={voter.getVotersList.results <= LIMIT || voter.getVotersList.results === 0}
+            disabled={
+              voter.getVotersList.results <= LIMIT ||
+              voter.getVotersList.results === 0
+            }
             onClick={() => handleChangePage("prev")}
             className="mr-4"
             variant="secondary"
@@ -671,7 +766,10 @@ const GenerateList = () => {
           </Button>
           {parseInt(currentPage, 10) - 1 !== 0 ? (
             <Button
-            disabled={voter.getVotersList.results <= LIMIT || voter.getVotersList.results === 0}
+              disabled={
+                voter.getVotersList.results <= LIMIT ||
+                voter.getVotersList.results === 0
+              }
               onClick={() => {
                 const page = parseInt(currentPage, 10) - 1;
                 if (currentPage === page.toString()) {
@@ -696,7 +794,10 @@ const GenerateList = () => {
           ) : null}
 
           <Button
-            disabled={voter.getVotersList.results <= LIMIT || voter.getVotersList.results === 0}
+            disabled={
+              voter.getVotersList.results <= LIMIT ||
+              voter.getVotersList.results === 0
+            }
             className="border border-gray-800"
             variant="outline"
             size="sm"
@@ -719,7 +820,10 @@ const GenerateList = () => {
             {parseInt(currentPage, 10)}
           </Button>
           <Button
-             disabled={voter.getVotersList.results <= LIMIT || voter.getVotersList.results === 0}
+            disabled={
+              voter.getVotersList.results <= LIMIT ||
+              voter.getVotersList.results === 0
+            }
             onClick={() => {
               const page = parseInt(currentPage, 10) + 1;
               if (currentPage === page.toString()) {
@@ -742,7 +846,10 @@ const GenerateList = () => {
             {parseInt(currentPage, 10) + 1}
           </Button>
           <Button
-            disabled={voter.getVotersList.results <= LIMIT || voter.getVotersList.results === 0}
+            disabled={
+              voter.getVotersList.results <= LIMIT ||
+              voter.getVotersList.results === 0
+            }
             onClick={() => handleChangePage("next")}
             className="ml-4"
             variant="secondary"
@@ -753,9 +860,12 @@ const GenerateList = () => {
         </div>
       )}
 
-      <Modal open={onOpen === 3} onOpenChange={()=>{
-        setOnOpen(0)
-      }} />
+      <Modal
+        open={onOpen === 3}
+        onOpenChange={() => {
+          setOnOpen(0);
+        }}
+      />
     </div>
   );
 };

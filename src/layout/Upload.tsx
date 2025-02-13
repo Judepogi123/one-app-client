@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 //url
-import { production } from "../api/axios";
+import { localhost } from "../api/axios";
 import useCancelToken from "../utils/useCancelToken";
 //lib
 import { useParams } from "react-router-dom";
@@ -41,7 +41,7 @@ interface DraftReq {
   draftData: DraftType;
 }
 
-const socket = io(production);
+const socket = io(localhost);
 
 const Upload = ({ draftData }: DraftReq) => {
   const { draftID } = useParams();
@@ -52,7 +52,7 @@ const Upload = ({ draftData }: DraftReq) => {
   const [onViewCounter, setOnViewCounter] = useState<boolean>(false);
   const [prevLoading, setPrevLoading] = useState<boolean>(false);
 
-  const { cancelRequest } = useCancelToken(`${production}/draft`);
+  const { cancelRequest } = useCancelToken(`${localhost}/draft`);
 
   console.log(data);
 

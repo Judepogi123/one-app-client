@@ -15,6 +15,7 @@ export const GET_SUPPORTERS = gql`
       maleSize
       surveyor
       activeSurveyor
+      barangayDelistedVoter
       barangayVotersCount
       supporters(id: $id) {
         figureHeads
@@ -863,13 +864,14 @@ export const GET_ALL_VOTERS = gql`
 
 export const SEARCH_VOTER = gql`
   #graphql
-  query ($query: String!, $skip: Int!, $take: Int!) {
-    searchVoter(query: $query, skip: $skip, take: $take) {
+  query ($query: String!, $skip: Int!, $take: Int!, $zipCode: Int) {
+    searchVoter(query: $query, skip: $skip, take: $take, zipCode: $zipCode) {
       id
       firstname
       lastname
       gender
       idNumber
+      teamId
       barangay {
         name
         id
@@ -966,6 +968,7 @@ export const GET_VOTER_LIST = gql`
         lastname
         gender
         idNumber
+        candidatesId
         barangay {
           name
           id
@@ -984,6 +987,7 @@ export const GET_VOTER_LIST = gql`
         inc
         oor
         senior
+        teamId
       }
       results
     }
@@ -1037,6 +1041,7 @@ export const GET_TEAM_LIST = gql`
           }
         }
         purokCoors {
+          id
           voter {
             firstname
             lastname
@@ -1050,6 +1055,7 @@ export const GET_TEAM_LIST = gql`
           purok {
             purokNumber
           }
+          teamId
         }
       }
       candidate {
@@ -1061,14 +1067,21 @@ export const GET_TEAM_LIST = gql`
         firstname
         lastname
       }
+      AccountHandleTeam {
+          id
+          account {
+            uid
+            username
+          }
+        }
     }
   }
 `;
 
 export const GET_CANDIDATES = gql`
   #graphql
-  query Candidates {
-    candidates {
+  query Candidates($zipCode: String) {
+    candidates(zipCode: $zipCode) {
       id
       firstname
       lastname
@@ -1093,6 +1106,7 @@ export const GET_TEAM_INFO = gql`
     team(id: $id) {
       id
       level
+      purokId
       purok {
         purokNumber
         id
@@ -1326,3 +1340,248 @@ export const GET_USER_LIST = gql`
     }
   }
 `;
+
+export const GET_USER_INFO = gql`
+  #graphql
+  query User($id: String!) {
+    user(id: $id) {
+    uid
+    username
+    privilege
+    purpose
+    role
+    userQRCodeId
+    qrCode {
+      qrCode
+    }
+    accountHandleTeam {
+      id
+      teamId
+      team {
+        id
+        AccountValidateTeam(id: $id) {
+          id
+          timstamp
+        }
+        teamLeader {
+          voter {
+            firstname
+            lastname
+          }
+        }
+        _count {
+          voters
+        }
+        municipal {
+          name
+        }
+        barangay {
+          name
+          
+        }
+      }
+    }
+  }
+  }
+`;
+
+export const GET_BARANGAY_SUPPORT = gql`
+  #grpahql
+
+  query Barangay($id: ID!, $candidateId: String, $zipCode: Int) {
+    barangay(id: $id) {
+      id
+      name
+      leaders(candidateId: $candidateId) {
+        id
+        voter {
+          firstname
+          lastname
+          idNumber
+        }
+        teamList {
+          id
+          teamLeader {
+            voter {
+              idNumber
+              firstname
+              lastname
+            }
+          }
+          votersCount
+        }
+      }
+    }
+  }
+`;
+
+
+export const GET_ASSIGNED_TEAMS = gql`
+  query GetAssignedTeams(
+    $userId: String, 
+    $zipCode: Int, 
+    $barangaysId: Int, 
+    $from: Int, 
+    $take: Int, 
+    $min: Int, 
+    $max: Int
+  ) {
+    getAssignedTeams(
+      userId: $userId, 
+      zipCode: $zipCode, 
+      barangaysId: $barangaysId, 
+      from: $from, 
+      take: $take, 
+      min: $min, 
+      max: $max
+    ) {
+      id
+      teamId
+      usersUid
+      municipalsId
+      barangaysId
+      accountValidateTeamId
+    }
+  }
+`;
+
+export const GET_TEAM_LEADERS_TEAM = gql`
+#graphql
+
+query TeamLeaderTeams($level: Int, $zipCode: String, $barangay: String, $skip: Int) {
+  teamLeaderTeamHandle(level: $level, zipCode: $zipCode, barangay: $barangay, skip: $skip) {
+    id
+    voter {
+      firstname
+      lastname
+    }
+    teamList {
+      id
+      municipal {
+        name
+      }
+      barangay {
+        name
+      }
+      _count {
+        voters
+      }
+      teamLeader {
+        voter {
+          firstname
+          lastname
+        }
+      }
+      AccountHandleTeam {
+          id
+          account {
+            uid
+            username
+          }
+        }
+    }
+  }
+}
+`
+
+export const GET_ACCOUNT_TEAM_INFO = gql`
+  #graphql
+    query Team($id: String!) {
+    team(id: $id) {
+      id
+      _count {
+      voters
+    }
+      teamLeader {
+        id
+        votersId
+        voter {
+          id
+          idNumber
+          firstname
+          lastname
+        }
+      }
+      AccountValidateTeam {
+        id
+        timstamp
+      }
+      voters {
+        id
+        firstname
+        lastname
+        idNumber
+        record {
+          id
+          questionable
+          type
+        }
+        ValdilatedMember {
+          timestamp
+          id
+        }
+        untracked {
+          id
+          timestamp
+        }
+        inc
+        status
+        oor
+      }
+    }
+  }
+`;
+
+export const GET_BARANGAY_TEAMS = gql`
+  #graphql
+  query BarnagayList($zipCode: Int!){
+    barangayList(zipCode: $zipCode) {
+      id
+      name
+      teamValidationStat {
+        members
+        teamLeadersCount
+        validatedMembers
+        validatedTL
+        untrackedMembers
+      }
+    }
+  }
+`
+export const GET_BARANGAY_TEAMLIST = gql`
+  #graphql
+  query Barangay($id: ID!, $level: Int) {
+    barangay(id: $id) {
+      id
+      name
+      teams(level: $level) {
+        id
+        _count {
+          voters
+        }
+        untrackedCount
+        AccountValidateTeam {
+          id
+          timstamp
+          account {
+            uid
+          }
+        }
+        teamLeader {
+          id
+          voter {
+            id
+            idNumber
+            firstname
+            lastname
+            purok {
+              purokNumber
+            }
+          }
+        }
+      }
+    }
+  }
+
+`;
+

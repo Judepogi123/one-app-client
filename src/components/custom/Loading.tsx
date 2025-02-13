@@ -1,6 +1,5 @@
 //import React from 'react'
 
-
 //props
 
 // interface LoadingProps{
@@ -12,11 +11,13 @@
 //import { Skeleton } from '../ui/skeleton';
 const Loading = () => {
   return (
-    <div>Loading</div>
-  )
-}
+    <div className="w-full h-1/2">
+      <p className="text-center font-medium">Loading...</p>
+    </div>
+  );
+};
 
-export default Loading
+export default Loading;
 
 // const LoadingType = ({type}:{type: number})=>{
 //     switch (type) {
@@ -32,7 +33,7 @@ export default Loading
 //                   <h1>Loading...</h1>
 //               </div>
 //             )
-    
+
 //         default:
 //             break;
 //     }

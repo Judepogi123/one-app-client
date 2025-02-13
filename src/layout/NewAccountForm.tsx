@@ -27,15 +27,34 @@ import {
 } from "../components/ui/select";
 //interfaces
 import { NewAccountSchema } from "../zod/data";
+import { Checkbox } from "../components/ui/checkbox";
+import { toast } from "sonner";
+
+//
+import { useUserData } from "../provider/UserDataProvider";
 
 type NewAccountProps = z.infer<typeof NewAccountSchema>;
 const NewAccountForm = () => {
   const form = useForm<NewAccountProps>({
     resolver: zodResolver(NewAccountSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      role: "1",
+      purpose: "1",
+      encryptPassword: false,
+    },
   });
 
-  const [newUser, { loading, error }] = useMutation(CREATE_NEW_USER);
-  console.log("Error: ",error);
+  const user = useUserData();
+
+  const [newUser, { loading, error }] = useMutation(CREATE_NEW_USER, {
+    onCompleted: () => {
+      toast.success("Created New User", {
+        closeButton: false,
+      });
+    },
+  });
 
   const {
     handleSubmit,
@@ -46,7 +65,7 @@ const NewAccountForm = () => {
     formState: { errors, isSubmitting },
   } = form;
   const showOption = watch("role") === "100";
-
+  const encrupt = watch("encryptPassword");
   useEffect(() => {
     const subscription = watch((value, { name, type }) =>
       console.log(value, name, type)
@@ -64,6 +83,8 @@ const NewAccountForm = () => {
           role: parseInt(data.role, 10),
           purpose: parseInt(data.purpose as string, 10),
           status: 1,
+          encryptPassword: data.encryptPassword,
+          forMunicipal: data.forMunicipal,
         },
       },
     });
@@ -77,8 +98,12 @@ const NewAccountForm = () => {
       password: "",
       role: "",
       purpose: "",
+      forMunicipal: "",
     });
   };
+
+  console.log(user);
+
   return (
     <div className="w-full h-auto p-2">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -140,6 +165,52 @@ const NewAccountForm = () => {
                     {...field}
                     {...register("password", { required: true })}
                     placeholder="Type password here"
+                  />
+                </FormControl>
+                {errors.password && (
+                  <FormMessage>{errors.password.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="encryptPassword"
+            render={({ field }) => (
+              <FormItem className="">
+                <div className="flex items-center pt-2 gap-1">
+                  {" "}
+                  <FormControl {...field}>
+                    <Checkbox
+                      checked={encrupt}
+                      onCheckedChange={field.onChange}
+                      {...register("encryptPassword", { required: true })}
+                    />
+                  </FormControl>
+                  <FormLabel>Encrypt password</FormLabel>
+                </div>
+
+                {errors.password && (
+                  <FormMessage>{errors.password.message}</FormMessage>
+                )}
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="forMunicipal"
+            render={({ field }) => (
+              <FormItem className="mt-4">
+                <FormLabel>For Municipal (optional)</FormLabel>
+                <FormControl
+                  defaultValue={user.forMunicipal ? user.forMunicipal : ""}
+                  {...field}
+                >
+                  <Input
+                    disabled={user.forMunicipal ? true : false}
+                    {...field}
+                    type="number"
+                    {...register("forMunicipal", { required: false })}
+                    placeholder="Muncipal Zip code (optional)"
                   />
                 </FormControl>
                 {errors.password && (

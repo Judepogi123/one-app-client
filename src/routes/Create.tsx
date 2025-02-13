@@ -19,7 +19,7 @@ import { RiSurveyLine } from "react-icons/ri";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { MdOpenInNew } from "react-icons/md";
 import { MdOutlineManageAccounts } from "react-icons/md";
-
+import { MdOutlineBugReport } from "react-icons/md";
 const optionList: DataLayoutProps[] = [
   {
     title: "New",
@@ -37,20 +37,20 @@ const optionList: DataLayoutProps[] = [
     title: "Update",
     value: "/manage/update",
     icon: MdOutlineChangeCircle,
-    desc: "Sort and Search",
+    desc: "",
   },
 
   {
     title: "Area",
     value: "/area",
     icon: MdOutlineAnalytics,
-    desc: "Sort and Search",
+    desc: "Population and Barangay",
   },
   {
-    title: "Wave",
-    value: "/wave",
+    title: "Validation",
+    value: "/manage/validation",
     icon: MdOutlineAnalytics,
-    desc: "Sort and Search",
+    desc: "",
   },
   {
     title: "Nominee",
@@ -62,13 +62,19 @@ const optionList: DataLayoutProps[] = [
     title: "Survey",
     value: "/survey",
     icon: RiSurveyLine,
-    desc: "Sort and Search",
+    desc: "Init. and Reports",
   },
   {
     title: "Accounts",
     value: "/manage/accounts",
     icon: MdOutlineManageAccounts,
     desc: "Manage accounts",
+  },
+  {
+    title: "Report",
+    value: "/manage/accounts",
+    icon: MdOutlineBugReport,
+    desc: "System reports and feedback",
   },
 ];
 
@@ -82,7 +88,7 @@ const Create = () => {
           <div
             key={i}
             onClick={() => navigate(item.value)}
-            className=" w-full h-32 border border-gray-500 bg-white flex justify-center items-center flex-col rounded-md cursor-pointer text-center hover:border-slate-900"
+            className=" w-full h-32 border border-gray-300 bg-white flex justify-center items-center flex-col rounded-md cursor-pointer text-center hover:border-slate-900"
           >
             <div className=" w-auto p-2">
               {<item.icon className=" text-4xl" />}

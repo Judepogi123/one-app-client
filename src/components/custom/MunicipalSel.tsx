@@ -24,13 +24,15 @@ interface Props {
   onChange?: (...event: any[]) => void;
   handleChangeArea: (value: string, key?: string) => void;
   className?: string;
+  disabled: boolean;
 }
 
 const MunicipalSel = ({
-  defaultValue,
   value,
   handleChangeArea,
   className,
+  disabled,
+  defaultValue,
 }: Props) => {
   const { data, loading, error } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
@@ -40,11 +42,12 @@ const MunicipalSel = ({
   }
   return (
     <div className={twMerge("w-auto flex items-center gap-2", className)}>
-      <Label>Muncipal: </Label>
+      <Label>Municipality: </Label>
       <Select
-        value={value}
+        disabled={disabled}
         defaultValue={defaultValue}
-        onValueChange={(value) => handleChangeArea(value, "municipal")}
+        value={value}
+        onValueChange={(value) => handleChangeArea("zipCode", value)}
       >
         <SelectTrigger disabled={loading}>
           <SelectValue placeholder={loading ? "Loading..." : "Select"} />

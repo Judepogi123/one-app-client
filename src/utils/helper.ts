@@ -106,3 +106,5 @@ export const calculatePercentage = (part: number, total: number): string => {
   return ((part / total) * 100).toFixed(2);
 };
 
+
+export const responseError = ["Bad Request", "User not found","Unauthorized Account","Account Suspended","Incorrect password"]

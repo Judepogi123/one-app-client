@@ -75,6 +75,16 @@ export const LOGIN_ADMIN = gql`
   }
 `;
 
+export const LOGIN_USER = gql`
+  #graphql
+  mutation UserLogin($user: UserLoginInput!) {
+    userLogin(user: $user) {
+      username
+      password
+    }
+  }
+`;
+
 export const CREATE_SURVEY = gql`
   #graphql
   mutation Survey($survey: NewSurveyInput!) {
@@ -578,5 +588,133 @@ export const RESET_TEAM_LIST = gql`
   #grahpql
   mutation ResetTeamList($zipCode: String!, $barangayId: String!) {
     resetTeamList(zipCode: $zipCode, barangayId: $barangayId)
+  }
+`;
+
+export const MERGE_TEAM = gql`
+  #graphql
+  mutation Team($firstId: String, $secondId: String) {
+    teamMerger(firstId: $firstId, secondId: $secondId)
+  }
+`;
+
+
+export const GET_ASSIGNED_TEAMS = gql`
+  mutation GetAssignedTeams(
+    $userId: String, 
+    $zipCode: Int, 
+    $barangaysId: Int, 
+    $from: Int, 
+    $take: Int, 
+    $min: Int, 
+    $max: Int
+  ) {
+    assignedTeamsOnAccount(
+      userId: $userId, 
+      zipCode: $zipCode, 
+      barangaysId: $barangaysId, 
+      from: $from, 
+      take: $take, 
+      min: $min, 
+      max: $max
+    )
+  }
+`;
+
+export const DELETE_ASSIGN_TEAM = gql`
+#graphql
+mutation Team($id: String){
+  deleteAssignTeam(id: $id)
+}
+
+`
+
+export const SELECTED_ASSIGN = gql`
+
+mutation Selected($ids: [String!],$userId: String!){
+  selectedTeamAssign(ids: $ids, userId: $userId)
+}
+`
+export const MARK_TEAM_VERIFIED = gql`
+  #graphql
+  mutation MarkTeamVerified($teamId: String, $accountID: String) {
+    markTeamVerified(teamId: $teamId, accountID:  $accountID)
+  }
+`;
+
+export const MARK_MEMBER_VERIFIED = gql`
+  #graphql
+  mutation MarkMemberVerified($memberId: [String!], $accountID: String) {
+    markMemberVerified(memberId: $memberId, accountID: $accountID)
+  }
+`;
+
+export const UPDATE_MEMBER_PROPS = gql`
+  #graphql
+  mutation UpdateMemberProps($memberId: [String!], $props: String){
+    updateTeamMemberProps(memberId: $memberId, props: $props)
+  }
+`
+
+export const SWAP_VOTERS = gql`
+  #graphql
+  mutation Voter($levelToSwap: Int, $levelToBeSwapped: Int, $voterOneId: String, $voterTwoId: String){
+    swapVoters(levelToSwap: $levelToSwap,
+     levelToBeSwapped: $levelToBeSwapped, 
+     voterOneId: $voterOneId, 
+     voterTwoId: $voterTwoId)
+  }
+
+`
+
+export const EXCLUDE_VOTERS = gql`
+  #graphql
+  mutation Voters($membersId: [String!]){
+    memberExclude(membersId: $membersId)
+  }
+
+`
+
+export const UNTRACK_MEMBERS = gql`
+#graphql
+  mutation Untracked($memberId: [String!]){
+    markUntracked(memberId: $memberId)
+  }
+`
+
+export const SUBMIT_VALIDATION = gql`
+  #graphql
+  mutation Validation(
+    $validatedDelisted: [NewValidatedDelistedVoter!]
+    $votersToUpdate: [NewVotersToUpdate!]
+    $votersToTransfer: [NewToTransfer!]
+    $untrackedList: [NewUntrackedList!]
+    $validateDuplicate: [NewDuplicateteamMembersToRemove!]
+    $recordToDelete: [NewRecordToDelete!]
+    $appoinments: [NewAppointments!]
+    $newVoterRecord: [NewVoterRecord!]
+    $toSplit: [NewForSplitInput!]
+    $validatedPerson: [NewValidatedPersonInput!]
+    $validatedTeams: [NewValidatedTeamsRecordInput!]
+    $accountTeamHoldings: [NewAccountTeamHoldInput!]
+    $teamToMerge: [NewTeamToMergeInput]
+    $teamExcluded: [NewToTeamExcludeInput!]
+  ) {
+    validationUpdate(
+      validatedDelisted: $validatedDelisted
+      votersToUpdate: $votersToUpdate
+      votersToTransfer: $votersToTransfer
+      untrackedList: $untrackedList
+      validateDuplicate: $validateDuplicate
+      recordToDelete: $recordToDelete
+      appoinments: $appoinments
+      newVoterRecord: $newVoterRecord
+      toSplit: $toSplit
+      validatedPerson: $validatedPerson
+      validatedTeams: $validatedTeams
+      accountTeamHoldings: $accountTeamHoldings
+      teamToMerge: $teamToMerge
+      teamExcluded: $teamExcluded
+    )
   }
 `;

@@ -33,7 +33,7 @@ interface AreaProps {
   currentMunicipal: string;
   currentBarangay: string;
   currentPurok: string;
-  className?: string
+  className?: string;
 }
 
 const AreaSelection = ({
@@ -41,7 +41,7 @@ const AreaSelection = ({
   currentBarangay,
   currentMunicipal,
   currentPurok,
-  className
+  className,
 }: AreaProps) => {
   const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
@@ -92,22 +92,23 @@ const AreaSelection = ({
     });
   }, [currentBarangay, purokRefetch]);
 
-  useEffect(()=>{
-    if(currentBarangay === "all") {
-      handleChangeOption("purok","all")
+  useEffect(() => {
+    if (currentBarangay === "all") {
+      handleChangeOption("purok", "all");
     }
-    if(currentMunicipal === "all") {
-      handleChangeOption("barangay","all")
+    if (currentMunicipal === "all") {
+      handleChangeOption("barangay", "all");
     }
-  },[currentBarangay,currentMunicipal])
+  }, [currentBarangay, currentMunicipal]);
 
   if (!data) {
     return;
   }
   return (
-    <div className={twMerge(" h-auto p-2 flex items-center gap-2",className )}>
+    <div className={twMerge(" h-auto p-2 flex items-center gap-2", className)}>
       <Label htmlFor="municipal">Municipal:</Label>
       <Select
+        value={currentMunicipal}
         defaultValue="all"
         onValueChange={(value) => handleChangeOption("zipCode", value)}
       >
@@ -127,6 +128,7 @@ const AreaSelection = ({
 
       <Label htmlFor="barangay">Barangay:</Label>
       <Select
+        value={currentBarangay}
         defaultValue="all"
         onValueChange={(value) => handleChangeOption("barangay", value)}
       >
@@ -145,9 +147,13 @@ const AreaSelection = ({
       </Select>
 
       <Label htmlFor="purok">Purok:</Label>
-      <Select value={currentPurok} defaultValue="all"  onValueChange={(value) => handleChangeOption("purok", value)}>
+      <Select
+        value={currentPurok}
+        defaultValue="all"
+        onValueChange={(value) => handleChangeOption("purok", value)}
+      >
         <SelectTrigger id="purok" className="w-auto">
-          <SelectValue placeholder={purokLoading? "Loading..." : ""} />
+          <SelectValue placeholder={purokLoading ? "Loading..." : ""} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All</SelectItem>
@@ -159,7 +165,6 @@ const AreaSelection = ({
             ))}
         </SelectContent>
       </Select>
-
     </div>
   );
 };

@@ -6,20 +6,22 @@ import {
   BreadcrumbItem,
   BreadcrumbSeparator,
 } from "../components/ui/breadcrumb";
-
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "../components/ui/popover";
+import { Button } from "../components/ui/button";
 //lib
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import z from "zod";
+import { useUserData } from "../provider/UserDataProvider";
 //types
 //import { HomeLayoutProps } from "../interface/layout";
 
 //icons
-import { CiUser } from "react-icons/ci";
-
+import { CiUser, CiLogout } from "react-icons/ci";
 //props
-import { AuthUser } from "../zod/data";
 interface HeaderProps {
   handleChangeMenu: (value: string) => void;
   currentMenu: string | null;
@@ -31,19 +33,16 @@ interface HeaderProps {
 //   { title: "Survey", value: "/survey" },
 // ];
 
-type UserType = z.infer<typeof AuthUser>;
+//type UserType = z.infer<typeof AuthUser>;
 
-const Header = ({ }: HeaderProps) => {
+const Header = ({}: HeaderProps) => {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
   const signOut = useSignOut();
   const navigate = useNavigate();
-  const auth = useAuthUser<{ user: UserType }>();
-
-  console.log(auth);
-
+  const user = useUserData();
   return (
-    <div className=" w-full h-auto">
+    <div className=" w-full h-auto hidden lg:block">
       <div className="w-full h-auto flex justify-between p-4">
         <Breadcrumb>
           <BreadcrumbList>
@@ -72,15 +71,33 @@ const Header = ({ }: HeaderProps) => {
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div
-          className="p-2 hover:border-slate-700 border"
-          onClick={() => {
-            signOut();
-            navigate("/auth");
-          }}
-        >
-          <CiUser />
-        </div>
+        <Popover>
+          <PopoverTrigger>
+            <div className="p-2 hover:border-slate-700 border rounded-full">
+              <CiUser />
+            </div>
+          </PopoverTrigger>
+
+          <PopoverContent className="w-full min-w-[200px] flex flex-col gap-2">
+            <div className="w-full">
+              <h1 className=" text-center font-mono font-medium">
+                {user.username}
+              </h1>
+              <h1 className="text-center text-sm">Admin</h1>
+            </div>
+            <Button
+              className="w-auto flex items-center gap-1"
+              variant="secondary"
+              onClick={() => {
+                signOut();
+                navigate("/auth");
+              }}
+            >
+              <CiLogout />
+              Sign Out
+            </Button>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
