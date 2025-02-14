@@ -19,7 +19,7 @@ import AddMembers from "../layout/AddMembers";
 import SearchVoters from "../layout/SearchVoters";
 import { Button } from "../components/ui/button";
 import Modal from "../components/custom/Modal";
-import { Checkbox } from "../components/ui/checkbox";
+// import { Checkbox } from "../components/ui/checkbox";
 import { FaEllipsisVertical } from "react-icons/fa6";
 //props
 import { TeamProps, VotersProps } from "../interface/data";
@@ -49,7 +49,7 @@ const Groups = () => {
   const { teamId } = useParams();
   const navigate = useNavigate();
 
-  const { data, loading, refetch,error } = useQuery<{
+  const { data, loading, refetch, error } = useQuery<{
     team: TeamProps | null;
   }>(GET_TEAM_INFO, {
     variables: { id: teamId },
@@ -231,7 +231,7 @@ const Groups = () => {
       <div className="w-full p-2 border bg-slate-200 relative">
         {data.team?.teamLeader?.barangayCoor && (
           <HeaderInfo
-          title={`${team.barangay.name} Barangay Coor."`}
+            title={`${team.barangay.name} Barangay Coor."`}
             fullname={`${
               data.team.teamLeader?.barangayCoor.voter?.lastname as string
             }, ${
@@ -244,7 +244,9 @@ const Groups = () => {
             title={`${team.barangay.name} Purok Coor."`}
             fullname={`${
               data.team.teamLeader.purokCoors.voter?.lastname as string
-            }, ${data.team.teamLeader.purokCoors.voter?.firstname as string}-(${data.team.teamLeader.purokCoors.voter?.idNumber})`}
+            }, ${data.team.teamLeader.purokCoors.voter?.firstname as string}-(${
+              data.team.teamLeader.purokCoors.voter?.idNumber
+            })`}
           />
         )}
         <Popover>
@@ -261,17 +263,21 @@ const Groups = () => {
             <Button variant="outline" onClick={() => setOnOpenModal(2)}>
               Vacant
             </Button>
-            <Button variant="outline" onClick={() => setOnOpenModal(2)}>
+            <Button
+              variant="outline"
+              onClick={() => setOnOpenModal(2)}
+              disabled
+            >
               Switch
             </Button>
 
-            <Button
+            {/* <Button
               className=" bg-blue-400 hover:bg-blue-500"
               variant="outline"
               onClick={() => setOnOpenModal(2)}
             >
               Profile
-            </Button>
+            </Button> */}
           </PopoverContent>
         </Popover>
 
@@ -289,7 +295,10 @@ const Groups = () => {
 
             <PopoverContent className="flex flex-col gap-1">
               <Button
-                onClick={() => setOnMultiSelect(!onMultiSelect)}
+                onClick={() => {
+                  setSelectedList([]);
+                  setOnMultiSelect(!onMultiSelect);
+                }}
                 variant="outline"
               >
                 {onMultiSelect ? "Cancel" : "Multi select"}
@@ -306,9 +315,12 @@ const Groups = () => {
               <Button onClick={() => setOnOpenModal(4)} variant="outline">
                 Add {handleLevel((team.level as number) - 1)}
               </Button>
-              <Button variant="outline">Transfer</Button>
+              <Button variant="outline" disabled>
+                Transfer
+              </Button>
               <Button
                 variant="outline"
+                disabled
                 onClick={() => navigate(`/teams/${teamId}/qrCodes`)}
               >
                 QR codes
@@ -322,12 +334,12 @@ const Groups = () => {
       </div>
       <Table>
         <TableHeader>
-          {onMultiSelect && (
+          {/* {onMultiSelect && (
             <TableHead className="flex items-center gap-2">
               <Checkbox />
               Select all
             </TableHead>
-          )}
+          )} */}
           <TableHead>No.</TableHead>
           <TableHead>Tag ID</TableHead>
           <TableHead>Member ({team?.voters.length})</TableHead>
@@ -383,7 +395,7 @@ const Groups = () => {
       </Table>
 
       <Modal
-        className="max-w-3xl"
+        className="max-w-5xl"
         title={`Change ${handleLevel(team?.level as number)}`}
         open={onOpenModal === 1}
         onOpenChange={() => {
@@ -436,7 +448,7 @@ const Groups = () => {
         }}
       />
       <Modal
-        className=" max-w-3xl max-h-[80%] overflow-auto"
+        className=" max-w-5xl max-h-[80%] overflow-auto"
         title={`Add ${handleLevel(team.level - 1)}`}
         children={
           <AddMembers

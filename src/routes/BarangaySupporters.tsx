@@ -39,7 +39,9 @@ const BarangaySupporters = () => {
     candidate: CandidatesProps | null;
   }>(GET_SUPPORTERS, {
     variables: {
-      zipCode: parseInt(currenetZipCode, 10),
+      zipCode: user?.forMunicipal
+        ? user?.forMunicipal
+        : parseInt(currenetZipCode, 10),
       id: candidateID,
     },
     skip: !candidateID,
@@ -159,6 +161,9 @@ const BarangaySupporters = () => {
   ] = useLazyQuery<{
     barangay: BarangayProps;
   }>(GET_BARANGAY_SUPPORT, {
+    variables: {
+      id: candidateID,
+    },
     onError: (err) => {
       console.log(err);
     },

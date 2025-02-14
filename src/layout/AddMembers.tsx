@@ -68,7 +68,7 @@ const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
       toast("Select at least one voter as member");
       return;
     }
-    
+
     const teamIdList = selectedList.map((item) => {
       return {
         id: item.id,
@@ -90,7 +90,7 @@ const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
       },
     });
     if (error) {
-      toast("Failed to add team", {
+      toast.error("Failed to add team", {
         description: error.message,
         className: "text-red-500 font-semibold",
         closeButton: false,
@@ -98,7 +98,9 @@ const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
       return;
     }
     if (response.data) {
-      toast("Success");
+      toast.success("Success", {
+        closeButton: false,
+      });
       return;
     }
   };

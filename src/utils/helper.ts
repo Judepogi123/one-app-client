@@ -108,3 +108,5 @@ export const calculatePercentage = (part: number, total: number): string => {
 
 
 export const responseError = ["Bad Request", "User not found","Unauthorized Account","Account Suspended","Incorrect password"]
+
+export const removeAllSpaces = (str: string) => str.replace(/\s+/g, '');

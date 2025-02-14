@@ -25,7 +25,7 @@ export const GET_SUPPORTERS = gql`
         withTeams
         voterWithoutTeam
       }
-      teamStat {
+      teamStat(candidateId: $id) {
         aboveMax
         belowMax
         equalToMax
@@ -1326,8 +1326,8 @@ export const GET_TEAM_RECORD_INFO = gql`
 export const GET_USER_LIST = gql`
   #graphql
 
-  query Users {
-    userList {
+  query Users($zipCode: Int) {
+    userList(zipCode: $zipCode) {
       uid
       username
       privilege
@@ -1388,7 +1388,7 @@ export const GET_USER_INFO = gql`
 export const GET_BARANGAY_SUPPORT = gql`
   #grpahql
 
-  query Barangay($id: ID!, $candidateId: String, $zipCode: Int) {
+  query Barangay($id: ID!, $candidateId: String) {
     barangay(id: $id) {
       id
       name

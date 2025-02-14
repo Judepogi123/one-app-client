@@ -19,6 +19,7 @@ import {
 import { Input } from "../components/ui/input";
 //import { Label } from "../components/ui/label";
 import Modal from "../components/custom/Modal";
+import Maintenance from "../components/custom/Maintenance";
 import {
   Form,
   FormControl,
@@ -39,7 +40,7 @@ import {
 //   SelectTrigger,
 //   SelectValue,
 // } from "../components/ui/select";
-import CandidateBatch from "../components/custom/CandidateBatch";
+///import CandidateBatch from "../components/custom/CandidateBatch";
 import {
   ApolloQueryResult,
   OperationVariables,
@@ -75,7 +76,7 @@ const Candidates = () => {
   const [onModal, setOnModal] = useState(0);
   const user = useUserData();
   const [params, setParams] = useSearchParams({
-    zipCode: user?.forMunicipal?.toString() ?? "4905",
+    zipCode: user?.forMunicipal ? user?.forMunicipal.toString() : "4905",
   });
   const navigate = useNavigate();
 
@@ -103,6 +104,8 @@ const Candidates = () => {
     );
   };
 
+  return <Maintenance />;
+
   return (
     <div className="w-full">
       <div className="w-full p-2 flex justify-end gap-2 border border-gray-400">
@@ -113,10 +116,10 @@ const Candidates = () => {
           value={currentMunicipal}
           handleChangeArea={handleChangeArea}
         />
-        <CandidateBatch className=" w-auto" />
+        {/* <CandidateBatch className=" w-auto" /> */}
         <Popover>
-          <PopoverTrigger>
-            <Button size="sm" className="flex gap-2">
+          <PopoverTrigger disabled>
+            <Button size="sm" className="flex gap-2" disabled>
               <IoIosAddCircleOutline />
               New
             </Button>
@@ -152,7 +155,7 @@ const Candidates = () => {
 
         <TableBody>
           {data &&
-            data.candidates.map((item) => (
+            data?.candidates.map((item) => (
               <TableRow
                 key={item.id}
                 onClick={() => navigate(`/manage/candidates/${item.id}`)}

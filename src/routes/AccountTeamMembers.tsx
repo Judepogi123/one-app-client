@@ -64,8 +64,6 @@ const AccountTeamMembers = () => {
     );
   };
 
-  console.log({ data });
-
   const handleCheckId = (id: string) => selectedIDS.includes(id);
 
   const [markMember, { loading: memberLoading }] = useMutation(
@@ -306,7 +304,6 @@ const AccountTeamMembers = () => {
       try {
         const voterData: VotersProps = JSON.parse(item);
         setDroppedItem(voterData);
-        toast.success(`Dropped: ${voterData.firstname} ${voterData.lastname}`);
         setOnOpen(3);
       } catch (error) {
         toast.error("Error parsing voter data.");
@@ -378,7 +375,6 @@ const AccountTeamMembers = () => {
       },
     });
   };
-  console.log(selectedVoters);
 
   if (loading) {
     return <Loading />;

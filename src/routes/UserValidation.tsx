@@ -30,6 +30,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useUserData } from "../provider/UserDataProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ValidatedTeamsFormSchema } from "../zod/data";
@@ -56,15 +57,17 @@ import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { MdOutlinePlaylistRemove } from "react-icons/md";
 import { MdOutlineVerified } from "react-icons/md";
 import { MdOutlinePreview } from "react-icons/md";
+
 type ValidationFormProps = z.infer<typeof ValidatedTeamsFormSchema>;
 const UserValidation = () => {
   const { userID } = useParams();
   const navigate = useNavigate();
+  const user = useUserData();
   const [onOpen, setOnOpen] = useState(0);
   const [selectedIds, setSelectIds] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean>(false);
   const [params, setParams] = useSearchParams({
-    zipCode: "all",
+    zipCode: user?.forMunicipal ? user?.forMunicipal.toString() : "4905",
     barangay: "all",
   });
 
@@ -106,6 +109,14 @@ const UserValidation = () => {
 
   const form = useForm<ValidationFormProps>({
     resolver: zodResolver(ValidatedTeamsFormSchema),
+    defaultValues: {
+      barangay: "",
+      zipCOde: user?.forMunicipal ? user?.forMunicipal.toString() : "",
+      take: "",
+      from: "",
+      maxMembers: "",
+      minMembers: "",
+    },
   });
   const {
     handleSubmit,
@@ -396,6 +407,7 @@ const UserValidation = () => {
                       <FormLabel>Zip Code</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={user?.forMunicipal ? true : false}
                           type="number"
                           {...register("zipCOde")}
                           placeholder="Enter Zip Code"
@@ -519,9 +531,9 @@ const UserValidation = () => {
         footer={true}
         loading={selectionAssigning}
         onFunction={() => handleSelectionAssigment()}
-        className="w-full max-h-[500px] max-w-3xl overflow-auto"
+        className="w-full max-h-[600px] max-w-3xl overflow-auto"
       >
-        <div className="w-full bg-white sticky top-0 ">
+        <div className="w-full bg-white">
           <div className="w-full p-2 flex gap-2 items-center">
             <h1>Selected Teams: {selectedIds.length}</h1>
 
@@ -530,6 +542,10 @@ const UserValidation = () => {
             </Button>
           </div>
           <AreaSelection
+            disabled={user?.forMunicipal ? true : false}
+            defaultValue={
+              user?.forMunicipal ? user?.forMunicipal.toString() : "4905"
+            }
             handleChangeOption={handleChangeOption}
             currentMunicipal={currentMunicipal}
             currentBarangay={currentBarangay}
@@ -541,7 +557,7 @@ const UserValidation = () => {
           {teamHandles?.teamLeaderTeamHandle.map((group, index) => (
             <div className="w-full flex flex-col gap-2 border border-gray-600 rounded-sm p-2 bg-white">
               <h1>
-                {index + 1}. {group.voter?.firstname}
+                {index + 1}. {group.voter?.lastname}, {group.voter?.firstname}
               </h1>
               {group.teamList.map((item, i) => (
                 <TeamItem

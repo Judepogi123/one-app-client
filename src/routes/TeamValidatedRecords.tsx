@@ -1,6 +1,7 @@
 //
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useUserData } from "../provider/UserDataProvider";
 //ui
 import { Button } from "../components/ui/button";
 import {
@@ -31,9 +32,10 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 const TeamValidatedRecords = () => {
   const doc = new jsPDF();
+  const user = useUserData();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams({
-    zipCode: "all",
+    zipCode: user?.forMunicipal ? user?.forMunicipal.toString() : "all",
     barangay: "all",
     page: "1",
   });
@@ -106,6 +108,8 @@ const TeamValidatedRecords = () => {
     <div className="w-full h-auto">
       <div className="w-full flex justify-end items-center border border-l-0 border-r-0 border-slate-400">
         <AreaSelection
+          defaultValue={currentMunicipal}
+          disabled={user?.forMunicipal ? true : false}
           handleChangeOption={handleChangeOption}
           className="mr-3"
           currentMunicipal={currentMunicipal}

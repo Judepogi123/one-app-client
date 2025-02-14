@@ -15,6 +15,7 @@ export interface UserProps {
   uid: string;
   username: string;
   password: string;
+  forMunicipal: number
   role: number;
   purpose: number;
   status: number;

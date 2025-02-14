@@ -24,8 +24,8 @@ const Home = () => {
       <div className="w-full h-full hidden lg:block">
         <Outlet />
       </div>
-      <div className="block lg:hidden">
-        <h1>
+      <div className="block lg:hidden p-4">
+        <h1 className="text-lg text-center font-medium">
           Sorry, this platform is only suitable for Desktop Screen Size device
         </h1>
       </div>

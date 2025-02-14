@@ -141,9 +141,9 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
                   <TableCell>{item.teamId && "In Team"}</TableCell>
                   <TableCell>{handleLevel(item.level)}</TableCell>
                   <TableCell>{item.gender}</TableCell>
+                  <TableCell>{item.purok?.purokNumber}</TableCell>
                   <TableCell>{item.barangay.name}</TableCell>
                   <TableCell>{item.municipal.name}</TableCell>
-                  <TableCell>{item.purok?.purokNumber}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

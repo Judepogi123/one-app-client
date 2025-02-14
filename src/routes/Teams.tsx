@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
+import { useUserData } from "../provider/UserDataProvider";
 //ui
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "../components/ui/popover";
+// import {
+//   Popover,
+//   PopoverTrigger,
+//   PopoverContent,
+// } from "../components/ui/popover";
 // import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import {
   Table,
@@ -42,7 +43,7 @@ import { toast } from "sonner";
 import Modal from "../components/custom/Modal";
 //icons
 import { TbReport } from "react-icons/tb";
-import { SlOptionsVertical } from "react-icons/sl";
+//import { SlOptionsVertical } from "react-icons/sl";
 import { handleElements } from "../utils/element";
 import { Label } from "../components/ui/label";
 import { Checkbox } from "../components/ui/checkbox";
@@ -55,8 +56,9 @@ const options: { name: string; value: string }[] = [
 ];
 
 const Teams = () => {
+  const user = useUserData();
   const [params, setParams] = useSearchParams({
-    zipCode: "all",
+    zipCode: user?.forMunicipal ? user?.forMunicipal.toString() : "all",
     barangay: "all",
     purok: "all",
     level: "all",
@@ -242,9 +244,14 @@ const Teams = () => {
           currentBarangay={currentBarangay}
           currentMunicipal={currentMunicipal}
           handleChangeOption={handleChangeOption}
+          defaultValue={
+            user?.forMunicipal ? user?.forMunicipal.toString() : "all"
+          }
+          disabled={user?.forMunicipal ? true : false}
         />
         <Label htmlFor="issues">W/issues</Label>
         <Checkbox
+          disabled
           id="issues"
           checked={currentWithIssues === "true"}
           onCheckedChange={(check) =>
@@ -258,7 +265,7 @@ const Teams = () => {
             placeholder="Search"
             className="border border-slate-600"
           />
-          <Button>
+          <Button disabled>
             <TbReport fontSize={20} />
           </Button>
         </div>
@@ -282,7 +289,7 @@ const Teams = () => {
             <TableHead>Level</TableHead>
             <TableHead>Figure Head </TableHead>
             <TableHead>Handled</TableHead>
-            <TableHead>Issues</TableHead>
+            {/* <TableHead>Issues</TableHead> */}
             <TableHead>Purok</TableHead>
             <TableHead>Barangay</TableHead>
             <TableHead>Municipal</TableHead>
@@ -331,13 +338,13 @@ const Teams = () => {
                   <TableCell>
                     {item.voters.length}({handleLevel(item.level - 1)})
                   </TableCell>
-                  <TableCell>{item._count.voters}</TableCell>
+                  {/* <TableCell>{item._count.voters}</TableCell> */}
                   <TableCell>
                     {item.teamLeader?.voter?.purok?.purokNumber}
                   </TableCell>
                   <TableCell>{item.barangay.name}</TableCell>
                   <TableCell>{item.municipal.name}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Popover>
                       <PopoverTrigger>
                         <Button
@@ -352,7 +359,7 @@ const Teams = () => {
                       </PopoverTrigger>
                       <PopoverContent></PopoverContent>
                     </Popover>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               );
             })}

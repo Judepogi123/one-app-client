@@ -362,7 +362,7 @@ const GenerateList = () => {
     }
   };
 
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: handleDownload,
     onError: () => {
       toast.error("Failed to download the file", {
@@ -561,6 +561,7 @@ const GenerateList = () => {
             </RadioGroup>
 
             <RadioGroup
+              disabled
               defaultValue="strict"
               value={currentMode}
               onValueChange={(value) => handleChangeArea("mode", value)}
@@ -596,11 +597,12 @@ const GenerateList = () => {
             </Select> */}
 
             <Button
+              disabled
               variant="default"
               size="sm"
               className="flex gap-1 absolute right-0 mr-2"
               onClick={() => mutateAsync()}
-              disabled={isPending}
+              // disabled={isPending}
             >
               <TbReport fontSize={20} />
               Report

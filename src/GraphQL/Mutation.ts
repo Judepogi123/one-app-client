@@ -718,3 +718,15 @@ export const SUBMIT_VALIDATION = gql`
     )
   }
 `;
+
+export const TRANSFER_VOTER_AREA = gql`
+ mutation TransferVoter($memberId: [String!], $zipCode: Int, $barangay: String){
+  transferVotersArea(memberId: $memberId, zipCode: $zipCode, barangay: $barangay)
+ }
+`
+export const RESET_PASSWORD = gql`
+  #graphql
+  mutation ResetPassword($id: String, $newPassword: String){
+    resetPassword(id: $id, newPassword: $newPassword)
+  }
+`

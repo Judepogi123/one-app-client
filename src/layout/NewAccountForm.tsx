@@ -35,6 +35,7 @@ import { useUserData } from "../provider/UserDataProvider";
 
 type NewAccountProps = z.infer<typeof NewAccountSchema>;
 const NewAccountForm = () => {
+  const user = useUserData();
   const form = useForm<NewAccountProps>({
     resolver: zodResolver(NewAccountSchema),
     defaultValues: {
@@ -43,10 +44,9 @@ const NewAccountForm = () => {
       role: "1",
       purpose: "1",
       encryptPassword: false,
+      forMunicipal: user?.forMunicipal ? user?.forMunicipal.toString() : "",
     },
   });
-
-  const user = useUserData();
 
   const [newUser, { loading, error }] = useMutation(CREATE_NEW_USER, {
     onCompleted: () => {
@@ -200,12 +200,19 @@ const NewAccountForm = () => {
             name="forMunicipal"
             render={({ field }) => (
               <FormItem className="mt-4">
-                <FormLabel>For Municipal (optional)</FormLabel>
+                <FormLabel>
+                  For Municipal {user?.forMunicipal ? "" : "(optional)"}
+                </FormLabel>
                 <FormControl
-                  defaultValue={user.forMunicipal ? user.forMunicipal : ""}
+                  defaultValue={
+                    user?.forMunicipal ? user?.forMunicipal.toString() : ""
+                  }
                   {...field}
                 >
                   <Input
+                    defaultValue={
+                      user?.forMunicipal ? user?.forMunicipal.toString() : ""
+                    }
                     disabled={user.forMunicipal ? true : false}
                     {...field}
                     type="number"

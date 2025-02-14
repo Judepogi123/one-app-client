@@ -1,6 +1,7 @@
 //prosp
 import { TeamProps } from "../../interface/data";
 import { toast } from "sonner";
+import { Checkbox } from "../ui/checkbox";
 //
 interface Props {
   team: TeamProps;
@@ -21,17 +22,20 @@ const TeamItem = ({
   return (
     <div
       onClick={() => {
-        if (team?.AccountHandleTeam?.account?.uid && team.AccountHandleTeam.account.uid === userID) {
-          toast.warning("Already assinged to user!",{
+        if (
+          team?.AccountHandleTeam?.account?.uid &&
+          team.AccountHandleTeam.account.uid === userID
+        ) {
+          toast.warning("Already assinged to user!", {
             closeButton: false,
           });
           return;
         }
-        if(team.AccountHandleTeam){
-          toast.warning("Cannot assign team to this voter!",{
+        if (team.AccountHandleTeam) {
+          toast.warning("Cannot assign team to this voter!", {
             closeButton: false,
           });
-          return
+          return;
         }
         handleSelectIds(team.id);
       }}
@@ -47,10 +51,14 @@ const TeamItem = ({
             : team.AccountHandleTeam.account?.username}
         </h1>
       )}
-      <h1 className=" font-medium">
-        {(page - 1) * 50 + index + 1}. {team.teamLeader?.voter?.lastname},{" "}
-        {team.teamLeader?.voter?.firstname}
-      </h1>
+      <div className="flex items-center gap-2">
+        <Checkbox checked={handleCheckId(team.id)} />
+        <h1 className=" font-medium">
+          {(page - 1) * 50 + index + 1}. {team.teamLeader?.voter?.lastname},{" "}
+          {team.teamLeader?.voter?.firstname}
+        </h1>
+      </div>
+
       <h1 className="text-xs font-thin">Members: {team._count.voters}</h1>
       <h1 className="font-thin text-sm">
         {team.barangay.name}, {team.municipal.name}

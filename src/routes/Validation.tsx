@@ -37,9 +37,7 @@ const Validation = () => {
   const user = useUserData();
   const [onOpen, setOnOpen] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { data, loading, error } = useQuery<{ userList: UserProps[] }>(
-    GET_USER_LIST
-  );
+
   const [params, setParams] = useSearchParams({
     zipCode: user.forMunicipal ? user.forMunicipal?.toString() : "4905",
     tab: "validator",
@@ -47,6 +45,15 @@ const Validation = () => {
 
   const currentZipCode = params.get("zipCode") || "4905";
   const currentTab = params.get("tab") || "validator";
+
+  const { data, loading, error } = useQuery<{ userList: UserProps[] }>(
+    GET_USER_LIST,
+    {
+      variables: {
+        zipCode: parseInt(currentZipCode, 10),
+      },
+    }
+  );
 
   const handleChangeArea = (type: string, value?: string | undefined) => {
     if (!value) return;
@@ -303,17 +310,26 @@ const Validation = () => {
           <TabsList>
             <TabsTrigger value={"validator"}>Validator</TabsTrigger>
             <TabsTrigger value={"barangay"}>Barangay</TabsTrigger>
-            <TabsTrigger value={"report"}>Report</TabsTrigger>
+            {/* <TabsTrigger value={"report"}>Report</TabsTrigger> */}
           </TabsList>
           <div className="w-auto flex items-center gap-2">
             <MunicipalSel
-              disabled={user.forMunicipal ? true : false}
+              disabled={user?.forMunicipal ? true : false}
               className="max-w-96"
-              defaultValue={currentZipCode}
+              defaultValue={
+                user?.forMunicipal
+                  ? user?.forMunicipal.toString()
+                  : currentZipCode
+              }
               value={currentZipCode}
               handleChangeArea={handleChangeArea}
             />
-            <Button variant="outline" size="sm" onClick={() => setOnOpen(2)}>
+            <Button
+              disabled
+              variant="outline"
+              size="sm"
+              onClick={() => setOnOpen(2)}
+            >
               <IoPrintOutline size={20} />
             </Button>
             <Button size="sm" onClick={() => setOnOpen(2)}>
@@ -324,9 +340,9 @@ const Validation = () => {
         <TabsContent value={"barangay"} className="w-full h-auto">
           <ValidationBarangay zipCode={currentZipCode} />
         </TabsContent>
-        <TabsContent value={"report"}>
+        {/* <TabsContent value={"report"}>
           <div>Validator content</div>
-        </TabsContent>
+        </TabsContent> */}
         <TabsContent value={"validator"} className="w-full h-full">
           <div>
             <Table>

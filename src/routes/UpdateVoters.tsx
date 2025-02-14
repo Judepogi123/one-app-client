@@ -69,6 +69,7 @@ import {
   REMOVE_AREA_VOTERS,
   GENERATE_BUNLE_QRCODE,
   RESET_TEAM_LIST,
+  //TRANSFER_VOTER_AREA,
 } from "../GraphQL/Mutation";
 import { GrDocumentUpdate } from "react-icons/gr";
 import { toast } from "sonner";
@@ -161,27 +162,35 @@ const UpdateVoters = () => {
     navigate(`/voter/${value}`);
   };
 
-  const handleCheckVoter = (id: string, checked: boolean) => {
-    let listCopy = [...selectedList];
-    const matchedIndex = listCopy.findIndex((item) => item === id);
+  // const handleCheckVoter = (id: string, checked: boolean) => {
+  //   let listCopy = [...selectedList];
+  //   const matchedIndex = listCopy.findIndex((item) => item === id);
 
-    if (checked && matchedIndex === -1) {
-      listCopy.push(id);
-    } else if (!checked && matchedIndex !== -1) {
-      listCopy = listCopy.filter((item) => item !== id);
-    }
+  //   if (checked && matchedIndex === -1) {
+  //     listCopy.push(id);
+  //   } else if (!checked && matchedIndex !== -1) {
+  //     listCopy = listCopy.filter((item) => item !== id);
+  //   }
 
-    setSeelectedList(listCopy);
+  //   setSeelectedList(listCopy);
+  // };
+
+  const handleSelectIds = (id: string) => {
+    setSeelectedList((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
   };
 
-  const handleCheckValue = (id: string): boolean => {
-    const matchedIndex = selectedList.findIndex((item) => item === id);
+  const handleCheckId = (id: string) => selectedList.includes(id);
 
-    if (matchedIndex === -1) {
-      return false;
-    }
-    return true;
-  };
+  // const handleCheckValue = (id: string): boolean => {
+  //   const matchedIndex = selectedList.findIndex((item) => item === id);
+
+  //   if (matchedIndex === -1) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const handleCheckAll = () => {
     if (!data) {
@@ -208,6 +217,9 @@ const UpdateVoters = () => {
   const [genderBundleQrCode, { loading: generating }] = useMutation(
     GENERATE_BUNLE_QRCODE
   );
+
+  // const [tranvoterArea, { loading: transfering }] =
+  //   useMutation(TRANSFER_VOTER_AREA);
 
   const [resetTeamList] = useMutation(RESET_TEAM_LIST, {
     onError: (err) => {
@@ -294,7 +306,7 @@ const UpdateVoters = () => {
       return;
     }
 
-   await resetTeamList({
+    await resetTeamList({
       variables: {
         zipCode: data.zipCode,
         barangayId: data.barangayId,
@@ -357,28 +369,10 @@ const UpdateVoters = () => {
                   className="flex gap-2"
                   variant="outline"
                   onClick={() => navigate(`/manage/addvoter`)}
+                  disabled
                 >
                   <IoPersonAddOutline /> Add Voter
                 </Button>
-                <Button
-                  className="flex gap-2"
-                  variant="outline"
-                  onClick={() => {
-                    setOnSelect(!onSelect);
-                    setSeelectedList([]);
-                  }}
-                >
-                  <MdDeselect /> {onSelect ? "Cancel" : "Select many"}
-                </Button>
-                {onSelect && (
-                  <Button
-                    className="flex gap-2"
-                    variant="destructive"
-                    onClick={() => setMultiRemove(true)}
-                  >
-                    Remove selected
-                  </Button>
-                )}
 
                 <Button
                   onClick={() => setGenerate(true)}
@@ -388,16 +382,36 @@ const UpdateVoters = () => {
                   <IoQrCodeSharp />
                   Generate QR code
                 </Button>
+                <Button
+                  onClick={() => navigate(`/manage/update/voter-list`)}
+                  className="flex gap-2 items-center mt-2"
+                  variant="outline"
+                >
+                  <GrDocumentUpdate />
+                  Update List
+                </Button>
               </div>
 
               <Button
-                onClick={() => navigate(`/manage/update/voter-list`)}
-                className="flex gap-2 items-center"
+                className="flex gap-2 mt-3"
                 variant="outline"
+                onClick={() => {
+                  setOnSelect(!onSelect);
+                  setSeelectedList([]);
+                }}
               >
-                <GrDocumentUpdate />
-                Update List
+                <MdDeselect /> {onSelect ? "Cancel" : "Select many"}
               </Button>
+              {onSelect && (
+                <Button
+                  disabled={selectedList.length === 0}
+                  className="flex gap-2"
+                  variant="destructive"
+                  onClick={() => setMultiRemove(true)}
+                >
+                  Remove selected
+                </Button>
+              )}
               <Button
                 onClick={() => setOnOpen(1)}
                 className="flex gap-2 items-center"
@@ -535,8 +549,7 @@ const UpdateVoters = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onSelect) {
-                      const state = handleCheckValue(item.id);
-                      handleCheckVoter(item.id, state);
+                      handleSelectIds(item.id);
                       return;
                     }
                     handleNav(item.id);
@@ -546,13 +559,7 @@ const UpdateVoters = () => {
                 >
                   {onSelect && (
                     <TableCell className="z-50">
-                      <Checkbox
-                        checked={handleCheckValue(item.id)}
-                        onCheckedChange={(checked) => {
-                          handleCheckVoter(item.id, checked as boolean);
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
+                      <Checkbox checked={handleCheckId(item.id)} />
                     </TableCell>
                   )}
                   <TableCell>
@@ -749,6 +756,13 @@ const UpdateVoters = () => {
           setOnOpen(0);
         }}
       />
+
+      <Modal
+        open={onOpen === 2}
+        onOpenChange={() => {
+          setOnOpen(0);
+        }}
+      ></Modal>
     </div>
   );
 };

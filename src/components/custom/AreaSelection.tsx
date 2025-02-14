@@ -34,6 +34,8 @@ interface AreaProps {
   currentBarangay: string;
   currentPurok: string;
   className?: string;
+  defaultValue: string;
+  disabled?: boolean;
 }
 
 const AreaSelection = ({
@@ -42,6 +44,8 @@ const AreaSelection = ({
   currentMunicipal,
   currentPurok,
   className,
+  defaultValue,
+  disabled,
 }: AreaProps) => {
   const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
@@ -62,13 +66,10 @@ const AreaSelection = ({
   });
 
   useEffect(() => {
-    if (currentMunicipal === "all") {
-      return;
-    }
     refetch({
       zipCode: parseInt(currentMunicipal, 10),
     });
-  }, [currentMunicipal, refetch]);
+  }, [currentMunicipal, refetch, defaultValue]);
 
   const {
     data: purokList,
@@ -104,12 +105,14 @@ const AreaSelection = ({
   if (!data) {
     return;
   }
+
   return (
     <div className={twMerge(" h-auto p-2 flex items-center gap-2", className)}>
       <Label htmlFor="municipal">Municipal:</Label>
       <Select
+        disabled={disabled}
         value={currentMunicipal}
-        defaultValue="all"
+        defaultValue={defaultValue}
         onValueChange={(value) => handleChangeOption("zipCode", value)}
       >
         <SelectTrigger id="municipal" className="w-auto">
