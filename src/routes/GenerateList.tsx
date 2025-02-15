@@ -348,8 +348,6 @@ const GenerateList = () => {
           responseType: "blob",
         }
       );
-
-      // Create a URL for the blob and trigger a download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement("a");
       a.href = url;
