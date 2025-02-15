@@ -56,21 +56,23 @@ const ValidationBarangay = ({ zipCode }: Props) => {
           <TableBody>
             {data.barangayList.map((item) => (
               <TableRow
-                key={item.id}
+                key={item?.id}
                 className=" cursor-pointer hover:bg-slate-200"
-                onClick={() => navigate(`/manage/validation/${item.id}`)}
+                onClick={() => navigate(`/manage/validation/${item?.id}`)}
               >
-                <TableCell>{item.name}</TableCell>
+                <TableCell>{item?.name}</TableCell>
                 <TableCell>
-                  {item.teamValidationStat.teamLeadersCount}
-                </TableCell>
-                <TableCell>{item.teamValidationStat.validatedTL}</TableCell>
-                <TableCell>{item.teamValidationStat.members}</TableCell>
-                <TableCell>
-                  {item.teamValidationStat.validatedMembers}
+                  {item?.teamValidationStat?.teamLeadersCount ?? 0}
                 </TableCell>
                 <TableCell>
-                  {item.teamValidationStat.untrackedMembers}
+                  {item?.teamValidationStat?.validatedTL ?? 0}
+                </TableCell>
+                <TableCell>{item?.teamValidationStat?.members ?? 0}</TableCell>
+                <TableCell>
+                  {item?.teamValidationStat?.validatedMembers ?? 0}
+                </TableCell>
+                <TableCell>
+                  {item?.teamValidationStat?.untrackedMembers ?? 0}
                 </TableCell>
               </TableRow>
             ))}

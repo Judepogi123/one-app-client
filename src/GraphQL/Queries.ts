@@ -1520,7 +1520,7 @@ export const GET_ACCOUNT_TEAM_INFO = gql`
           timestamp
           id
         }
-        untracked {
+        UntrackedVoter {
           id
           timestamp
         }
