@@ -144,7 +144,7 @@ const Candidates = () => {
           <TableHead>Lastname</TableHead>
           <TableHead>Firstname</TableHead>
           <TableHead>Code</TableHead>
-          <TableHead>Overall</TableHead>
+          {/* <TableHead>Overall</TableHead> */}
           <TableHead>Figure Heads</TableHead>
           <TableHead>BC</TableHead>
           <TableHead>PC</TableHead>
@@ -164,7 +164,7 @@ const Candidates = () => {
                 <TableCell>{item.lastname}</TableCell>
                 <TableCell>{item.firstname}</TableCell>
                 <TableCell>{item.code}</TableCell>
-                <TableCell>{item.supporters}</TableCell>
+                {/* <TableCell>{item.supporters}</TableCell> */}
                 <TableCell>{item.inTeam.figureHeads}</TableCell>
                 <TableCell>{item.inTeam.bc}</TableCell>
                 <TableCell>{item.inTeam.pc}</TableCell>
