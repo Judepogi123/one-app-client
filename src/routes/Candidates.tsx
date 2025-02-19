@@ -19,7 +19,7 @@ import {
 import { Input } from "../components/ui/input";
 //import { Label } from "../components/ui/label";
 import Modal from "../components/custom/Modal";
-import Maintenance from "../components/custom/Maintenance";
+//import Maintenance from "../components/custom/Maintenance";
 import {
   Form,
   FormControl,
@@ -104,7 +104,7 @@ const Candidates = () => {
     );
   };
 
-  return <Maintenance />;
+  // return <Maintenance />;
 
   return (
     <div className="w-full">

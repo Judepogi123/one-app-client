@@ -161,6 +161,7 @@ const Teams = () => {
     onCompleted: () => {
       toast("Team merged successfully");
       setOnUpdate(null);
+      setOnOpen(0);
       refetch();
     },
   });
@@ -362,24 +363,67 @@ const Teams = () => {
         </Table>
       )}
       <div className="w-full flex gap-2 p-2 justify-center">
-        <Button size="sm" variant="outline">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            const pageNow = parseInt(currentPage, 10);
+            if (pageNow === 0) return;
+            const page = pageNow - 1;
+            handleChangeOption("page", page.toString());
+          }}
+        >
           Prev
         </Button>
-        <Button size="sm" variant="outline">
-          1
-        </Button>
-        <Button size="sm" variant="outline">
-          2
-        </Button>
-        <Button size="sm" variant="outline">
-          3
-        </Button>
+        {parseInt(currentPage, 10) - 1 === 0 ? null : (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const pageNow = parseInt(currentPage, 10);
+              if (pageNow === 0) return;
+              const page = pageNow - 1;
+              handleChangeOption("page", page.toString());
+            }}
+          >
+            {parseInt(currentPage, 10) - 1}
+          </Button>
+        )}
 
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className=" border border-gray-500">
+          {parseInt(currentPage, 10)}
+        </Button>
+        {data?.teamList && data.teamList.length >= 50 && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const pageNow = parseInt(currentPage, 10);
+              if (pageNow === 0) return;
+              const page = pageNow + 1;
+              handleChangeOption("page", page.toString());
+            }}
+          >
+            {parseInt(currentPage, 10) + 1}
+          </Button>
+        )}
+
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            if (data?.teamList && data.teamList.length < 50) return;
+            const pageNow = parseInt(currentPage, 10);
+            if (pageNow === 0) return;
+            const page = pageNow + 1;
+            handleChangeOption("page", page.toString());
+          }}
+        >
           Next
         </Button>
       </div>
       <Modal
+        title="Merge"
         onFunction={hadnleMergeTeam}
         children={
           <div>
@@ -392,6 +436,7 @@ const Teams = () => {
         open={onOpen === 1}
         onOpenChange={() => {
           setOnUpdate(null);
+          setOnOpen(0);
         }}
       />
     </div>

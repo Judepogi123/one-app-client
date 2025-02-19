@@ -22,7 +22,7 @@ interface Props {
   defaultValue: string;
   value: string;
   onChange?: (...event: any[]) => void;
-  handleChangeArea: (value: string, key?: string) => void;
+  handleChangeArea: (value: string, key: string) => void;
   className?: string;
   disabled: boolean;
 }
@@ -47,7 +47,7 @@ const MunicipalSel = ({
         disabled={disabled}
         defaultValue={defaultValue}
         value={value}
-        onValueChange={(value) => handleChangeArea("zipCode", value)}
+        onValueChange={(value) => handleChangeArea(value, "zipCode")}
       >
         <SelectTrigger disabled={loading}>
           <SelectValue placeholder={loading ? "Loading..." : "Select"} />

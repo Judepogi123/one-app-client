@@ -1123,14 +1123,18 @@ export const GET_TEAM_INFO = gql`
         votersId
         barangayCoor {
           id
+          votersId
           voter {
+            id
             firstname
             lastname
             idNumber
           }
         }
         purokCoors {
+          votersId
           voter {
+            id
             firstname
             lastname
             idNumber

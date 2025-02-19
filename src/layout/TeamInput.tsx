@@ -424,6 +424,7 @@ const TeamInput = () => {
         open={onOpenModal === 2}
         onOpenChange={() => {
           if (loading) return;
+          setCounter(0);
           setOnOpenModal(0);
         }}
         children={

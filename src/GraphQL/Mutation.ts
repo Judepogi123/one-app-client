@@ -730,3 +730,11 @@ export const RESET_PASSWORD = gql`
     resetPassword(id: $id, newPassword: $newPassword)
   }
 `
+
+export const TRANSFER_GROUP = gql`
+  #graphql
+    mutation TranferGroup($id: String, $toId: String){
+      transferGroup(id: $id, toId: $toId)
+    }
+
+`

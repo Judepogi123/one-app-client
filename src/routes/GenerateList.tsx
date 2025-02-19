@@ -360,8 +360,47 @@ const GenerateList = () => {
     }
   };
 
-  const { mutateAsync } = useMutation({
+  const handleDuplicate = async () => {
+    if (currentMunicipal === "all") {
+      toast.warning("Select a Municipal to download", {
+        closeButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "upload/duplicated",
+        {
+          zipCode: currentMunicipal,
+        },
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentBarangay}${Date.now()}.xlsx`; // Set the file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
+
+  const {} = useMutation({
     mutationFn: handleDownload,
+    onError: () => {
+      toast.error("Failed to download the file", {
+        closeButton: false,
+        description: "Please check your internet connection and try again",
+      });
+    },
+  });
+
+  const { mutateAsync: duplicating, isPending } = useMutation({
+    mutationFn: handleDuplicate,
     onError: () => {
       toast.error("Failed to download the file", {
         closeButton: false,
@@ -593,8 +632,17 @@ const GenerateList = () => {
                 ))}
               </SelectContent>
             </Select> */}
-
             <Button
+              variant="default"
+              size="sm"
+              className="flex gap-1 absolute right-0 mr-2"
+              onClick={() => duplicating()}
+              disabled={isPending}
+            >
+              <TbReport fontSize={20} />
+              Dup
+            </Button>
+            {/* <Button
               disabled
               variant="default"
               size="sm"
@@ -604,7 +652,7 @@ const GenerateList = () => {
             >
               <TbReport fontSize={20} />
               Report
-            </Button>
+            </Button> */}
           </div>
         )}
       </div>

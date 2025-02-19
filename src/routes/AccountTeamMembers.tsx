@@ -49,7 +49,7 @@ const AccountTeamMembers = () => {
   const [selectedVoters, setSelectedVoters] = useState<VotersProps[]>([]);
   const [droppedItem, setDroppedItem] = useState<VotersProps | null>(null);
   const [selected, setSelected] = useState<VotersProps | undefined>(undefined);
-  const { data, loading, error } = useQuery<{
+  const { data, loading } = useQuery<{
     team: TeamProps | null;
   }>(GET_ACCOUNT_TEAM_INFO, {
     variables: {
@@ -57,9 +57,6 @@ const AccountTeamMembers = () => {
     },
     skip: !accountTeamID,
   });
-
-  console.log("Error, ", error?.message);
-  console.log({ data });
 
   const handleSelectIds = (id: string) => {
     setSelectedIDS((prev) =>

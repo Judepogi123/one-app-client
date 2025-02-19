@@ -55,7 +55,7 @@ const Validation = () => {
     }
   );
 
-  const handleChangeArea = (type: string, value?: string | undefined) => {
+  const handleChangeArea = (value: string, type: string) => {
     if (!value) return;
     setParams(
       (prev) => {
@@ -303,7 +303,7 @@ const Validation = () => {
     <div className="w-full h-full relative">
       <Tabs
         defaultValue="validator"
-        onValueChange={(e) => handleChangeArea("tab", e)}
+        onValueChange={(e) => handleChangeArea(e, "tab")}
         value={currentTab}
       >
         <div className="w-full flex justify-between p-2 border border-gray-400 border-l-0 border-r-0 sticky bg-white top-0 z-30">
@@ -375,9 +375,7 @@ const Validation = () => {
         </TabsContent>
       </Tabs>
 
-      <Modal open={onOpen === 1} onOpenChange={() => setOnOpen(0)}>
-        <div>sda</div>
-      </Modal>
+      <Modal open={onOpen === 1} onOpenChange={() => setOnOpen(0)}></Modal>
 
       <Modal
         title="Import JSON file"

@@ -251,12 +251,11 @@ const BarangaySupporters = () => {
           <TableHead>PC</TableHead>
           <TableHead>TL</TableHead>
           <TableHead>Voter W/ team</TableHead>
-          <TableHead>Voter W/o team</TableHead>
+          {/* <TableHead>Voter W/o team</TableHead> */}
           <TableHead>10+</TableHead>
           <TableHead>10</TableHead>
           <TableHead>6-9</TableHead>
           <TableHead>5</TableHead>
-          <TableHead>4</TableHead>
           <TableHead>1-3</TableHead>
           <TableHead>Delisted Voter</TableHead>
           <TableHead>All Voters</TableHead>
@@ -281,13 +280,12 @@ const BarangaySupporters = () => {
                 <TableCell>{item.supporters?.pc || 0}</TableCell>
                 <TableCell>{item.supporters?.tl || 0}</TableCell>
                 <TableCell>{item.supporters?.withTeams || 0}</TableCell>
-                <TableCell>{item.supporters?.voterWithoutTeam || 0}</TableCell>
+                {/* <TableCell>{item.supporters?.voterWithoutTeam || 0}</TableCell> */}
                 <TableCell>{item.teamStat?.aboveMax || 0}</TableCell>
                 <TableCell>{item.teamStat?.equalToMax || 0}</TableCell>
                 <TableCell>{item.teamStat?.belowMax || 0}</TableCell>
-                <TableCell>{item.teamStat?.aboveMin || 0}</TableCell>
                 <TableCell>{item.teamStat?.equalToMin || 0}</TableCell>
-                <TableCell>{item.teamStat?.belowMin || 0}</TableCell>
+                <TableCell>{item.teamStat?.threeAndBelow || 0}</TableCell>
                 <TableCell>{item.barangayDelistedVoter || 0}</TableCell>
                 <TableCell>{item.barangayVotersCount || 0}</TableCell>
               </TableRow>
@@ -324,7 +322,7 @@ const BarangaySupporters = () => {
             <Button size="sm" variant="default" onClick={handleDownload}>
               Overall Breakdown
             </Button>
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" disabled>
               Barangay Breakdown
             </Button>
           </div>
@@ -336,12 +334,33 @@ const BarangaySupporters = () => {
       />
 
       <Modal
-        title={`${selected?.id}`}
+        title={`Print Supporters`}
         open={onOpen === 2}
         children={
-          <div className="p-4">
-            <Button disabled={barangayLoading} onClick={handleGenData}>
-              Check
+          <div className="flex flex-col gap-1">
+            <Button
+              className="w-full border border-gray-400"
+              variant="outline"
+              disabled
+              onClick={handleGenData}
+            >
+              Per BC (Not Available)
+            </Button>
+            <Button
+              className="w-full border border-gray-400"
+              variant="outline"
+              disabled={barangayLoading}
+              onClick={handleGenData}
+            >
+              Per PC
+            </Button>
+            <Button
+              className="w-full border border-gray-400"
+              variant="outline"
+              disabled
+              onClick={handleGenData}
+            >
+              Per TL (Not Available)
             </Button>
           </div>
         }

@@ -31,6 +31,8 @@ import {
   UPDATE_LEADER,
   UDPATE_TEAM_MEMBERS,
   REMOVE_TEAM,
+  SWAP_VOTERS,
+  //TRANSFER_GROUP,
 } from "../GraphQL/Mutation";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -46,6 +48,9 @@ const Groups = () => {
   const [selectedList, setSelectedList] = useState<string[]>([]);
   const [onMultiSelect, setOnMultiSelect] = useState(false);
   const [onOpenModal, setOnOpenModal] = useState(0);
+  const [onOpen, setOnOpen] = useState(0);
+  const [level, setLevel] = useState(0);
+  const [droppedItem, setDroppedItem] = useState<VotersProps | null>(null);
   const { teamId } = useParams();
   const navigate = useNavigate();
 
@@ -120,36 +125,71 @@ const Groups = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="w-full h-full grid">
-        <h1 className="m-auto text-yellow-600 text-xl font-medium">
-          Loading...
-        </h1>
-      </div>
-    );
-  }
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    item: VotersProps
+  ) => {
+    e.dataTransfer.setData("application/json", JSON.stringify(item));
+  };
 
-  if (!data) {
-    return (
-      <div className="w-full h-full grid">
-        <h1 className="m-auto text-yellow-600 text-xl font-medium">
-          Team unfound!
-        </h1>
-      </div>
-    );
-  }
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, level: number) => {
+    e.preventDefault();
+    const item = e.dataTransfer.getData("application/json");
 
-  const { team } = data;
-  if (!team) {
-    return (
-      <div className="w-full h-full grid">
-        <h1 className="m-auto text-yellow-600 text-xl font-medium">
-          Team members not found!
-        </h1>
-      </div>
-    );
-  }
+    if (item) {
+      try {
+        const voterData: VotersProps = JSON.parse(item);
+        setDroppedItem(voterData);
+        setLevel(level);
+        setOnOpen(11);
+      } catch (error) {
+        toast.error("Error parsing voter data.");
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const [swapVoters, { loading: swapping }] = useMutation(SWAP_VOTERS, {
+    onCompleted: () => {
+      toast.success("Swap success!", {
+        closeButton: false,
+      });
+      setOnOpen(0);
+    },
+    refetchQueries: [{ query: GET_TEAM_INFO, variables: { id: teamId } }],
+  });
+
+  const handleSwpped = async () => {
+    if (!data?.team?.teamLeader?.votersId) {
+      toast.error("TL ID not found", {
+        closeButton: false,
+      });
+      return;
+    }
+    if (!droppedItem) {
+      return;
+    }
+    const levelInfo = [
+      data.team.teamLeader.votersId,
+      data.team.teamLeader.purokCoors?.voter?.id,
+      data.team.teamLeader.barangayCoor?.voter?.id,
+    ];
+    if (droppedItem.id === levelInfo[level - 1]) {
+      toast.error("Cannot swap with the same level", {
+        closeButton: false,
+      });
+      return;
+    }
+    await swapVoters({
+      variables: {
+        voterOneId: droppedItem.id,
+        voterTwoId: levelInfo[level - 1],
+      },
+    });
+  };
 
   const handleChangLeader = async () => {
     if (!selectedVoters) {
@@ -164,7 +204,7 @@ const Groups = () => {
       variables: {
         id: selectedVoters.id,
         teamId: teamId,
-        level: team.level,
+        level: team?.level,
       },
     });
     if (response.errors) {
@@ -175,13 +215,14 @@ const Groups = () => {
 
   const handleUpdateLeader = async (method: number) => {
     if (!team) {
-      toast("Required date missing", {
+      toast.warning("Required date missing", {
         description: "Try refresh the page and try again.",
+        closeButton: false,
       });
       return;
     }
     if (!team.teamLeader) {
-      toast("Already vacant!", {
+      toast.warning("Already vacant!", {
         closeButton: false,
       });
       return;
@@ -226,35 +267,138 @@ const Groups = () => {
     }
   };
 
+  // const [transferGroup, { loading: transfering }] = useMutation(
+  //   TRANSFER_GROUP,
+  //   {
+  //     onCompleted: () => {
+  //       toast.success("Transfer success!", {
+  //         closeButton: false,
+  //       });
+  //       setOnOpen(0);
+  //     },
+  //     refetchQueries: [{ query: GET_TEAM_INFO, variables: { id: teamId } }],
+  //   }
+  // );
+
+  if (loading) {
+    return (
+      <div className="w-full h-full grid">
+        <h1 className="m-auto text-yellow-600 text-xl font-medium">
+          Loading...
+        </h1>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="w-full h-full grid">
+        <h1 className="m-auto text-yellow-600 text-xl font-medium">
+          Team unfound!
+        </h1>
+      </div>
+    );
+  }
+
+  const { team } = data;
+  if (!team) {
+    return (
+      <div className="w-full h-full grid">
+        <h1 className="m-auto text-yellow-600 text-xl font-medium">
+          Team members not found!
+        </h1>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-auto">
       <div className="w-full p-2 border bg-slate-200 relative">
         {data.team?.teamLeader?.barangayCoor && (
-          <HeaderInfo
-            title={`${team.barangay.name} Barangay Coor."`}
-            fullname={`${
-              data.team.teamLeader?.barangayCoor.voter?.lastname as string
-            }, ${
-              data.team.teamLeader?.barangayCoor.voter?.firstname as string
-            }-(${data.team.teamLeader.barangayCoor.voter?.idNumber})`}
-          />
+          <div
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, 3)}
+            draggable
+            onDragStart={(e) =>
+              handleDragStart(
+                e,
+                data.team?.teamLeader?.barangayCoor?.voter as VotersProps
+              )
+            }
+          >
+            <Popover>
+              <PopoverTrigger>
+                <HeaderInfo
+                  level={3}
+                  title={`${team.barangay.name} Barangay Coor.`}
+                  fullname={`${
+                    data.team.teamLeader?.barangayCoor.voter?.lastname as string
+                  }, ${
+                    data.team.teamLeader?.barangayCoor.voter
+                      ?.firstname as string
+                  }-(${data.team.teamLeader.barangayCoor.voter?.idNumber})`}
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <h1>Not Available</h1>
+                {/* <Button variant="outline" onClick={() => setOnOpenModal(2)}>
+                  Vacant
+                </Button> */}
+              </PopoverContent>
+            </Popover>
+          </div>
         )}
         {data.team?.teamLeader?.purokCoors && (
-          <HeaderInfo
-            title={`${team.barangay.name} Purok Coor."`}
-            fullname={`${
-              data.team.teamLeader.purokCoors.voter?.lastname as string
-            }, ${data.team.teamLeader.purokCoors.voter?.firstname as string}-(${
-              data.team.teamLeader.purokCoors.voter?.idNumber
-            })`}
-          />
+          <div
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, 2)}
+            draggable
+            onDragStart={(e) =>
+              handleDragStart(
+                e,
+                data.team?.teamLeader?.purokCoors?.voter as VotersProps
+              )
+            }
+          >
+            <Popover>
+              <PopoverTrigger>
+                {" "}
+                <HeaderInfo
+                  level={2}
+                  title={`${team.barangay.name} Purok Coor.`}
+                  fullname={`${
+                    data.team.teamLeader.purokCoors.voter?.lastname as string
+                  }, ${
+                    data.team.teamLeader.purokCoors.voter?.firstname as string
+                  }-(${data.team.teamLeader.purokCoors.voter?.idNumber})`}
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <h1>Not Available</h1>
+              </PopoverContent>
+            </Popover>
+          </div>
         )}
         <Popover>
           <PopoverTrigger>
-            <h1 className="font-medium text-slate-600 text-xl hover:underline">
-              {data.team?.teamLeader?.voter?.lastname},{" "}
-              {handleAltText(data.team?.teamLeader?.voter?.firstname, "Vacant")}
-            </h1>
+            <div
+              id="team-leader"
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, 1)}
+              draggable
+              onDragStart={(e) =>
+                handleDragStart(e, data.team?.teamLeader?.voter as VotersProps)
+              }
+            >
+              <h1 className="font-medium text-slate-600 text-xl hover:underline">
+                {data.team?.teamLeader?.voter?.lastname},{" "}
+                {handleAltText(
+                  data.team?.teamLeader?.voter?.firstname,
+                  "Vacant"
+                )}
+                -({data.team?.teamLeader?.voter?.idNumber})
+              </h1>
+            </div>
           </PopoverTrigger>
           <PopoverContent className="max-w-60 flex flex-col gap-2">
             <Button variant="outline" onClick={() => setOnOpenModal(1)}>
@@ -269,6 +413,10 @@ const Groups = () => {
               disabled
             >
               Switch
+            </Button>
+
+            <Button variant="outline" onClick={() => setOnOpen(1)} disabled>
+              Transfer Group
             </Button>
 
             {/* <Button
@@ -353,6 +501,8 @@ const Groups = () => {
             .filter((item) => item.id !== team?.teamLeader?.voter?.id)
             .map((item, i) => (
               <TableRow
+                draggable
+                onDragStart={(e) => handleDragStart(e, item)}
                 className={` cursor-pointer hover:bg-slate-200 ${
                   handleCheckState(item.id) ? "bg-slate-300" : ""
                 }`}
@@ -415,6 +565,7 @@ const Groups = () => {
         }
       />
       <Modal
+        className="max-w-sm"
         title="Vacant Team leader"
         children="Are you sure you want to vacant the team leader?"
         footer={true}
@@ -430,6 +581,7 @@ const Groups = () => {
       />
       <Modal
         title="Proceed?"
+        className="max-w-sm"
         footer={true}
         loading={updating}
         open={onOpenModal === 5}
@@ -440,6 +592,7 @@ const Groups = () => {
         }}
       />
       <Modal
+        className="max-w-sm"
         title="Disband"
         children="Are you sure you want to disband this team?"
         open={onOpenModal === 3}
@@ -476,7 +629,7 @@ const Groups = () => {
 
       <Modal
         title="Remove team"
-        className="min-w-40"
+        className="max-w-sm"
         onFunction={handleRemove}
         loading={removing}
         footer={true}
@@ -493,6 +646,41 @@ const Groups = () => {
         open={onOpenModal === 10}
         onOpenChange={() => {
           setOnOpenModal(0);
+        }}
+      />
+
+      <Modal
+        className=" max-w-sm"
+        title="Switch"
+        footer={true}
+        onFunction={handleSwpped}
+        loading={swapping}
+        children={<div className="w-full h-auto"></div>}
+        open={onOpen === 1}
+        onOpenChange={() => {
+          if (swapping) return;
+          setOnOpen(0);
+        }}
+      />
+      <Modal
+        className=" max-w-sm"
+        title="Switch"
+        footer={true}
+        onFunction={handleSwpped}
+        loading={swapping}
+        children={
+          <div className="w-full h-auto">
+            <h1 className=" font-mono">
+              {droppedItem?.lastname}, {droppedItem?.firstname}
+            </h1>
+          </div>
+        }
+        open={onOpen === 11}
+        onOpenChange={() => {
+          if (swapping) return;
+          setDroppedItem(null);
+          setLevel(0);
+          setOnOpen(0);
         }}
       />
     </div>
