@@ -166,6 +166,7 @@ const GenerateTeam = ({ barangay, zipCode, selectedId, level }: Props) => {
                           <FormLabel>{fieldName.toUpperCase()}</FormLabel>
                           <FormControl>
                             <Checkbox
+                              disabled
                               checked={field.value as boolean}
                               onCheckedChange={field.onChange}
                             />
@@ -261,7 +262,7 @@ const GenerateTeam = ({ barangay, zipCode, selectedId, level }: Props) => {
             </Button>
 
             <Button
-              disabled={isSubmitting}
+              disabled={isSubmitting || headerOnly}
               type="submit"
               size="sm"
               variant="secondary"

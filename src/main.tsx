@@ -97,6 +97,7 @@ const queryClient = new QueryClient();
 if (import.meta.env.NODE_ENV === "production") {
   disableReactDevTools();
 }
+disableReactDevTools();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>

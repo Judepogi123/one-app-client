@@ -632,6 +632,7 @@ const Groups = () => {
             </Button>
 
             <Button
+              disabled
               variant="outline"
               onClick={() => {
                 setOnOpen(2);
@@ -696,16 +697,18 @@ const Groups = () => {
                 Add {handleLevel((team.level as number) - 1)}
               </Button>
               <Button
-                disabled={selectedList.length === 0}
+                // disabled={selectedList.length === 0}
                 variant="outline"
                 onClick={() => {
                   setOnOpen(5);
                   setLevel(team.level);
                 }}
+                disabled
               >
                 Transfer
               </Button>
               <Button
+                disabled
                 variant="outline"
                 onClick={() => {
                   setOnOpen(7);

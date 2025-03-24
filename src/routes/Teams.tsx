@@ -260,7 +260,7 @@ const Teams = () => {
           </Button>
         ))}
         <Label htmlFor="members">Members: </Label>
-        <Select defaultValue="all">
+        <Select defaultValue="all" disabled>
           <SelectTrigger id="members" className="w-auto">
             <SelectValue placeholder="Handle" />
           </SelectTrigger>
@@ -333,6 +333,7 @@ const Teams = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setOnOpen(3)}
+                disabled
               >
                 <MdOutlineAssignmentInd fontSize={20} />
                 Re-assign
