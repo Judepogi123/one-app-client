@@ -14,7 +14,7 @@ import {
   HttpLink,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-
+import { localhost } from "./api/axios";
 //customHoook
 import UserDataProvider from "./provider/UserDataProvider";
 //Router
@@ -78,10 +78,7 @@ const errorLink = onError(({ graphQLErrors }) => {
   }
 });
 
-const link = from([
-  errorLink,
-  new HttpLink({ uri: "https://jml-server.onrender.com/graphql" }),
-]);
+const link = from([errorLink, new HttpLink({ uri: `${localhost}graphql` })]);
 
 const client = new ApolloClient({
   link: link,

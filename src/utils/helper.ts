@@ -110,3 +110,16 @@ export const calculatePercentage = (part: number, total: number): string => {
 export const responseError = ["Bad Request", "User not found","Unauthorized Account","Account Suspended","Incorrect password"]
 
 export const removeAllSpaces = (str: string) => str.replace(/\s+/g, '');
+
+export const commentsTagShow = (tag: number) => {
+  const data = ["", "UD", "ND", "OP"]
+  return data[tag]
+}
+
+export const MembersCapacities = ["All", "0 Members",
+  "3 and below",
+  "4 only",
+  "5 (Min. standard)",
+  "6 to 9",
+  "10 (Max. standard)",
+  "10 and above"]

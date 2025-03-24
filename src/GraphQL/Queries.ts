@@ -33,6 +33,7 @@ export const GET_SUPPORTERS = gql`
         equalToMin
         belowMin
         threeAndBelow
+        clean
       }
     }
     candidate(id: $id) {
@@ -353,6 +354,7 @@ export const GET_DRAFTSURVEY = gql`
       status
       admin {
         firstname
+        uid
       }
     }
   }
@@ -864,8 +866,8 @@ export const GET_ALL_VOTERS = gql`
 
 export const SEARCH_VOTER = gql`
   #graphql
-  query ($query: String!, $skip: Int!, $take: Int!, $zipCode: Int) {
-    searchVoter(query: $query, skip: $skip, take: $take, zipCode: $zipCode) {
+  query ($query: String!, $skip: Int!, $take: Int!, $zipCode: Int, $barangayId: String) {
+    searchVoter(query: $query, skip: $skip, take: $take, zipCode: $zipCode, barangayId: $barangayId) {
       id
       firstname
       lastname
@@ -891,6 +893,9 @@ export const SEARCH_VOTER = gql`
       illi
       oor
       idNumber
+      WhiteList {
+        id
+      }
     }
   }
 `;
@@ -1014,6 +1019,7 @@ export const GET_TEAM_LIST = gql`
     ) {
       id
       level
+      teamLeaderId
       _count {
         voters
       }
@@ -1107,6 +1113,8 @@ export const GET_TEAM_INFO = gql`
       id
       level
       purokId
+      barangaysId
+      teamLeaderId
       purok {
         purokNumber
         id
@@ -1121,9 +1129,12 @@ export const GET_TEAM_INFO = gql`
       teamLeader {
         id
         votersId
+        level
+        teamId
         barangayCoor {
           id
           votersId
+          teamId
           voter {
             id
             firstname
@@ -1132,7 +1143,9 @@ export const GET_TEAM_INFO = gql`
           }
         }
         purokCoors {
+          id
           votersId
+          teamId
           voter {
             id
             firstname
@@ -1493,6 +1506,7 @@ export const GET_ACCOUNT_TEAM_INFO = gql`
     query Team($id: String!) {
     team(id: $id) {
       id
+      barangaysId
       _count {
       voters
     }
@@ -1548,6 +1562,16 @@ export const GET_BARANGAY_TEAMS = gql`
         validatedMembers
         validatedTL
         untrackedMembers
+        orMembers
+        dead
+      }
+      supporters {
+        withTeams
+        tl
+      }
+      teamComment {
+        id
+        type
       }
     }
   }
@@ -1588,4 +1612,38 @@ export const GET_BARANGAY_TEAMLIST = gql`
   }
 
 `;
+
+export const FIGURE_HEADS = gql`
+  #graphql
+  query FigureHeads($level: Int, $barangayId: String){
+    figureHeads(level: $level, barangayId: $barangayId){
+      id
+      teamId
+      level
+      purokCoors {
+        id
+        voter {
+          firstname
+          lastname
+          idNumber
+        }
+      }
+      barangayCoor {
+        id
+        voter {
+          firstname
+          lastname
+          idNumber
+        }
+      }
+      voter {
+        idNumber
+        id
+        firstname
+        lastname
+      }
+    }
+  }
+
+`
 

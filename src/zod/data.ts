@@ -184,3 +184,16 @@ export const ValidatedTeamsFormSchema = z.object({
   minMembers: z.string().min(1, "Minimum members is required"),
   maxMembers: z.string().min(1, "Maximum members is required"),
 });
+
+export const GenerateTeamSchema = z.object({
+  delisted: z.boolean().default(false),
+  ud: z.boolean().default(false),
+  nd: z.boolean().default(false),
+  op: z.boolean().default(false),
+  or: z.boolean().default(false),
+  inc: z.boolean().default(false),
+  dead: z.boolean().default(false),
+  selected: z.boolean().default(false),
+  headOnly: z.boolean().default(false),
+  membersCount: z.string().default("all")
+})

@@ -56,7 +56,7 @@ const optionList: DataLayoutProps[] = [
     title: "Nominee",
     value: "/manage/candidates",
     icon: FaPeopleGroup,
-    desc: "Sort and Search",
+    desc: "Supporters and Candidates",
   },
   {
     title: "Survey",
@@ -70,6 +70,12 @@ const optionList: DataLayoutProps[] = [
     icon: MdOutlineManageAccounts,
     desc: "Manage accounts",
   },
+  // {
+  //   title: "Attendance",
+  //   value: "/manage/accounts",
+  //   icon: MdOutlineManageAccounts,
+  //   desc: "Manage accounts",
+  // },
   // {
   //   title: "Report",
   //   value: "/manage/accounts",

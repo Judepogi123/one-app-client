@@ -697,7 +697,7 @@ const GenerateList = () => {
                         ? index + 1
                         : (parseInt(currentPage, 10) - 1) * LIMIT + index + 1}
                     </TableCell>
-                    <TableCell>{item.idNumber}</TableCell>
+                    <TableCell>{item.id}</TableCell>
                     <TableCell>
                       {handleElements(query, item.lastname)}
                     </TableCell>

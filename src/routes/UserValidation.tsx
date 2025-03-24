@@ -57,6 +57,7 @@ import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { MdOutlinePlaylistRemove } from "react-icons/md";
 import { MdOutlineVerified } from "react-icons/md";
 import { MdOutlinePreview } from "react-icons/md";
+import { formatTimestamp } from "../utils/date";
 
 type ValidationFormProps = z.infer<typeof ValidatedTeamsFormSchema>;
 const UserValidation = () => {
@@ -371,7 +372,9 @@ const UserValidation = () => {
                   <TableCell>{item.team?.municipal.name}</TableCell>
                   <TableCell>
                     {(item.team?.AccountValidateTeam &&
-                      item.team.AccountValidateTeam.timstamp) ||
+                      formatTimestamp(
+                        item.team.AccountValidateTeam.timstamp as string
+                      )) ||
                       "N/A"}
                   </TableCell>
                 </TableRow>

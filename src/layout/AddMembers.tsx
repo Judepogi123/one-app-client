@@ -17,15 +17,21 @@ interface Props {
   level: number;
   head: string;
   setOnOpenModal: React.Dispatch<React.SetStateAction<number>>;
+  barangaysId?: string;
 }
 
-const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
+const AddMembers = ({ level, head, setOnOpenModal, barangaysId }: Props) => {
   const [selectedList, setSelectedList] = useState<VotersProps[]>([]);
   const [selectedVoter, setSelectedVoter] = useState<VotersProps | undefined>(
     undefined
   );
 
   const { teamId } = useParams();
+
+  const handleRemoveVoters = (id: string) => {
+    setSelectedList(selectedList.filter((item) => item.id !== id));
+    setSelectedVoter(undefined);
+  };
 
   useEffect(() => {
     setSelectedVoter(undefined);
@@ -112,13 +118,16 @@ const AddMembers = ({ level, head, setOnOpenModal }: Props) => {
           selectedVoter={selectedVoter}
           setSelectedVoter={setSelectedVoter}
           level={0}
+          barangaysId={barangaysId}
         />
       </div>
       <div className="w-full h-auto flex flex-col">
         {selectedList &&
           selectedList.map((voter) => (
-            <div key={voter.id}>
-              {voter.firstname} {voter.lastname}
+            <div key={voter.id} onClick={() => handleRemoveVoters(voter.id)}>
+              <h1 className="font-medium hover:underline cursor-pointer">
+                {voter.firstname} {voter.lastname}
+              </h1>
             </div>
           ))}
       </div>

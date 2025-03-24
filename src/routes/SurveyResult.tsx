@@ -1,4 +1,6 @@
 import { useParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "../api/axios";
 import {
   Select,
   SelectContent,
@@ -36,7 +38,6 @@ import { CiExport } from "react-icons/ci";
 //layout
 import SurveyAgeResult from "../layout/SurveyAgeResult";
 import Modal from "../components/custom/Modal";
-import { exportPDF } from "../utils/generate";
 import { toast } from "sonner";
 //import { Item } from "@radix-ui/react-select";
 interface SurveyInfoProps {
@@ -89,8 +90,6 @@ const SurveyResult = () => {
     fetchPolicy: "no-cache",
   });
 
-  console.log({ data });
-
   useEffect(() => {
     refetch();
   }, [
@@ -111,8 +110,63 @@ const SurveyResult = () => {
     },
     skip: !selectedMunicipal,
   });
+  const handlePrint = async () => {
+    if (!selectedBaragnay) {
+      toast.warning("Invalid Area", {
+        closeButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "upload/generate-survey-report",
+        {
+          zipCode: selectedMunicipal,
+          code: surveyID,
+          barangayId: selectedBaragnay,
+        },
+        {
+          responseType: "blob", // Important for handling binary data
+        }
+      );
 
-  console.log({ responseData });
+      // Create a URL for the Blob data
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary anchor element
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "survey-report.pdf";
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: handlePrint,
+    onMutate: () => {
+      const toastId = toast.loading("Downloading...", { closeButton: false });
+      return { toastId }; // Pass the toastId to onSuccess and onError
+    },
+    onSuccess: (_data, _variables, context) => {
+      toast.dismiss(context?.toastId); // Auto close the loading toast
+      toast.success("Download complete", {
+        closeButton: false,
+        description: "Open the PDF file to see the results",
+      });
+    },
+    onError: (_error, _variables, context) => {
+      toast.dismiss(context?.toastId); // Auto close the loading toast
+      toast.error("Download error", { closeButton: false });
+    },
+  });
 
   useEffect(() => {
     if (!responseData?.barangayList) return;
@@ -211,7 +265,7 @@ const SurveyResult = () => {
           <CiExport />
           Export
         </Button>
-        <Button onClick={() => exportPDF(`${data.survey.tagID}.pdf`)}>
+        <Button onClick={() => mutateAsync()} disabled={isPending}>
           Print
         </Button>
       </div>
@@ -278,7 +332,7 @@ const SurveyResult = () => {
             if (presentationMode) {
               return query.access === "regular" && query.onTop;
             }
-            
+
             return query.onTop;
           })
           .map((item) => (

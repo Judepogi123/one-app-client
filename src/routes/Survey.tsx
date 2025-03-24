@@ -76,7 +76,9 @@ const Survey = () => {
         // navigate(`/survey/${response.data.createSurvey.id}`);
         return;
       }
-      toast("Failed to create new survey.");
+      toast.warning("Failed to create new survey.", {
+        closeButton: false,
+      });
     } catch (error) {
       toast("An error occurered.", {
         description: `${error}`,
@@ -96,7 +98,7 @@ const Survey = () => {
     );
   };
 
-  const handleNavitate = (value: string) => {    
+  const handleNavitate = (value: string) => {
     try {
       if (currentState === "draft") {
         navigate(`/survey/draft/${value}`);
@@ -157,7 +159,7 @@ const Survey = () => {
           <Table>
             <TableHeader className="border bg-slate-200">
               <TableHead>Tag ID</TableHead>
-              <TableHead>Facilitate by</TableHead>
+              {/* <TableHead>Facilitate by</TableHead> */}
               <TableHead>Create at</TableHead>
               <TableHead>Status</TableHead>
             </TableHeader>
@@ -174,7 +176,7 @@ const Survey = () => {
                     className="cursor-pointer hover:bg-slate-100"
                   >
                     <TableCell>{item.tagID}</TableCell>
-                    <TableCell>{item.admin.firstname}</TableCell>
+                    {/* <TableCell>{item.admin.uid}</TableCell> */}
                     <TableCell>{formatTimestamp(item.timestamp)}</TableCell>
                     <TableCell>
                       {item.drafted ? "Drafted" : item.status}

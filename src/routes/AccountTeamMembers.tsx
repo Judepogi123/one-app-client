@@ -14,6 +14,7 @@ import {
   EXCLUDE_VOTERS,
   UNTRACK_MEMBERS,
   ADD_MEMBERS,
+  COMMENTS,
 } from "../GraphQL/Mutation";
 //layout
 import { Button } from "../components/ui/button";
@@ -41,6 +42,22 @@ import { formatTimestamp } from "../utils/date";
 //icons
 import { CiSearch } from "react-icons/ci";
 import SearchVoters from "../layout/SearchVoters";
+import { commentsTagShow } from "../utils/helper";
+
+const commentsTag = [
+  {
+    title: "UD",
+    type: 1,
+  },
+  {
+    title: "ND",
+    type: 2,
+  },
+  {
+    title: "OP",
+    type: 3,
+  },
+];
 const AccountTeamMembers = () => {
   const { accountTeamID, userID } = useParams();
   const [onOpen, setOnOpen] = useState(0);
@@ -376,6 +393,43 @@ const AccountTeamMembers = () => {
     });
   };
 
+  const [comments, { loading: commenting }] = useMutation(COMMENTS, {
+    onCompleted: () => {
+      toast.success("Success! ", {
+        closeButton: false,
+      });
+      setOnOpen(0);
+    },
+    onError: (err) => {
+      toast.error("Tag Comment failed", {
+        closeButton: false,
+        description: `${err.message}`,
+      });
+      setSelectedIDS([]);
+      console.log(err);
+    },
+    refetchQueries: [
+      { query: GET_ACCOUNT_TEAM_INFO, variables: { id: accountTeamID } },
+    ],
+  });
+
+  console.log(selectedIDS);
+
+  const handleComments = async (type: number) => {
+    if (selectedIDS.length === 0) {
+      toast.warning("Please select at least one team member", {
+        closeButton: false,
+      });
+      return;
+    }
+    await comments({
+      variables: {
+        ids: selectedIDS.map((item) => item),
+        tag: type,
+      },
+    });
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -488,9 +542,22 @@ const AccountTeamMembers = () => {
                       Un/Tracked
                     </Button>
                   </div>
+                  <p className="text-sm text-center mt-2">Comments</p>
+                  <div className="w-full grid grid-cols-2 gap-2">
+                    {commentsTag.map((item) => (
+                      <Button
+                        id={item.type.toString()}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleComments(item.type)}
+                        disabled={commenting}
+                      >
+                        {item.title}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <div className="w-full mt-4">
-                  <p></p>
                   <Button
                     size="sm"
                     className="w-full"
@@ -525,6 +592,7 @@ const AccountTeamMembers = () => {
               <TableHead>Firstname</TableHead>
               <TableHead>ID Number</TableHead>
               <TableHead>Tags</TableHead>
+              <TableHead>Comments</TableHead>
               <TableHead>Date Validated</TableHead>
               <TableHead>Untracked</TableHead>
             </TableHeader>
@@ -614,6 +682,7 @@ const AccountTeamMembers = () => {
               selectedVoter={selected}
               setSelectedVoter={setSelected}
               level={0}
+              barangaysId={data.team?.barangaysId}
             />
             {selectedVoters.length > 0 && (
               <div className="w-full p-2">
@@ -733,12 +802,19 @@ const MemberItem = ({
         {item.status === 0 && "D, "}]
       </TableCell>
       <TableCell>
+        {item.record
+          .filter((item) => item.type > 0)
+          .map((item) => commentsTagShow(item.type))}
+      </TableCell>
+      <TableCell>
         {item?.ValdilatedMember?.timestamp
           ? formatTimestamp(item.ValdilatedMember.timestamp)
           : "N/A"}
       </TableCell>
       <TableCell>
-        {item.untracked ? formatTimestamp(item.untracked.timestamp) : "N/A"}
+        {item.UntrackedVoter
+          ? formatTimestamp(item.UntrackedVoter.timestamp)
+          : "N/A"}
       </TableCell>
     </TableRow>
   );

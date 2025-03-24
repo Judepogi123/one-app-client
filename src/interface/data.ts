@@ -109,6 +109,7 @@ export interface TeamStatProps {
   equalToMin: number;
   belowMin: number;
   threeAndBelow: number;
+  clean: number
 }
 
 export interface ValidationProps {
@@ -158,8 +159,21 @@ export interface VotersProps {
   leader?: TeamLeaderProps;
   record: VoterRecord[];
   ValdilatedMember: ValdilatedMember
-  untracked: UntrackedVoter
+  UntrackedVoter: UntrackedVoter
+  WhiteList: BlackList[]
 }
+
+export interface BlackList {
+  id: string;
+  timestamp: Date;
+  municipalsId: number;
+  barangaysId: string;
+  votersId: string;
+  barangay: BarangayProps;
+  municipal: MunicipalProps;
+  voter: VotersProps;
+}
+
 export interface UntrackedVoter {
   id: string;
   note?: string;
@@ -180,6 +194,7 @@ export interface VoterRecord {
   id: string;
   desc: string;
   questionable: boolean;
+  type: number
   timestamp: string; // Use string for DateTime fields to align with GraphQL responses
   voter?: VotersProps; // Optional relation to Voter
   votersId?: string; // Optional votersId field
@@ -213,6 +228,7 @@ export interface BarangayProps {
   barangayDelistedVoter: number
   teamValidationStat: TeamValidationStat
   teams: TeamProps[]
+  teamComment: VoterRecord[]
 }
 export interface TeamValidationStat {
   teamLeadersCount: number;
@@ -220,6 +236,9 @@ export interface TeamValidationStat {
   validatedTL: number;
   validatedMembers: number;
   untrackedMembers: number;
+  orMembers: number;
+  dead: number;
+  exclude: number;
 }
 export interface MunicipalProps {
   id: number;
@@ -553,10 +572,12 @@ export interface TeamLeaderProps {
   barangayCoor: {
     id: string;
     voter?: VotersProps | null;
+    teamId: string | null;
   };
   purokCoors: {
     id: string;
     voter?: VotersProps | null;
+    teamId: string | null;
   };
   teamList: TeamProps[]
 }

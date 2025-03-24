@@ -7,7 +7,7 @@ import Modal from "../components/custom/Modal";
 //graphql
 import { useMutation, useQuery } from "@apollo/client";
 import { SURVEY_CONCLUDED, DELETE_SURVEY } from "../GraphQL/Mutation";
-import { GET_SELECTED_DRAFT_SURVEY,GET_DRAFTSURVEY } from "../GraphQL/Queries";
+import { GET_SELECTED_DRAFT_SURVEY, GET_DRAFTSURVEY } from "../GraphQL/Queries";
 //props
 import { SurveyStateList } from "../interface/layout";
 import { DraftedSurvey } from "../interface/data";
@@ -22,7 +22,7 @@ import { CiWarning } from "react-icons/ci";
 const optionList: SurveyStateList[] = [
   { name: "Info", link: "info", icon: FaInfo },
   { name: "Compliance", link: "compliance", icon: RiFolderReceivedLine },
-  { name: "Analytics", link: "result", icon: GrScorecard },
+  { name: "Results", link: "result", icon: GrScorecard },
 ];
 
 const LiveSurvey = () => {
@@ -31,7 +31,7 @@ const LiveSurvey = () => {
   const { surveyID } = useParams();
   const navigate = useNavigate();
 
-  const { data} = useQuery<{ survey: DraftedSurvey }>(
+  const { data } = useQuery<{ survey: DraftedSurvey }>(
     GET_SELECTED_DRAFT_SURVEY,
     {
       variables: {
@@ -41,11 +41,14 @@ const LiveSurvey = () => {
   );
 
   const [surveyConclude, { loading }] = useMutation(SURVEY_CONCLUDED, {
-    refetchQueries: [GET_SELECTED_DRAFT_SURVEY,GET_DRAFTSURVEY],
+    refetchQueries: [GET_SELECTED_DRAFT_SURVEY, GET_DRAFTSURVEY],
     variables: { id: surveyID },
   });
 
-  const [deleteSurvey, { loading: deleteLoading }] = useMutation(DELETE_SURVEY,{refetchQueries: [GET_DRAFTSURVEY]});
+  const [deleteSurvey, { loading: deleteLoading }] = useMutation(
+    DELETE_SURVEY,
+    { refetchQueries: [GET_DRAFTSURVEY] }
+  );
 
   const handleConclude = async () => {
     try {
@@ -141,7 +144,7 @@ const LiveSurvey = () => {
       />
 
       <Modal
-      onFunction={handleDeleteSurvey}
+        onFunction={handleDeleteSurvey}
         loading={deleteLoading}
         footer={true}
         title="Delete survey"

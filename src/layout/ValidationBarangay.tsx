@@ -10,16 +10,18 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  TableFooter,
 } from "../components/ui/table";
 import Loading from "../components/custom/Loading";
 import { BarangayProps } from "../interface/data";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+//import { calculatePercentage } from "../utils/helper";
 //props
 interface Props {
   zipCode: string | undefined;
 }
 const ValidationBarangay = ({ zipCode }: Props) => {
-  const { loading, data, refetch } = useQuery<{
+  const { loading, data, refetch, error } = useQuery<{
     barangayList: BarangayProps[];
   }>(GET_BARANGAY_TEAMS, {
     variables: { zipCode: parseInt(zipCode as string, 10) },
@@ -27,11 +29,76 @@ const ValidationBarangay = ({ zipCode }: Props) => {
   });
   const navigate = useNavigate();
 
+  console.log({ error });
+
   useEffect(() => {
     refetch({
       zipCode: parseInt(zipCode as string, 10),
     });
   }, [zipCode]);
+
+  const totalTL = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.supporters.tl || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalVTL = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamValidationStat.validatedTL || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalUT = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamValidationStat.untrackedMembers || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalVoterAsMembers = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.supporters?.withTeams || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalVM = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamValidationStat.validatedMembers || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalDeads = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamValidationStat.dead || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalOR = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamValidationStat.orMembers || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
 
   if (loading) {
     return <Loading />;
@@ -50,8 +117,14 @@ const ValidationBarangay = ({ zipCode }: Props) => {
             <TableHead>TL's</TableHead>
             <TableHead>Validated TL</TableHead>
             <TableHead>Members </TableHead>
-            <TableHead>Validated Member</TableHead>
-            <TableHead>Untracked</TableHead>
+            <TableHead>Validated Member (#/%)</TableHead>
+            <TableHead>Dead (#/%)</TableHead>
+            <TableHead>OR (#/%)</TableHead>
+            <TableHead>UD (#/%)</TableHead>
+            <TableHead>ND (#/%)</TableHead>
+            <TableHead>OP (#/%)</TableHead>
+            {/* <TableHead>Excluded (#/%)</TableHead> */}
+            <TableHead>Untracked (#/%)</TableHead>
           </TableHeader>
           <TableBody>
             {data.barangayList.map((item) => (
@@ -71,12 +144,52 @@ const ValidationBarangay = ({ zipCode }: Props) => {
                 <TableCell>
                   {item?.teamValidationStat?.validatedMembers ?? 0}
                 </TableCell>
+                <TableCell>{item.teamValidationStat.dead ?? 0}</TableCell>
+                <TableCell>{item.teamValidationStat.orMembers ?? 0}</TableCell>
+                <TableCell>
+                  {item?.teamComment?.filter((item) => item.type === 1)
+                    .length ?? 0}
+                </TableCell>
+                <TableCell>
+                  {item?.teamComment?.filter((item) => item.type === 2)
+                    .length ?? 0}
+                </TableCell>
+                <TableCell>
+                  {item?.teamComment?.filter((item) => item.type === 3)
+                    .length ?? 0}
+                </TableCell>
+                {/* <TableCell>
+                  {item.teamValidationStat.exclude ?? 0}{" "}
+                  {item.teamValidationStat.exclude > 0
+                    ? `(${calculatePercentage(
+                        item.teamValidationStat.exclude,
+                        item?.teamValidationStat?.members
+                      )})`
+                    : null}
+                </TableCell> */}
                 <TableCell>
                   {item?.teamValidationStat?.untrackedMembers ?? 0}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="text-left">
+                {data.barangayList.length}
+              </TableCell>
+              <TableCell className="text-left">{totalTL}</TableCell>
+              <TableCell className="text-left">{totalVTL}</TableCell>
+              <TableCell className="text-left">{totalVoterAsMembers}</TableCell>
+              <TableCell className="text-left">{totalVM}</TableCell>
+              <TableCell className="text-left">{totalDeads}</TableCell>
+              <TableCell className="text-left">{totalOR}</TableCell>
+              <TableCell className="text-left">--</TableCell>
+              <TableCell className="text-left">--</TableCell>
+              <TableCell className="text-left">--</TableCell>
+              <TableCell className="text-left">{totalUT}</TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </div>
     </div>

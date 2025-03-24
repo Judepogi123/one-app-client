@@ -95,7 +95,7 @@ const UpdateVoters = () => {
   const [onOpen, setOnOpen] = useState(0);
 
   const [selectedList, setSeelectedList] = useState<string[]>([]);
-  const [offset, setOffset] = useSearchParams({ page: "0" });
+  const [offset, setOffset] = useSearchParams({ page: "1" });
   const [municipal, setMunicipal] = useSearchParams({ area: "all" });
   const [barangay, setBarangay] = useSearchParams({
     barangay: "all",
@@ -105,7 +105,7 @@ const UpdateVoters = () => {
 
   const navigate = useNavigate();
 
-  const currentOffset = offset.get("page") || "0";
+  const currentOffset = offset.get("page") || "1";
   const currentMunicipal = municipal.get("area") || "all";
   const currentBarangay = barangay.get("barangay") || "all";
   const currentPurok = barangay.get("purok") || "all";
@@ -129,7 +129,7 @@ const UpdateVoters = () => {
     municipals: MunicipalProps[];
   }>(GET_ALL_VOTERS, {
     variables: {
-      offset: parseInt(currentOffset as string, 10) * LIMIT,
+      offset: (parseInt(currentOffset as string, 10) - 1) * LIMIT,
       limit: 20,
       zipCode: currentMunicipal,
       barangayId: currentBarangay,
@@ -438,11 +438,11 @@ const UpdateVoters = () => {
               <PaginationItem
                 className="mr-10 border border-gray-400 p-1 rounded cursor-pointer"
                 onClick={() => {
-                  if (currentOffset === "0") {
+                  if (currentOffset === "1") {
                     return;
                   }
                   setOffset((prev) => {
-                    prev.set("page", "0");
+                    prev.set("page", "1");
                     return prev;
                   });
                 }}
@@ -563,9 +563,7 @@ const UpdateVoters = () => {
                     </TableCell>
                   )}
                   <TableCell>
-                    {parseInt(currentOffset, 10) + 1 < 1
-                      ? i + 1
-                      : (parseInt(currentOffset, 10) + 1) * LIMIT + 1 + i}
+                    {(parseInt(currentOffset, 10) - 1) * 20 + i + 1}
                   </TableCell>
                   <TableCell>{item.lastname}</TableCell>
                   <TableCell>{item.firstname}</TableCell>
@@ -616,6 +614,7 @@ const UpdateVoters = () => {
       />
 
       <Modal
+        className="max-w-sm"
         title={`Remove the selected item: (${selectedList.length})`}
         open={onMultiRemove}
         onOpenChange={() => {

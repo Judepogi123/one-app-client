@@ -20,10 +20,10 @@ import Modal from "../components/custom/Modal";
 import { Button } from "../components/ui/button";
 
 //icons
-import { IoMdMore } from "react-icons/io";
 import { MARK_TEAM_VERIFIED } from "../GraphQL/Mutation";
 import { toast } from "sonner";
 import { formatTimestamp } from "../utils/date";
+import { IoPrintOutline } from "react-icons/io5";
 const BaranngayTeams = () => {
   const { barangayID, userID } = useParams();
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const BaranngayTeams = () => {
   const [onOpen, setOnOpen] = useState(0);
   const [selected, setSelected] = useState<TeamProps | null>(null);
 
-  const { data, loading, error } = useQuery<{ barangay: BarangayProps }>(
+  const { data, loading } = useQuery<{ barangay: BarangayProps }>(
     GET_BARANGAY_TEAMLIST,
     {
       variables: {
@@ -42,8 +42,6 @@ const BaranngayTeams = () => {
       skip: !barangayID,
     }
   );
-
-  console.log(error);
 
   const handleOpenModal = (team: TeamProps) => {
     setSelected(team);
@@ -109,7 +107,7 @@ const BaranngayTeams = () => {
         </h1>
 
         <Button size="sm">
-          <IoMdMore size={18} />
+          <IoPrintOutline size={18} />
         </Button>
       </div>
       <div className="w-full p-2 relative">

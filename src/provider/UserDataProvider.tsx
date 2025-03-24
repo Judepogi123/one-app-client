@@ -17,7 +17,6 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
   //const signOut = useSignOut();
   const [user, setUser] = useState<AuthType | null>(authUser);
 
-  // Detect login/logout and update user state
   useEffect(() => {
     if (!authHeader) {
       setUser(null); // Clear user on logout
@@ -26,7 +25,6 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [authHeader, authUser]);
 
-  // Update document title when user changes
   useEffect(() => {
     if (user) {
       document.title =

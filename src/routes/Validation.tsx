@@ -20,6 +20,7 @@ import {
 } from "../components/ui/tabs";
 //hooks
 import { useMutation, useQuery } from "@apollo/client";
+import { useMutation as ruseMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserData } from "../provider/UserDataProvider";
 //query
@@ -32,6 +33,7 @@ import { toast } from "sonner";
 import { SUBMIT_VALIDATION } from "../GraphQL/Mutation";
 import { Input } from "../components/ui/input";
 import { IoPrintOutline } from "react-icons/io5";
+import axios from "../api/axios";
 const Validation = () => {
   const navigate = useNavigate();
   const user = useUserData();
@@ -110,18 +112,18 @@ const Validation = () => {
         const fileContent = event.target?.result;
         if (typeof fileContent === "string") {
           const jsonData: any = JSON.parse(fileContent);
-          console.log({ jsonData });
+          console.log(jsonData);
 
           const response = await submitResponse({
             variables: {
-              validatedDelisted: jsonData.delistedVoterValidated.map(
-                (item: any) => {
-                  return {
-                    id: item.id,
-                    votersId: item.votersId,
-                  };
-                }
-              ),
+              // validatedDelisted: jsonData.delistedVoterValidated.map(
+              //   (item: any) => {
+              //     return {
+              //       id: item.id,
+              //       votersId: item.votersId,
+              //     };
+              //   }
+              // ),
               votersToUpdate: jsonData.votersToUpdate.map((item: any) => {
                 return {
                   id: item.id,
@@ -154,16 +156,16 @@ const Validation = () => {
                   account_id: item.account_id,
                 };
               }),
-              validateDuplicate: jsonData.duplicateteamMembersToRemove.map(
-                (item: any) => {
-                  return {
-                    id: item.id,
-                    duplicateteamMemberId: item.duplicateteamMemberId,
-                    votersId: item.votersId,
-                    account_id: item.account_id,
-                  };
-                }
-              ),
+              validateDuplicate: jsonData.duplicateteamMembersToRemove
+                ? jsonData.duplicateteamMembersToRemove.map((item: any) => {
+                    return {
+                      id: item.id,
+                      duplicateteamMemberId: item.duplicateteamMemberId,
+                      votersId: item.votersId,
+                      account_id: item.account_id,
+                    };
+                  })
+                : [],
               recordToDelete: jsonData.recordToDelete.map((item: any) => {
                 return {
                   id: item.id,
@@ -172,15 +174,15 @@ const Validation = () => {
                   team_id: item.team_id,
                 };
               }),
-              appoinments: jsonData.appointments.map((item: any) => {
-                return {
-                  id: item.id,
-                  teamId: item.teamId,
-                  votersId: item.votersId,
-                  account_id: item.usersUid,
-                  timestamp: item.timestamp,
-                };
-              }),
+              // appoinments: jsonData.appointments.map((item: any) => {
+              //   return {
+              //     id: item.id,
+              //     teamId: item.teamId,
+              //     votersId: item.votersId,
+              //     account_id: item.usersUid,
+              //     timestamp: item.timestamp,
+              //   };
+              // }),
               newVoterRecord: jsonData.newVoterRecords.map((record: any) => {
                 return {
                   id: record.id,
@@ -210,17 +212,17 @@ const Validation = () => {
                   barangaysId: item.barangaysId,
                 };
               }),
-              accountTeamHoldings: jsonData.accountTeamHoldings.map(
-                (item: any) => {
-                  return {
-                    id: item.id,
-                    accountId: item.accountId,
-                    teamId: item.teamId,
-                    municipalsId: item.municipalsId,
-                    barangaysId: item.barangaysId,
-                  };
-                }
-              ),
+              // accountTeamHoldings: jsonData.accountTeamHoldings.map(
+              //   (item: any) => {
+              //     return {
+              //       id: item.id,
+              //       accountId: item.accountId,
+              //       teamId: item.teamId,
+              //       municipalsId: item.municipalsId,
+              //       barangaysId: item.barangaysId,
+              //     };
+              //   }
+              // ),
               validatedTeams: jsonData.validatedTeams.map((item: any) => {
                 return {
                   id: item.id,
@@ -255,26 +257,6 @@ const Validation = () => {
             },
           });
           console.log(response.data);
-
-          // setListCount(jsonData.length)
-          // jsonData.forEach(async (item) => {
-          //   console.log({ item });
-
-          //   await composeTeam({
-          //     variables: {
-          //       team: {
-          //         zipCode: parseInt(item.municipal_id, 10),
-          //         barangayId: item.barangay_id,
-          //         teamLeaderId: item.teamLeaderID,
-          //         members: item.members.map((member) => member.idNumber),
-          //         purokCoorId: item.purokCoorID,
-          //         barangayCoorId: item.barangayCoorID,
-          //       },
-          //     },
-          //   });
-          // });
-
-          // Log the grouped data to the console
           console.log("Grouped Data:", groupedData);
 
           // Optional: Uncomment if you want to transform the object into an array
@@ -299,6 +281,44 @@ const Validation = () => {
       console.log(error);
     }
   };
+
+  const handleValidation = async () => {
+    if (currentZipCode === "all") {
+      toast.warning("Select a Municipal to download", {
+        closeButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "upload/validation-result",
+        {
+          zipCode: currentZipCode,
+        },
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentZipCode}${Date.now()}.xlsx`; // Set the file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
+
+  const { mutateAsync, isPending } = ruseMutation({
+    mutationFn: handleValidation,
+    mutationKey: ["validationResult"],
+    onMutate: () => {
+      toast.success("Downloading...");
+    },
+  });
+
   return (
     <div className="w-full h-full relative">
       <Tabs
@@ -325,10 +345,10 @@ const Validation = () => {
               handleChangeArea={handleChangeArea}
             />
             <Button
-              disabled
+              disabled={isPending}
               variant="outline"
               size="sm"
-              onClick={() => setOnOpen(2)}
+              onClick={() => mutateAsync()}
             >
               <IoPrintOutline size={20} />
             </Button>
@@ -388,7 +408,7 @@ const Validation = () => {
           <div className="w-full h-auto">
             {submitting ? (
               <div>
-                <h1 className="text-lg font-medium">Uploadeding</h1>
+                <h1 className="text-lg font-medium">Uploading</h1>
               </div>
             ) : (
               <div className="">

@@ -21,14 +21,14 @@ const Home = () => {
   return (
     <div className=" w-full h-full">
       <Header handleChangeMenu={handleChangeMenu} currentMenu={currentMenu} />
-      <div className="w-full h-full hidden lg:block">
+      <div className="w-full h-full">
         <Outlet />
       </div>
-      <div className="block lg:hidden p-4">
+      {/* <div className="block lg:hidden p-4">
         <h1 className="text-lg text-center font-medium">
           Sorry, this platform is only suitable for Desktop Screen Size device
         </h1>
-      </div>
+      </div> */}
       <Toaster position="top-right" className="" closeButton={true} />
     </div>
   );

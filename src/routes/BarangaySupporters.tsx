@@ -24,6 +24,8 @@ import {
 } from "../components/ui/table";
 //props
 import { BarangayProps, CandidatesProps } from "../interface/data";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 const BarangaySupporters = () => {
   const user = useUserData();
   const [onOpen, setOnOpen] = useState(0);
@@ -110,6 +112,24 @@ const BarangaySupporters = () => {
     );
   }, [data]);
 
+  const totleAboveMin = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamStat.belowMax || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
+  const totalClean = useMemo(() => {
+    return (
+      data?.barangayList?.reduce(
+        (acc, curr) => acc + (curr?.teamStat.clean || 0),
+        0
+      ) || 0
+    );
+  }, [data]);
+
   const handleDownload = async () => {
     if (!data) {
       return;
@@ -142,6 +162,45 @@ const BarangaySupporters = () => {
       console.error("Error downloading the file:", error);
     }
   };
+
+  const downloadExcel = async () => {
+    if (!currenetZipCode) {
+      toast.error("Please select a zip code", {
+        closeButton: false,
+      });
+      return;
+    }
+    if (!selected) {
+      toast.error("Please select a zip code", {
+        closeButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.get(`upload/team-breakdown`, {
+        responseType: "blob",
+        params: {
+          zipCode: currenetZipCode,
+          barangay: selected.id,
+        },
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${selected.name}-Team_BreakDown.xlsx`; // Suggested filename
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading file", error);
+    }
+  };
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: downloadExcel,
+  });
 
   useEffect(() => {
     refetch({
@@ -192,7 +251,7 @@ const BarangaySupporters = () => {
       console.log(barangay);
 
       const returned = await axios.post(
-        "upload//supporter-report-barangay",
+        "upload/supporter-report-barangay",
         {
           zipCode: 4905,
           candidate: data?.candidate
@@ -216,8 +275,6 @@ const BarangaySupporters = () => {
       console.log(error);
     }
   };
-
-  console.log(user);
 
   return (
     <div className="w-full h-auto">
@@ -250,6 +307,7 @@ const BarangaySupporters = () => {
           <TableHead>BC</TableHead>
           <TableHead>PC</TableHead>
           <TableHead>TL</TableHead>
+          <TableHead>Clean</TableHead>
           <TableHead>Voter W/ team</TableHead>
           {/* <TableHead>Voter W/o team</TableHead> */}
           <TableHead>10+</TableHead>
@@ -279,6 +337,7 @@ const BarangaySupporters = () => {
                 <TableCell>{item.supporters?.bc || 0}</TableCell>
                 <TableCell>{item.supporters?.pc || 0}</TableCell>
                 <TableCell>{item.supporters?.tl || 0}</TableCell>
+                <TableCell>{item.teamStat?.clean || 0}</TableCell>
                 <TableCell>{item.supporters?.withTeams || 0}</TableCell>
                 {/* <TableCell>{item.supporters?.voterWithoutTeam || 0}</TableCell> */}
                 <TableCell>{item.teamStat?.aboveMax || 0}</TableCell>
@@ -300,18 +359,16 @@ const BarangaySupporters = () => {
         </TableBody>
         <TableFooter className="w-full">
           <TableRow className="w-full">
-            <TableCell className="text-right">
-              Total Barangays: {data?.barangayList?.length ?? 0}
+            <TableCell className="text-left">
+              {data?.barangayList?.length ?? 0}
             </TableCell>
-            <TableCell className="text-right">
-              Total Figure Heads: {totalVoterFigureHeads}
-            </TableCell>
-            <TableCell className="text-right">Total BC: {totalBC}</TableCell>
-            <TableCell className="text-right">Total PC: {totalPC}</TableCell>
-            <TableCell className="text-right">Total TL: {totalTL}</TableCell>
-            <TableCell className="text-right">
-              Total W/ team: {totalVoterAsMembers}
-            </TableCell>
+            <TableCell className="text-left">{totalVoterFigureHeads}</TableCell>
+            <TableCell className="text-left">{totalBC}</TableCell>
+            <TableCell className="text-left">{totalPC}</TableCell>
+            <TableCell className="text-left">{totalTL}</TableCell>
+            <TableCell className="text-left">{totalClean}</TableCell>
+            <TableCell className="text-left">{totalVoterAsMembers}</TableCell>
+            <TableCell className="text-left">{totleAboveMin}</TableCell>
           </TableRow>
         </TableFooter>
       </Table>
@@ -361,6 +418,14 @@ const BarangaySupporters = () => {
               onClick={handleGenData}
             >
               Per TL (Not Available)
+            </Button>
+            <Button
+              className="w-full border border-gray-400"
+              variant="outline"
+              disabled={isPending}
+              onClick={() => mutateAsync()}
+            >
+              Team Break down
             </Button>
           </div>
         }

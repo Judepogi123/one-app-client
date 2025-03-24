@@ -514,8 +514,13 @@ export const UPDATE_LEADER = gql`
 
 export const CHANGE_LEADER = gql`
   #graphql
-  mutation Team($id: String!, $teamId: String!, $level: Int!) {
-    changeLeader(id: $id, teamId: $teamId, level: $level)
+  mutation Team(
+    $id: String!
+    $teamId: String!
+    $level: Int!
+    $currentTl: String
+  ) {
+    changeLeader(id: $id, teamId: $teamId, level: $level, currentTl: $currentTl)
   }
 `;
 
@@ -598,47 +603,44 @@ export const MERGE_TEAM = gql`
   }
 `;
 
-
 export const GET_ASSIGNED_TEAMS = gql`
   mutation GetAssignedTeams(
-    $userId: String, 
-    $zipCode: Int, 
-    $barangaysId: Int, 
-    $from: Int, 
-    $take: Int, 
-    $min: Int, 
+    $userId: String
+    $zipCode: Int
+    $barangaysId: Int
+    $from: Int
+    $take: Int
+    $min: Int
     $max: Int
   ) {
     assignedTeamsOnAccount(
-      userId: $userId, 
-      zipCode: $zipCode, 
-      barangaysId: $barangaysId, 
-      from: $from, 
-      take: $take, 
-      min: $min, 
+      userId: $userId
+      zipCode: $zipCode
+      barangaysId: $barangaysId
+      from: $from
+      take: $take
+      min: $min
       max: $max
     )
   }
 `;
 
 export const DELETE_ASSIGN_TEAM = gql`
-#graphql
-mutation Team($id: String){
-  deleteAssignTeam(id: $id)
-}
-
-`
+  #graphql
+  mutation Team($id: String) {
+    deleteAssignTeam(id: $id)
+  }
+`;
 
 export const SELECTED_ASSIGN = gql`
-
-mutation Selected($ids: [String!],$userId: String!){
-  selectedTeamAssign(ids: $ids, userId: $userId)
-}
-`
+  mutation Selected($ids: [String!], $userId: String!) {
+    selectedTeamAssign(ids: $ids, userId: $userId)
+  }
+`;
 export const MARK_TEAM_VERIFIED = gql`
   #graphql
   mutation MarkTeamVerified($teamId: String, $accountID: String) {
-    markTeamVerified(teamId: $teamId, accountID:  $accountID)
+    markTeamVerified(teamId: $teamId, accountID: $accountID)
   }
 `;
 
@@ -651,36 +653,41 @@ export const MARK_MEMBER_VERIFIED = gql`
 
 export const UPDATE_MEMBER_PROPS = gql`
   #graphql
-  mutation UpdateMemberProps($memberId: [String!], $props: String){
+  mutation UpdateMemberProps($memberId: [String!], $props: String) {
     updateTeamMemberProps(memberId: $memberId, props: $props)
   }
-`
+`;
 
 export const SWAP_VOTERS = gql`
   #graphql
-  mutation Voter($levelToSwap: Int, $levelToBeSwapped: Int, $voterOneId: String, $voterTwoId: String){
-    swapVoters(levelToSwap: $levelToSwap,
-     levelToBeSwapped: $levelToBeSwapped, 
-     voterOneId: $voterOneId, 
-     voterTwoId: $voterTwoId)
+  mutation Voter(
+    $levelToSwap: Int
+    $levelToBeSwapped: Int
+    $voterOneId: String
+    $voterTwoId: String
+  ) {
+    swapVoters(
+      levelToSwap: $levelToSwap
+      levelToBeSwapped: $levelToBeSwapped
+      voterOneId: $voterOneId
+      voterTwoId: $voterTwoId
+    )
   }
-
-`
+`;
 
 export const EXCLUDE_VOTERS = gql`
   #graphql
-  mutation Voters($membersId: [String!]){
+  mutation Voters($membersId: [String!]) {
     memberExclude(membersId: $membersId)
   }
-
-`
+`;
 
 export const UNTRACK_MEMBERS = gql`
-#graphql
-  mutation Untracked($memberId: [String!]){
+  #graphql
+  mutation Untracked($memberId: [String!]) {
     markUntracked(memberId: $memberId)
   }
-`
+`;
 
 export const SUBMIT_VALIDATION = gql`
   #graphql
@@ -720,21 +727,100 @@ export const SUBMIT_VALIDATION = gql`
 `;
 
 export const TRANSFER_VOTER_AREA = gql`
- mutation TransferVoter($memberId: [String!], $zipCode: Int, $barangay: String){
-  transferVotersArea(memberId: $memberId, zipCode: $zipCode, barangay: $barangay)
- }
-`
+  mutation TransferVoter(
+    $memberId: [String!]
+    $zipCode: Int
+    $barangay: String
+  ) {
+    transferVotersArea(
+      memberId: $memberId
+      zipCode: $zipCode
+      barangay: $barangay
+    )
+  }
+`;
 export const RESET_PASSWORD = gql`
   #graphql
-  mutation ResetPassword($id: String, $newPassword: String){
+  mutation ResetPassword($id: String, $newPassword: String) {
     resetPassword(id: $id, newPassword: $newPassword)
   }
-`
+`;
 
 export const TRANSFER_GROUP = gql`
   #graphql
-    mutation TranferGroup($id: String, $toId: String){
-      transferGroup(id: $id, toId: $toId)
-    }
+  mutation TranferGroup($id: String, $toId: String) {
+    transferGroup(id: $id, toId: $toId)
+  }
+`;
 
-`
+export const TRANSPORT_SELECTED_MEMBERS = gql`
+  #graphql
+  mutation TransferSelectedMembers(
+    $ids: [String!]
+    $toTeam: String!
+    $level: Int
+    $currTL: String
+    $toTL: String
+  ) {
+    transferSelectedGroup(
+      ids: $ids
+      toTeam: $toTeam
+      level: $level
+      currTL: $currTL
+      toTL: $toTL
+    )
+  }
+`;
+
+export const CHANGE_LEVEL = gql`
+  #grpahql
+  mutation changeheadLevel(
+    $teamID: String
+    $level: Int
+    $targetLevel: Int
+    $targetHeads: String
+    $targetTeam: String
+    $currentTl: String
+  ) {
+    changeLevel(
+      teamID: $teamID
+      level: $level
+      targetLevel: $targetLevel
+      targetHeads: $targetHeads
+      targetTeam: $targetTeam
+      currentTl: $currentTl
+    )
+  }
+`;
+
+export const ASSIGN_HEADS = gql`
+  #graphql
+  mutation AssignedHeads($id: String, $toId: String, $level: Int) {
+    assignFigure(id: $id, toId: $toId, level: $level)
+  }
+`;
+
+export const COMMENTS = gql`
+  #graphql
+  mutation Comment($ids: [String!], $tag: Int!) {
+    comments(ids: $ids, tag: $tag)
+  }
+`;
+
+export const CALIBRATE_TEAM = gql`
+  mutation CalibrateTeam(
+    $id: String
+    $tlID: String
+    $pcID: String
+    $bcID: String
+    $level: Int
+  ) {
+    calibrateTeam(id: $id, tlID: $tlID, pcID: $pcID, bcID: $bcID, level: $level)
+  }
+`;
+
+export const CHANGE_MERIT = gql`
+  mutation changeMerit($id: [String!], $level: Int) {
+    changeMerits(id: $id, level: $level)
+  }
+`;

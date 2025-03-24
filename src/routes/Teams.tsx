@@ -7,6 +7,7 @@ import { useUserData } from "../provider/UserDataProvider";
 //ui
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import GenerateTeam from "../layout/GenerateTeam";
 // import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import {
   Table,
@@ -24,6 +25,11 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Skeleton } from "../components/ui/skeleton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../components/ui/popover";
 //props
 import { TeamProps } from "../interface/data";
 //graphql
@@ -36,12 +42,17 @@ import { handleLevel, handleSanitizeChar } from "../utils/helper";
 import AreaSelection from "../components/custom/AreaSelection";
 import { toast } from "sonner";
 import Modal from "../components/custom/Modal";
+import ReassignHeads from "../layout/ReassignHeads";
 //icons
 import { TbReport } from "react-icons/tb";
+import { RiRestartFill } from "react-icons/ri";
+import { SlOptionsVertical } from "react-icons/sl";
+import { MdOutlineAssignmentInd } from "react-icons/md";
 //import { SlOptionsVertical } from "react-icons/sl";
 import { handleElements } from "../utils/element";
 import { Label } from "../components/ui/label";
 import { Checkbox } from "../components/ui/checkbox";
+import hotkeys from "hotkeys-js";
 
 const options: { name: string; value: string }[] = [
   { name: "All", value: "all" },
@@ -52,6 +63,7 @@ const options: { name: string; value: string }[] = [
 
 const Teams = () => {
   const user = useUserData();
+  const [selected, setSelected] = useState<string[]>([]);
   const [params, setParams] = useSearchParams({
     zipCode: user?.forMunicipal ? user?.forMunicipal.toString() : "all",
     barangay: "all",
@@ -61,6 +73,7 @@ const Teams = () => {
     others: "0",
     query: "",
     withIssues: "false",
+    members: "all",
   });
 
   const currentMunicipal = params.get("zipCode") || "all";
@@ -68,6 +81,7 @@ const Teams = () => {
   const currentPurok = params.get("purok") || "all";
   const currentLevel = params.get("level") || "all";
   const currentPage = params.get("page") || "1";
+  const currentMembers = params.get("members") || "all";
   //const currentOthers = params.get("others") || "0";
   const currentQuery = params.get("query");
   const currentWithIssues = params.get("withIssues");
@@ -139,6 +153,7 @@ const Teams = () => {
     currentBarangay,
     currentQuery,
     refetch,
+    currentMembers,
   ]);
 
   // const handleDragEnd = (event: DragEndEvent) => {
@@ -206,6 +221,30 @@ const Teams = () => {
     }
   }, [onUpdate]);
 
+  const handleSelectIds = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleCheckId = (id: string) => selected.includes(id);
+
+  useEffect(() => {
+    hotkeys("ctrl+k", (event) => {
+      event.preventDefault();
+      setOnOpen(3);
+    });
+    hotkeys("ctrl+c", (event) => {
+      event.preventDefault();
+      setSelected([]);
+      setOnOpen(0);
+    });
+
+    return () => {
+      hotkeys.unbind("ctrl+g");
+    };
+  }, []);
+
   return (
     <div className="w-full">
       <div className="w-full flex gap-2 items-center px-2 border border-slate-400 border-l-0 border-r-0 sticky top-0 bg-white z-10">
@@ -228,8 +267,9 @@ const Teams = () => {
 
           <SelectContent className="w-auto">
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="<5">Below 5 members</SelectItem>
-            <SelectItem value="=5">With 5 members</SelectItem>
+            <SelectItem value="0">0</SelectItem>
+            <SelectItem value="4+1">4 + 1 members</SelectItem>
+            <SelectItem value="=5">5 members</SelectItem>
             <SelectItem value=">=5">With 5 members and above</SelectItem>
             <SelectItem value="<=10">With 10 members and below</SelectItem>
             <SelectItem value=">10">10 members above</SelectItem>
@@ -261,9 +301,44 @@ const Teams = () => {
             placeholder="Search"
             className="border border-slate-600"
           />
-          <Button disabled>
-            <TbReport fontSize={20} />
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              handleChangeOption("query", "");
+            }}
+          >
+            <RiRestartFill fontSize={20} />
           </Button>
+          <Popover>
+            <PopoverTrigger>
+              <Button size="sm">
+                <SlOptionsVertical fontSize={16} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className=" max-w-xs flex flex-col gap-2">
+              <h1 className=" font-medium text-sm">Options</h1>
+              <Button
+                className=" w-full flex gap-2"
+                variant="outline"
+                size="sm"
+                onClick={() => setOnOpen(2)}
+              >
+                <TbReport fontSize={20} />
+                Generate
+              </Button>
+
+              <Button
+                className=" w-full flex gap-2"
+                variant="outline"
+                size="sm"
+                onClick={() => setOnOpen(3)}
+              >
+                <MdOutlineAssignmentInd fontSize={20} />
+                Re-assign
+              </Button>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       <div>{data?.teamList.length}</div>
@@ -280,6 +355,7 @@ const Teams = () => {
       ) : (
         <Table>
           <TableHeader>
+            {onOpen === 3 ? <TableHead>Select</TableHead> : null}
             <TableHead>No</TableHead>
             <TableHead>Tag ID</TableHead>
             <TableHead>Level</TableHead>
@@ -302,6 +378,10 @@ const Teams = () => {
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, item?.teamLeader?.id as string)}
                   onClick={() => {
+                    if (onOpen === 3) {
+                      handleSelectIds(item.teamLeaderId);
+                      return;
+                    }
                     if (item.level !== 0) {
                       navigate(`/teams/${item.id}`);
                       return;
@@ -309,6 +389,11 @@ const Teams = () => {
                   }}
                   className="border border-gray-200 cursor-pointer hover:bg-slate-200"
                 >
+                  {onOpen === 3 ? (
+                    <TableCell>
+                      <Checkbox checked={handleCheckId(item.teamLeaderId)} />
+                    </TableCell>
+                  ) : null}
                   <TableCell>
                     {(parseInt(currentPage, 10) - 1) * 50 + i + 1}
                   </TableCell>
@@ -436,6 +521,48 @@ const Teams = () => {
         open={onOpen === 1}
         onOpenChange={() => {
           setOnUpdate(null);
+          setOnOpen(0);
+        }}
+      />
+
+      <Modal
+        title="Generate"
+        className="max-w-lg"
+        onFunction={hadnleMergeTeam}
+        children={
+          <div className="w-full flex">
+            <GenerateTeam
+              zipCode={currentMunicipal}
+              barangay={currentBarangay}
+              level={currentLevel}
+              selectedId={selected}
+            />
+          </div>
+        }
+        loading={merging}
+        open={onOpen === 2}
+        onOpenChange={() => {
+          setOnUpdate(null);
+          setOnOpen(0);
+        }}
+      />
+
+      <Modal
+        title="Change Level"
+        className="max-w-sm"
+        onFunction={hadnleMergeTeam}
+        children={
+          <div className="w-full flex flex-col">
+            <p className="text-sm mb-2">
+              The members belows the selecte team/team-leader will be affected
+              of this action
+            </p>
+            <ReassignHeads selectedIDs={selected} />
+          </div>
+        }
+        loading={merging}
+        open={onOpen === 4}
+        onOpenChange={() => {
           setOnOpen(0);
         }}
       />

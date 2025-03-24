@@ -22,6 +22,9 @@ import { useLazyQuery } from "@apollo/client";
 import { toast } from "sonner";
 import { handleElements } from "../utils/element";
 
+//icons
+import { MdOutlineBlock } from "react-icons/md";
+
 //type
 interface SearchVoterProps {
   selectedVoter?: VotersProps | undefined;
@@ -29,9 +32,14 @@ interface SearchVoterProps {
     React.SetStateAction<VotersProps | undefined>
   >;
   level?: number;
+  barangaysId?: string;
 }
 
-const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
+const SearchVoters = ({
+  setSelectedVoter,
+  level,
+  barangaysId,
+}: SearchVoterProps) => {
   const [query, setQuery] = useState<string>("");
   const [page, setPage] = useState(1);
   const [searchVoter, { data, loading }] = useLazyQuery<{
@@ -44,6 +52,8 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
 
   const user = useUserData();
 
+  console.log("serch", barangaysId);
+
   useEffect(() => {
     const fetchVoters = async () => {
       const response = await searchVoter({
@@ -52,6 +62,7 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
           skip: (page - 1) * LIMIT,
           take: LIMIT,
           zipCode: user.forMunicipal ? user.forMunicipal : undefined,
+          barangayId: barangaysId,
         },
       });
 
@@ -120,6 +131,7 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
                 "Purok",
                 "Barangay",
                 "Municipal",
+                "",
               ].map((item) => (
                 <TableHead>{item}</TableHead>
               ))}
@@ -129,10 +141,21 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
               {data?.searchVoter.map((item, i) => (
                 <TableRow
                   onClick={() => {
+                    if (item.WhiteList.length > 0) {
+                      toast.warning("Voter's found in the BlackList.", {
+                        description: "The selected voter is on the Black List.",
+                        closeButton: false,
+                      });
+                      return;
+                    }
                     handleSelectVoter({ ...item });
                   }}
                   key={item.id}
-                  className=" cursor-pointer hover:bg-slate-200"
+                  className={`${
+                    item.WhiteList.length > 0
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  } hover:bg-slate-200`}
                 >
                   <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
                   <TableCell>{handleElements(value, item.idNumber)}</TableCell>
@@ -144,6 +167,11 @@ const SearchVoters = ({ setSelectedVoter, level }: SearchVoterProps) => {
                   <TableCell>{item.purok?.purokNumber}</TableCell>
                   <TableCell>{item.barangay.name}</TableCell>
                   <TableCell>{item.municipal.name}</TableCell>
+                  {item.WhiteList.length > 0 ? (
+                    <TableCell>
+                      <MdOutlineBlock />
+                    </TableCell>
+                  ) : null}
                 </TableRow>
               ))}
             </TableBody>
