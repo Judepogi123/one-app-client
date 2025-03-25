@@ -56,10 +56,16 @@ const GenerateTeam = ({ barangay, zipCode, selectedId, level }: Props) => {
 
   const onSubmit = async (data: TeamProps) => {
     if (zipCode === "all" || barangay === "all") {
-      toast.warning("Select specific are", {
+      toast.warning("Select specific area.", {
         description: "Too large data set to generate",
       });
       return;
+    }
+    if (level === "all") {
+      return toast.warning("Select a specific level", {
+        closeButton: false,
+        description: "Select from TL, PC or BC only",
+      });
     }
 
     try {

@@ -376,7 +376,7 @@ const Groups = () => {
     CALIBRATE_TEAM,
     {
       onCompleted: () => {
-        toast.success("Cali!", {
+        toast.success("Calibrated!", {
           closeButton: false,
         });
         setOnOpen(0);
@@ -384,7 +384,7 @@ const Groups = () => {
       },
       refetchQueries: [{ query: GET_TEAM_INFO, variables: { id: teamId } }],
       onError: () => {
-        toast.error("Calibrate Failed!", {
+        toast.error("Calibration Failed!", {
           closeButton: false,
         });
         setLevel(0);
@@ -411,6 +411,12 @@ const Groups = () => {
   const handleCalibrateTeam = async () => {
     if (!data?.team) {
       toast.warning("Invalid Team data", {
+        closeButton: false,
+      });
+      return;
+    }
+    if (data.team.level >= 2) {
+      toast.warning("Calibration is not allowed in this level", {
         closeButton: false,
       });
       return;
