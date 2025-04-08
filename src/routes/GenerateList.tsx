@@ -5,6 +5,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "use-debounce";
 import { useUserData } from "../provider/UserDataProvider";
 import { useMutation } from "@tanstack/react-query";
+//import { useMutation as guseMutation } from "@apollo/client";
 //graphql
 import { useQuery } from "@apollo/client";
 import {
@@ -13,6 +14,7 @@ import {
   GET_BARANGAYS,
   GET_PUROKLIST,
 } from "../GraphQL/Queries";
+//import { REFRESH_VOTER } from "../GraphQL/Mutation";
 //ui
 import { Button } from "../components/ui/button";
 import {
@@ -52,6 +54,7 @@ import { RiOrganizationChart } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 import { TbReport } from "react-icons/tb";
 import { GrNotes } from "react-icons/gr";
+import { GrPowerReset } from "react-icons/gr";
 //props
 import {
   MunicipalProps,
@@ -83,9 +86,12 @@ const capablityList: { name: string; value: string }[] = [
 import { handleElements } from "../utils/element";
 import axios from "../api/axios";
 import { toast } from "sonner";
+import RefreshVoterForm from "../layout/RefreshVoterForm";
 const GenerateList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [onOpen, setOnOpen] = useState<number>(0);
+  const [selectedID, setSelectedID] = useState<string[]>([]);
+  const [selected, setSelected] = useState<VotersProps | null>(null);
   const [query] = useDebounce(searchQuery, 1000);
   const [onExtend, setOnExtend] = useState<boolean>(false);
 
@@ -132,6 +138,23 @@ const GenerateList = () => {
   const currentMode = capParams.get("mode") || "strict";
   // const currentWithoutTeam = capParams.get("withOutTeam") || "all";
   const LIMIT = 50;
+
+  const handleCheckState = (id: string) => {
+    const copyList = [...selectedID];
+    return copyList.includes(id);
+  };
+
+  const handleSelectMultipleVoter = (id: string, checked: boolean) => {
+    let updatedList = [...selectedID];
+    if (checked) {
+      // Remove the item if it exists
+      updatedList = updatedList.filter((item) => item !== id);
+    } else {
+      // Add the item if it does not exist
+      updatedList.push(id);
+    }
+    setSelectedID(updatedList);
+  };
 
   //query params
   //const currentQueryParas = queryParams.get("search");
@@ -399,7 +422,7 @@ const GenerateList = () => {
     },
   });
 
-  const { mutateAsync: duplicating, isPending } = useMutation({
+  const { mutateAsync: duplicating } = useMutation({
     mutationFn: handleDuplicate,
     onError: () => {
       toast.error("Failed to download the file", {
@@ -632,16 +655,28 @@ const GenerateList = () => {
                 ))}
               </SelectContent>
             </Select> */}
-            <Button
-              variant="default"
-              size="sm"
-              className="flex gap-1 absolute right-0 mr-2"
-              onClick={() => duplicating()}
-              disabled={isPending}
-            >
-              <TbReport fontSize={20} />
-              Dup
-            </Button>
+            <div className="flex gap-2 absolute right-0 mr-2">
+              <Button
+                disabled
+                className="flex gap-1"
+                onClick={() => setOnOpen(4)}
+                size="sm"
+                variant="outline"
+              >
+                <GrPowerReset />
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="flex gap-1 "
+                onClick={() => duplicating()}
+                disabled={true}
+              >
+                <TbReport fontSize={20} />
+                Print
+              </Button>
+            </div>
+
             {/* <Button
               disabled
               variant="default"
@@ -676,6 +711,12 @@ const GenerateList = () => {
 
           <Table>
             <TableHeader>
+              <TableHead onClick={() => setSelectedID([])}>
+                <span className=" hover:underline hover:font-medium cursor-pointer">
+                  {" "}
+                  {selectedID.length > 0 ? "Cancel" : "Select"}
+                </span>
+              </TableHead>
               <TableHead>No</TableHead>
               <TableHead>Tag ID</TableHead>
               <TableHead>Lastname</TableHead>
@@ -690,14 +731,26 @@ const GenerateList = () => {
 
             <TableBody>
               {voter?.getVotersList.voters.map((item, index) => (
-                <TableRow key={index}>
+                <TableRow
+                  className=" cursor-pointer"
+                  key={index}
+                  onClick={() => {
+                    handleSelectMultipleVoter(
+                      item.id,
+                      handleCheckState(item.id)
+                    );
+                  }}
+                >
+                  <TableCell>
+                    <Checkbox checked={handleCheckState(item.id)} />
+                  </TableCell>
                   <TooltipProvider>
                     <TableCell className="font-medium text-gray-800">
                       {parseInt(currentPage, 10) <= 1
                         ? index + 1
                         : (parseInt(currentPage, 10) - 1) * LIMIT + index + 1}
                     </TableCell>
-                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.idNumber}</TableCell>
                     <TableCell>
                       {handleElements(query, item.lastname)}
                     </TableCell>
@@ -716,7 +769,10 @@ const GenerateList = () => {
                             disabled={item.teamId ? false : true}
                             size="sm"
                             variant="outline"
-                            onClick={() => navigate(`/teams/${item.teamId}`)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate(`/teams/${item.teamId}`);
+                            }}
                           >
                             <RiOrganizationChart />
                           </Button>
@@ -755,7 +811,28 @@ const GenerateList = () => {
                       <Tooltip delayDuration={1.5}>
                         <TooltipTrigger>
                           <Button
-                            onClick={() => navigate(`/voter/${item.id}`)}
+                            onClick={() => {
+                              setSelected(item);
+                              setOnOpen(3);
+                            }}
+                            size="sm"
+                            variant="outline"
+                          >
+                            <GrPowerReset />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Reset</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip delayDuration={1.5}>
+                        <TooltipTrigger>
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate(`/voter/${item.id}`);
+                            }}
                             size="sm"
                             variant="outline"
                           >
@@ -910,6 +987,24 @@ const GenerateList = () => {
 
       <Modal
         open={onOpen === 3}
+        children={
+          <div className="flex flex-col gap-4">
+            <RefreshVoterForm selected={selected ? [selected.id] : []} />
+          </div>
+        }
+        onOpenChange={() => {
+          setSelected(null);
+          setOnOpen(0);
+        }}
+      />
+      <Modal
+        title={`Reset the selected: ${selectedID.length}`}
+        children={
+          <div className="flex flex-col gap-4">
+            <RefreshVoterForm selected={selectedID} />
+          </div>
+        }
+        open={onOpen === 4}
         onOpenChange={() => {
           setOnOpen(0);
         }}

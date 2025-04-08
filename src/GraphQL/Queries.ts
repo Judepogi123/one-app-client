@@ -866,8 +866,20 @@ export const GET_ALL_VOTERS = gql`
 
 export const SEARCH_VOTER = gql`
   #graphql
-  query ($query: String!, $skip: Int!, $take: Int!, $zipCode: Int, $barangayId: String) {
-    searchVoter(query: $query, skip: $skip, take: $take, zipCode: $zipCode, barangayId: $barangayId) {
+  query (
+    $query: String!
+    $skip: Int!
+    $take: Int!
+    $zipCode: Int
+    $barangayId: String
+  ) {
+    searchVoter(
+      query: $query
+      skip: $skip
+      take: $take
+      zipCode: $zipCode
+      barangayId: $barangayId
+    ) {
       id
       firstname
       lastname
@@ -1009,6 +1021,22 @@ export const GET_TEAM_LIST = gql`
     $query: String!
     $skip: Int!
   ) {
+    teamMembersCount(
+      zipCode: $zipCode
+      barangayId: $barangayId
+      purokId: $purokId
+      level: $level
+      query: $query
+      skip: $skip
+    )
+    teamCount(
+      zipCode: $zipCode
+      barangayId: $barangayId
+      purokId: $purokId
+      level: $level
+      query: $query
+      skip: $skip
+    )
     teamList(
       zipCode: $zipCode
       barangayId: $barangayId
@@ -1039,6 +1067,7 @@ export const GET_TEAM_LIST = gql`
 
       teamLeader {
         id
+        votersId
         barangayCoor {
           id
           voter {
@@ -1074,12 +1103,12 @@ export const GET_TEAM_LIST = gql`
         lastname
       }
       AccountHandleTeam {
-          id
-          account {
-            uid
-            username
-          }
+        id
+        account {
+          uid
+          username
         }
+      }
     }
   }
 `;
@@ -1362,43 +1391,42 @@ export const GET_USER_INFO = gql`
   #graphql
   query User($id: String!) {
     user(id: $id) {
-    uid
-    username
-    privilege
-    purpose
-    role
-    userQRCodeId
-    qrCode {
-      qrCode
-    }
-    accountHandleTeam {
-      id
-      teamId
-      team {
+      uid
+      username
+      privilege
+      purpose
+      role
+      userQRCodeId
+      qrCode {
+        qrCode
+      }
+      accountHandleTeam {
         id
-        AccountValidateTeam(id: $id) {
+        teamId
+        team {
           id
-          timstamp
-        }
-        teamLeader {
-          voter {
-            firstname
-            lastname
+          AccountValidateTeam(id: $id) {
+            id
+            timstamp
           }
-        }
-        _count {
-          voters
-        }
-        municipal {
-          name
-        }
-        barangay {
-          name
-          
+          teamLeader {
+            voter {
+              firstname
+              lastname
+            }
+          }
+          _count {
+            voters
+          }
+          municipal {
+            name
+          }
+          barangay {
+            name
+          }
         }
       }
     }
-  }
   }
 `;
 
@@ -1432,24 +1460,23 @@ export const GET_BARANGAY_SUPPORT = gql`
   }
 `;
 
-
 export const GET_ASSIGNED_TEAMS = gql`
   query GetAssignedTeams(
-    $userId: String, 
-    $zipCode: Int, 
-    $barangaysId: Int, 
-    $from: Int, 
-    $take: Int, 
-    $min: Int, 
+    $userId: String
+    $zipCode: Int
+    $barangaysId: Int
+    $from: Int
+    $take: Int
+    $min: Int
     $max: Int
   ) {
     getAssignedTeams(
-      userId: $userId, 
-      zipCode: $zipCode, 
-      barangaysId: $barangaysId, 
-      from: $from, 
-      take: $take, 
-      min: $min, 
+      userId: $userId
+      zipCode: $zipCode
+      barangaysId: $barangaysId
+      from: $from
+      take: $take
+      min: $min
       max: $max
     ) {
       id
@@ -1463,53 +1490,63 @@ export const GET_ASSIGNED_TEAMS = gql`
 `;
 
 export const GET_TEAM_LEADERS_TEAM = gql`
-#graphql
+  #graphql
 
-query TeamLeaderTeams($level: Int, $zipCode: String, $barangay: String, $skip: Int) {
-  teamLeaderTeamHandle(level: $level, zipCode: $zipCode, barangay: $barangay, skip: $skip) {
-    id
-    voter {
-      firstname
-      lastname
-    }
-    teamList {
+  query TeamLeaderTeams(
+    $level: Int
+    $zipCode: String
+    $barangay: String
+    $skip: Int
+  ) {
+    teamLeaderTeamHandle(
+      level: $level
+      zipCode: $zipCode
+      barangay: $barangay
+      skip: $skip
+    ) {
       id
-      municipal {
-        name
+      voter {
+        firstname
+        lastname
       }
-      barangay {
-        name
-      }
-      _count {
-        voters
-      }
-      teamLeader {
-        voter {
-          firstname
-          lastname
+      teamList {
+        id
+        municipal {
+          name
         }
-      }
-      AccountHandleTeam {
+        barangay {
+          name
+        }
+        _count {
+          voters
+        }
+        teamLeader {
+          voter {
+            firstname
+            lastname
+          }
+        }
+        AccountHandleTeam {
           id
           account {
             uid
             username
           }
         }
+      }
     }
   }
-}
-`
+`;
 
 export const GET_ACCOUNT_TEAM_INFO = gql`
   #graphql
-    query Team($id: String!) {
+  query Team($id: String!) {
     team(id: $id) {
       id
       barangaysId
       _count {
-      voters
-    }
+        voters
+      }
       teamLeader {
         id
         votersId
@@ -1552,7 +1589,7 @@ export const GET_ACCOUNT_TEAM_INFO = gql`
 
 export const GET_BARANGAY_TEAMS = gql`
   #graphql
-  query BarnagayList($zipCode: Int!){
+  query BarnagayList($zipCode: Int!) {
     barangayList(zipCode: $zipCode) {
       id
       name
@@ -1575,7 +1612,7 @@ export const GET_BARANGAY_TEAMS = gql`
       }
     }
   }
-`
+`;
 export const GET_BARANGAY_TEAMLIST = gql`
   #graphql
   query Barangay($id: ID!, $level: Int) {
@@ -1610,40 +1647,126 @@ export const GET_BARANGAY_TEAMLIST = gql`
       }
     }
   }
-
 `;
 
 export const FIGURE_HEADS = gql`
   #graphql
-  query FigureHeads($level: Int, $barangayId: String){
-    figureHeads(level: $level, barangayId: $barangayId){
+  query FigureHeads($level: Int, $barangayId: String) {
+    figureHeads(level: $level, barangayId: $barangayId) {
       id
-      teamId
       level
-      purokCoors {
+      teamLeader {
         id
+        teamId
+        level
+        purokCoors {
+          id
+          voter {
+            firstname
+            lastname
+            idNumber
+          }
+        }
+        barangayCoor {
+          id
+          voter {
+            firstname
+            lastname
+            idNumber
+          }
+        }
         voter {
+          idNumber
+          id
           firstname
           lastname
-          idNumber
         }
-      }
-      barangayCoor {
-        id
-        voter {
-          firstname
-          lastname
-          idNumber
-        }
-      }
-      voter {
-        idNumber
-        id
-        firstname
-        lastname
       }
     }
   }
+`;
+export const GET_ALL_COLL = gql`
+  #graphql
+  query CollBatchList($zipCode: Int) {
+    getAllCollBatch(zipCode: $zipCode) {
+      id
+      timestamp
+      title
+      stab
+    }
+  }
+`;
 
-`
+export const GET_COLLECTION_BATCH = gql`
+  #graphql
+  query Can($zipCode: Int!, $id: String) {
+    barangayList(zipCode: $zipCode) {
+      id
+      name
+      number
+      population
+      collectionResult(id: $id) {
+        batch {
+          id
+          title
+          timestamp
+          stab
+        }
+        stab
+        team
+      }
+    }
+  }
+`;
 
+export const SCAN_LIST = gql`
+  #graphql
+  query AreaScan($zipCode: Int, $barangayId: String) {
+    calibrateTeamArea(zipCode: $zipCode, barangayId: $barangayId) {
+      barangaysId
+      votersId
+      voter {
+        firstname
+        lastname
+        idNumber
+        barangay {
+          name
+        }
+      }
+      reason
+      correct
+      code
+      level
+      currentLevel
+      teamLeader {
+        id
+        voter {
+          firstname
+          lastname
+          idNumber
+        }
+      }
+      teamId
+    }
+  }
+`;
+
+export const GET_BARANGAY_STAB = gql`
+  #graphql
+  query Butaws($zipCode: Int!) {
+    barangayList(zipCode: $zipCode) {
+      id
+      name
+      supporters {
+        withTeams
+        figureHeads
+      }
+      collectionResult {
+        allTeamMembers
+        genQrCode
+        stabOne
+        stabTwo
+      }
+    }
+  }
+`;

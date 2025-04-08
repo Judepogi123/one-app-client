@@ -113,26 +113,29 @@ const Teams = () => {
     handleChangeOption("query", sanitized);
   }, 1000);
 
-  const { data, loading, refetch } = useQuery<{ teamList: TeamProps[] }>(
-    GET_TEAM_LIST,
-    {
-      variables: {
-        zipCode: currentMunicipal,
-        barangayId: currentBarangay,
-        purokId: currentPurok,
-        level: currentLevel,
-        page: (parseInt(currentPage, 10) - 1) * 50,
-        skip: 1,
-        query: currentQuery,
-        withIssues: currentWithIssues === "true",
-      },
-      fetchPolicy: "cache-and-network",
-      onError: (error) => {
-        toast(`${error.message}`);
-        console.error("Error fetching data", error);
-      },
-    }
-  );
+  const { data, loading, refetch } = useQuery<{
+    teamList: TeamProps[];
+    teamCount: number;
+    teamMembersCount: number;
+  }>(GET_TEAM_LIST, {
+    variables: {
+      zipCode: currentMunicipal,
+      barangayId: currentBarangay,
+      purokId: currentPurok,
+      level: currentLevel,
+      page: (parseInt(currentPage, 10) - 1) * 50,
+      skip: 1,
+      query: currentQuery,
+      withIssues: currentWithIssues === "true",
+    },
+    fetchPolicy: "cache-and-network",
+    onError: (error) => {
+      toast(`${error.message}`);
+      console.error("Error fetching data", error);
+    },
+  });
+
+  console.log(data);
 
   useEffect(() => {
     refetch({
@@ -306,6 +309,7 @@ const Teams = () => {
             variant="outline"
             onClick={() => {
               handleChangeOption("query", "");
+              handleChangeOption("page", "1");
             }}
           >
             <RiRestartFill fontSize={20} />
@@ -342,7 +346,15 @@ const Teams = () => {
           </Popover>
         </div>
       </div>
-      <div>{data?.teamList.length}</div>
+      <div className="w-full p-4 rounded-sm bg-slate-100">
+        <p className="font-medium">Results</p>
+        <div className="ml-4 text-sm font-light">
+          Team count: {data?.teamCount ?? 0}
+        </div>
+        <div className="ml-4 text-sm font-light">
+          Members count: {data?.teamMembersCount ?? 0}
+        </div>
+      </div>
       {loading ? (
         <div className="w-full flex flex-col gap-1 px-2">
           {Array.from({ length: 10 }).map((_, index) => (
@@ -418,7 +430,12 @@ const Teams = () => {
                   </TableCell>
 
                   <TableCell>
-                    {item.voters.length}({handleLevel(item.level - 1)})
+                    {
+                      item.voters.filter(
+                        (mem) => mem.id !== item.teamLeader?.votersId
+                      ).length
+                    }
+                    ({handleLevel(item.level - 1)})
                   </TableCell>
                   {/* <TableCell>{item._count.voters}</TableCell> */}
                   <TableCell>

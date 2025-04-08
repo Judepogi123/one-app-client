@@ -415,18 +415,17 @@ const Groups = () => {
       });
       return;
     }
-    if (data.team.level >= 2) {
-      toast.warning("Calibration is not allowed in this level", {
-        closeButton: false,
-      });
-      return;
-    }
+
     await calibrateTeam({
       variables: {
         id: data?.team?.id,
         tlID: data?.team?.teamLeader?.id,
-        pcID: data?.team?.teamLeader?.purokCoors.id,
-        bcID: data?.team?.teamLeader?.barangayCoor.id,
+        pcID: data?.team?.teamLeader?.purokCoors
+          ? data?.team?.teamLeader?.purokCoors.id
+          : null,
+        bcID: data?.team?.teamLeader?.barangayCoor.id
+          ? data?.team?.teamLeader?.barangayCoor.id
+          : null,
         level: level,
       },
     });

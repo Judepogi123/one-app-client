@@ -15,28 +15,28 @@ export interface UserProps {
   uid: string;
   username: string;
   password: string;
-  forMunicipal: number
+  forMunicipal: number;
   role: number;
   purpose: number;
   status: number;
   timestamp: Date;
   privilege: number[];
-  userQRCodeId?: string | null; 
+  userQRCodeId?: string | null;
   qrCode?: UserQRCodeProps | null; // Single optional relation
-  accountHandleTeam: AccountHandleTeam[]
-  accessToken: string
+  accountHandleTeam: AccountHandleTeam[];
+  accessToken: string;
 }
 export interface AccountHandleTeam {
-  id: string; 
+  id: string;
   account?: UserProps;
   usersUid?: string;
-  team?: TeamProps; 
-  teamId: string; 
-  municipal?: MunicipalProps; 
+  team?: TeamProps;
+  teamId: string;
+  municipal?: MunicipalProps;
   municipalsId?: number;
-  barangay?: BarangayProps; 
-  barangaysId?: string;  
-  accountValidateTeamId?: string; 
+  barangay?: BarangayProps;
+  barangaysId?: string;
+  accountValidateTeamId?: string;
 }
 
 export interface AccountValidateTeam {
@@ -109,7 +109,7 @@ export interface TeamStatProps {
   equalToMin: number;
   belowMin: number;
   threeAndBelow: number;
-  clean: number
+  clean: number;
 }
 
 export interface ValidationProps {
@@ -158,9 +158,9 @@ export interface VotersProps {
   teamId?: string;
   leader?: TeamLeaderProps;
   record: VoterRecord[];
-  ValdilatedMember: ValdilatedMember
-  UntrackedVoter: UntrackedVoter
-  WhiteList: BlackList[]
+  ValdilatedMember: ValdilatedMember;
+  UntrackedVoter: UntrackedVoter;
+  WhiteList: BlackList[];
 }
 
 export interface BlackList {
@@ -194,7 +194,7 @@ export interface VoterRecord {
   id: string;
   desc: string;
   questionable: boolean;
-  type: number
+  type: number;
   timestamp: string; // Use string for DateTime fields to align with GraphQL responses
   voter?: VotersProps; // Optional relation to Voter
   votersId?: string; // Optional votersId field
@@ -223,12 +223,19 @@ export interface BarangayProps {
   maleSize: number;
   validationList: ValidationProps[];
   supporters: AllSupporters;
-  teamStat: TeamStatProps
-  leaders: TeamLeaderProps[]
-  barangayDelistedVoter: number
-  teamValidationStat: TeamValidationStat
-  teams: TeamProps[]
-  teamComment: VoterRecord[]
+  teamStat: TeamStatProps;
+  leaders: TeamLeaderProps[];
+  barangayDelistedVoter: number;
+  teamValidationStat: TeamValidationStat;
+  teams: TeamProps[];
+  teamComment: VoterRecord[];
+  collectionResult: BarangayCollResult;
+}
+interface BarangayCollResult {
+  stabOne: number;
+  stabTwo: number;
+  genQrCode: number;
+  allTeamMembers: number;
 }
 export interface TeamValidationStat {
   teamLeadersCount: number;
@@ -544,10 +551,10 @@ export interface TeamProps {
     voters: number;
   };
   votersCount: number;
-  AccountHandleTeam: AccountHandleTeam
-  AccountValidateTeam: AccountValidateTeam
-  ValdilatedMember: ValdilatedMember | null
-  untrackedCount: number
+  AccountHandleTeam: AccountHandleTeam;
+  AccountValidateTeam: AccountValidateTeam;
+  ValdilatedMember: ValdilatedMember | null;
+  untrackedCount: number;
 }
 
 export interface TeamLeaderProps {
@@ -579,7 +586,7 @@ export interface TeamLeaderProps {
     voter?: VotersProps | null;
     teamId: string | null;
   };
-  teamList: TeamProps[]
+  teamList: TeamProps[];
 }
 
 // export interface TeamMember {
@@ -661,4 +668,61 @@ export interface CustomOption {
   queryResponse_id: string;
   survey_id: string;
   respondentResponse_id: string;
+}
+
+export interface StabCollection {
+  id: string;
+  voter: VotersProps;
+  votersId: string;
+  stamp: number;
+  barangay: BarangayProps;
+  barangaysId: string;
+  team: TeamProps;
+  teamId: string;
+  timestamp: Date;
+  collectionBatchTeam?: CollectionBatchTeam | null;
+  collectionBatchTeamId?: string | null;
+  batch?: CollectionBatch | null;
+  collectionBatchId?: string | null;
+}
+
+export interface CollectionBatchTeam {
+  id: string;
+  barangay?: BarangayProps | null;
+  barangaysId?: string | null;
+  team?: TeamProps | null;
+  teamId?: string | null;
+  batch?: CollectionBatch | null;
+  collectionBatchId?: string | null;
+  stab: number;
+  level: number;
+  timestamp: Date;
+  memberStab: StabCollection[];
+}
+
+export interface CollectionBatch {
+  id: string;
+  municipal: MunicipalProps;
+  municipalsId: number;
+  timestamp?: String | null;
+  title?: string | null;
+  stab: number;
+  CollectionBatchTeam: CollectionBatchTeam[];
+  StabCollection: StabCollection[];
+}
+
+export interface CalibratedResult {
+  voter?: VotersProps;
+  votersId: string;
+  level: number; // TypeScript uses 'number' instead of 'Int'
+  reason: string; // TypeScript uses 'string' instead of 'String'
+  code: number;
+  barangay?: BarangayProps;
+  barangaysId: string;
+  teamLeader?: any | undefined;
+  teamLeaderId: string | null;
+  team?: TeamProps;
+  teamId: string | null;
+  correct: string;
+  currentLevel: number;
 }

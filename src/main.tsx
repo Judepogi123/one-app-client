@@ -65,6 +65,9 @@ import AddVoter from "./routes/AddVoter";
 import Validation from "./routes/Validation";
 import BaranngayTeams from "./routes/BaranngayTeams";
 import AccountTeamMembers from "./routes/AccountTeamMembers";
+import StabCollection from "./routes/StabCollection";
+import CollectionReport from "./routes/CollectionReport";
+import Scan from "./routes/Scan";
 // Styles
 import "./index.css";
 import UserValidation from "./routes/UserValidation";
@@ -161,6 +164,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                       <Route path="manage/new" element={<NewBatchVoter />} />
                       <Route path="manage/draft" element={<NewVoterDraft />} />
                       <Route path="manage/update" element={<UpdateVoters />} />
+                      <Route
+                        path="manage/collection"
+                        element={<StabCollection />}
+                      />
+                      <Route path="manage/scan" element={<Scan />} />
+                      <Route
+                        path="/manage/collection/:id"
+                        element={<CollectionReport />}
+                      />
                       <Route
                         path="manage/validation"
                         element={<Validation />}

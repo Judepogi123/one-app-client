@@ -824,3 +824,25 @@ export const CHANGE_MERIT = gql`
     changeMerits(id: $id, level: $level)
   }
 `;
+
+export const REFRESH_VOTER = gql`
+  mutation refreshVotes(
+    $ids: [String!]
+    $header: Boolean
+    $team: Boolean
+    $connection: Boolean
+  ) {
+    refreshVoter(
+      ids: $ids
+      header: $header
+      team: $team
+      connection: $connection
+    )
+  }
+`;
+
+export const CREATE_NEW_BATCH = gql`
+  mutation newBatch($zipCode: Int, $stab: String, $title: String) {
+    newCollectionbatch(zipCode: $zipCode, stab: $stab, title: $title)
+  }
+`;

@@ -139,7 +139,10 @@ const BarangaySupporters = () => {
       const response = await axios.post(
         "upload/supporter-report",
         {
-          zipCode: 4905,
+          zipCode:
+            user.forMunicipal !== 4903
+              ? parseInt(currenetZipCode, 10)
+              : user.forMunicipal,
           candidate: data?.candidate
             ? `${data.candidate.firstname} ${data.candidate.lastname}`
             : undefined,

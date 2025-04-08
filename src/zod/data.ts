@@ -3,7 +3,7 @@ import z from "zod";
 export const UserSchema = z.object({
   phoneNumber: z.string(),
   password: z.string().min(8, "Must have at least characters"),
-  showPassword: z.boolean().optional()
+  showPassword: z.boolean().optional(),
 });
 
 export const AuthUser = z.object({
@@ -137,7 +137,7 @@ export const NewAccountSchema = z
       .string()
       .min(8, "Must have at least 8 characters")
       .optional(),
-    encryptPassword: z.boolean().optional()
+    encryptPassword: z.boolean().optional(),
   })
   .refine(
     (data) =>
@@ -195,5 +195,18 @@ export const GenerateTeamSchema = z.object({
   dead: z.boolean().default(false),
   selected: z.boolean().default(false),
   headOnly: z.boolean().default(false),
-  membersCount: z.string().default("all")
-})
+  membersCount: z.string().default("all"),
+});
+
+export const RefreshVoter = z.object({
+  team: z.boolean().default(false),
+  header: z.boolean().default(false),
+  connection: z.boolean().default(false),
+  blocklisted: z.boolean().default(false),
+  records: z.boolean().default(false),
+});
+
+export const NewCollBatchSchema = z.object({
+  stab: z.string().default("1"),
+  title: z.string().optional(),
+});

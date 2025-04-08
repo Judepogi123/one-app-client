@@ -36,6 +36,7 @@ interface AreaProps {
   className?: string;
   defaultValue: string;
   disabled?: boolean;
+  showPurok?: boolean;
 }
 
 const AreaSelection = ({
@@ -46,6 +47,7 @@ const AreaSelection = ({
   className,
   defaultValue,
   disabled,
+  showPurok,
 }: AreaProps) => {
   const { data, loading } = useQuery<{ municipals: MunicipalProps[] }>(
     GET_MUNICIPALS
@@ -138,36 +140,41 @@ const AreaSelection = ({
         <SelectTrigger id="barangay" className="w-auto">
           <SelectValue placeholder={barangayLoading ? "Loading..." : ""} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-72">
           <SelectItem value="all">All</SelectItem>
           {barangayList &&
-            barangayList.barangayList.map((item) => (
+            barangayList.barangayList.map((item, i) => (
               <SelectItem key={item.id} value={item.id}>
-                {item.name}
+                {i + 1}. {item.name}
               </SelectItem>
             ))}
         </SelectContent>
       </Select>
 
-      <Label htmlFor="purok">Purok:</Label>
-      <Select
-        value={currentPurok}
-        defaultValue="all"
-        onValueChange={(value) => handleChangeOption("purok", value)}
-      >
-        <SelectTrigger id="purok" className="w-auto">
-          <SelectValue placeholder={purokLoading ? "Loading..." : ""} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          {purokList &&
-            purokList.getPurokList.map((item) => (
-              <SelectItem key={item.id} value={item.id as string}>
-                {item.purokNumber}
-              </SelectItem>
-            ))}
-        </SelectContent>
-      </Select>
+      {showPurok && (
+        <>
+          {" "}
+          <Label htmlFor="purok">Purok:</Label>
+          <Select
+            value={currentPurok}
+            defaultValue="all"
+            onValueChange={(value) => handleChangeOption("purok", value)}
+          >
+            <SelectTrigger id="purok" className="w-auto">
+              <SelectValue placeholder={purokLoading ? "Loading..." : ""} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {purokList &&
+                purokList.getPurokList.map((item) => (
+                  <SelectItem key={item.id} value={item.id as string}>
+                    {item.purokNumber}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </>
+      )}
     </div>
   );
 };
