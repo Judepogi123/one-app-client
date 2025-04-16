@@ -25,7 +25,10 @@ const Machines = () => {
   const [onOpen, setOnOpen] = useState(0);
   const [selected, setSelected] = useState<MachineProps | null>(null);
   const [params, setParams] = useSearchParams({
-    zipCode: user.forMunicipal ? user.forMunicipal.toString() : "4905",
+    zipCode:
+      user.forMunicipal && user.forMunicipal !== 4905
+        ? user.forMunicipal?.toString()
+        : "4905",
     barangay: "none",
   });
 

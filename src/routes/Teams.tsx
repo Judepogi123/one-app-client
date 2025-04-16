@@ -334,6 +334,7 @@ const Teams = () => {
         ))}
         <Label htmlFor="members">Members: </Label>
         <Select
+          disabled
           defaultValue="all"
           onValueChange={(value) => handleChangeOption("members", value)}
         >

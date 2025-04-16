@@ -33,7 +33,10 @@ const StabCollection = () => {
   const [selected, setSelected] = useState<BarangayProps | null>(null);
   const user = useUserData();
   const [params, setParams] = useSearchParams({
-    zipCode: user.forMunicipal !== 4905 ? user.forMunicipal.toString() : "4905",
+    zipCode:
+      user.forMunicipal && user.forMunicipal !== 4905
+        ? user.forMunicipal?.toString()
+        : "4905",
     barangay: "",
   });
 
@@ -131,7 +134,7 @@ const StabCollection = () => {
           className="max-w-96"
           defaultValue={
             user.forMunicipal && user.forMunicipal !== 4905
-              ? user.forMunicipal.toString()
+              ? user.forMunicipal?.toString()
               : "4905"
           }
           value={currentMunicipal}
