@@ -75,39 +75,37 @@ const StabCollection = () => {
   };
 
   const totolMachine = useMemo(() => {
-    if (!data) return 0;
-    return (
-      data?.barangayList.reduce((acc, base) => {
-        return acc + base.machines.length;
-      }, 0) || 0
-    );
+    if (!data?.barangayList) return 0;
+
+    return data.barangayList.reduce((acc, base) => {
+      return acc + (base.machines?.length || 0);
+    }, 0);
   }, [data]);
 
   const totolTeams = useMemo(() => {
-    if (!data) return 0;
-    return (
-      data?.barangayList.reduce((acc, base) => {
-        return acc + base.supporters.tl;
-      }, 0) || 0
-    );
+    if (!data?.barangayList) return 0;
+
+    return data.barangayList.reduce((acc, base) => {
+      return acc + (base.supporters?.tl || 0);
+    }, 0);
   }, [data]);
 
   const totalMembers = useMemo(() => {
-    if (!data) return 0;
-    return (
-      data?.barangayList.reduce((acc, base) => {
-        return acc + base.supporters.withTeams;
-      }, 0) || 0
-    );
+    if (!data?.barangayList) return 0;
+
+    return data.barangayList.reduce((acc, base) => {
+      return acc + (base.supporters?.withTeams || 0);
+    }, 0);
   }, [data]);
 
   const totalOverall = useMemo(() => {
-    if (!data) return 0;
-    return (
-      data?.barangayList.reduce((acc, base) => {
-        return acc + (base.supporters.withTeams + base.supporters.tl);
-      }, 0) || 0
-    );
+    if (!data?.barangayList) return 0;
+
+    return data.barangayList.reduce((acc, base) => {
+      const tl = base.supporters?.tl || 0;
+      const withTeams = base.supporters?.withTeams || 0;
+      return acc + (tl + withTeams);
+    }, 0);
   }, [data]);
 
   useEffect(() => {
@@ -170,7 +168,7 @@ const StabCollection = () => {
           <TableBody>
             {data.barangayList.map((item, i) => (
               <TableRow
-                className=" cursor-pointer hover:bg-slate-200"
+                className="cursor-pointer hover:bg-slate-200"
                 key={i}
                 onClick={() => {
                   setSelected(item);
@@ -179,23 +177,29 @@ const StabCollection = () => {
               >
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>{item.name}</TableCell>
-                <TableCell>{item.machines.length}</TableCell>
-                <TableCell>{item.supporters.tl}</TableCell>
-                <TableCell>{item.supporters.withTeams}</TableCell>
+                <TableCell>{item.machines?.length || 0}</TableCell>
+                <TableCell>{item.supporters?.tl || 0}</TableCell>
+                <TableCell>{item.supporters?.withTeams || 0}</TableCell>
                 <TableCell>
-                  {item.supporters.withTeams + item.supporters.tl}
+                  {(item.supporters?.withTeams || 0) +
+                    (item.supporters?.tl || 0)}
                 </TableCell>
-                <TableCell>{item.collectionResult.stabOne}</TableCell>
-                <TableCell>{item.collectionResult.stabTwo}</TableCell>
+                <TableCell>{item.collectionResult?.stabOne || 0}</TableCell>
+                <TableCell>{item.collectionResult?.stabTwo || 0}</TableCell>
                 <TableCell>
-                  {item.machines.reduce((acc, base) => acc + base.result, 0) ??
-                    0}
+                  {item.machines?.reduce(
+                    (acc, base) => acc + (base.result || 0),
+                    0
+                  ) || 0}
                 </TableCell>
                 <TableCell>
                   {handleCalVariance(
-                    item.supporters.withTeams + item.supporters.tl,
-                    item.machines.reduce((acc, base) => acc + base.result, 0) ??
+                    (item.supporters?.withTeams || 0) +
+                      (item.supporters?.tl || 0),
+                    item.machines?.reduce(
+                      (acc, base) => acc + (base.result || 0),
                       0
+                    ) || 0
                   )}
                 </TableCell>
               </TableRow>

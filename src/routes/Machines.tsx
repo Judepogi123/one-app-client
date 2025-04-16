@@ -98,8 +98,6 @@ const Machines = () => {
     });
   }, [currentMunicipal]);
 
-  console.log({ data });
-
   return (
     <div className="w-full ">
       <div className=" w-full p-4 flex justify-between">
