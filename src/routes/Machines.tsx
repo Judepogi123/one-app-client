@@ -125,23 +125,25 @@ const Machines = () => {
           <TableHead>Total Reg. Voters</TableHead>
           <TableHead>Votes</TableHead>
         </TableHeader>
-        <TableBody>
-          {data?.getAllMachines.map((item) => (
-            <TableRow
-              className=" hover:bg-slate-300 cursor-pointer"
-              onClick={() => {
-                setOnOpen(2);
-                setSelected(item);
-              }}
-            >
-              <TableCell>{item.number}</TableCell>
-              <TableCell>{item.location.name}</TableCell>
-              <TableCell>{item._count.prints}</TableCell>
-              <TableCell>{item.regVoters ?? 0}</TableCell>
-              <TableCell>{item.result}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        {data && (
+          <TableBody>
+            {data.getAllMachines?.map((item) => (
+              <TableRow
+                className=" hover:bg-slate-300 cursor-pointer"
+                onClick={() => {
+                  setOnOpen(2);
+                  setSelected(item);
+                }}
+              >
+                <TableCell>{item.number}</TableCell>
+                <TableCell>{item.location.name}</TableCell>
+                <TableCell>{item._count.prints}</TableCell>
+                <TableCell>{item.regVoters ?? 0}</TableCell>
+                <TableCell>{item.result}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        )}
       </Table>
 
       <Modal
