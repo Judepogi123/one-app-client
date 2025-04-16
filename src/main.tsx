@@ -68,9 +68,12 @@ import AccountTeamMembers from "./routes/AccountTeamMembers";
 import StabCollection from "./routes/StabCollection";
 import CollectionReport from "./routes/CollectionReport";
 import Scan from "./routes/Scan";
+import BarangayStabCollection from "./routes/BarangayStabCollection";
 // Styles
 import "./index.css";
 import UserValidation from "./routes/UserValidation";
+import Machines from "./routes/Machines";
+import BarangayPrecinct from "./routes/BarangayPrecinct";
 
 // Apollo Client Setup
 const errorLink = onError(({ graphQLErrors }) => {
@@ -168,11 +171,21 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                         path="manage/collection"
                         element={<StabCollection />}
                       />
+                      <Route
+                        path="manage/collection/:barangayId"
+                        element={<BarangayStabCollection />}
+                      />
+                      <Route
+                        path="manage/collection/:barangayId/:precinctID"
+                        element={<BarangayPrecinct />}
+                      />
                       <Route path="manage/scan" element={<Scan />} />
                       <Route
                         path="/manage/collection/:id"
                         element={<CollectionReport />}
                       />
+
+                      <Route path="/manage/machine" element={<Machines />} />
                       <Route
                         path="manage/validation"
                         element={<Validation />}

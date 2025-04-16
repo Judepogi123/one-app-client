@@ -18,7 +18,7 @@ import { BarangayProps } from "../../interface/data";
 
 interface Props {
   zipCode: string;
-  handleChangeArea: (value: string, key?: string) => void;
+  handleChangeArea: (value: string, key: string) => void;
   className?: string | undefined;
   value?: string | "none";
 }
@@ -48,7 +48,7 @@ const BarangaySel = ({
   }, [zipCode, refetch]);
 
   return (
-    <div className={twMerge("w-auto flex items-center", className ?? "")}>
+    <div className={twMerge("w-auto flex gap-2 items-center", className ?? "")}>
       <Label>Barangay: </Label>
       <Select
         value={value}
@@ -60,7 +60,7 @@ const BarangaySel = ({
             placeholder={loading ? "Loading..." : "Select Barangay"}
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-80">
           <SelectItem value="none">None</SelectItem>
           {data &&
             data.barangayList.map((barangay) => (

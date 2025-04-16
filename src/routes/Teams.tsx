@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
 import { useUserData } from "../provider/UserDataProvider";
+import { useMutation as ruseMutation } from "@tanstack/react-query";
+import axios from "../api/axios";
 //ui
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -47,7 +49,7 @@ import ReassignHeads from "../layout/ReassignHeads";
 import { TbReport } from "react-icons/tb";
 import { RiRestartFill } from "react-icons/ri";
 import { SlOptionsVertical } from "react-icons/sl";
-import { MdOutlineAssignmentInd } from "react-icons/md";
+import { FaPrint } from "react-icons/fa";
 //import { SlOptionsVertical } from "react-icons/sl";
 import { handleElements } from "../utils/element";
 import { Label } from "../components/ui/label";
@@ -127,6 +129,7 @@ const Teams = () => {
       skip: 1,
       query: currentQuery,
       withIssues: currentWithIssues === "true",
+      members: currentMembers,
     },
     fetchPolicy: "cache-and-network",
     onError: (error) => {
@@ -146,6 +149,7 @@ const Teams = () => {
       page: currentPage,
       skip: (parseInt(currentPage, 10) - 1) * 50,
       query: currentQuery,
+      members: currentMembers,
     });
   }, [
     currentLevel,
@@ -231,6 +235,72 @@ const Teams = () => {
   };
 
   const handleCheckId = (id: string) => selected.includes(id);
+  const handlePrintStab = async () => {
+    if (currentBarangay === "all") {
+      toast.warning("Select a specific area", {
+        closeButton: false,
+        description: "Too large to print",
+      });
+      return;
+    }
+
+    const response = await axios.get(
+      `upload/generate-stab?id=${currentBarangay}`,
+      {
+        responseType: "blob", // This is crucial for file downloads
+      }
+    );
+
+    // Create download link
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+
+    // Get filename from content-disposition or use default
+    const contentDisposition = response.headers["content-disposition"];
+    const fileName = contentDisposition
+      ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+      : `voters-stab-${currentBarangay}.pdf`;
+
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    link.parentNode?.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const { isPending, mutateAsync } = ruseMutation({
+    mutationFn: handlePrintStab,
+    onSuccess: () => {
+      if (currentBarangay === "all") return;
+      toast.success("Download completed!", {
+        closeButton: false,
+      });
+    },
+    onError: () => {
+      toast.error("Failed to generate PDF", {
+        closeButton: false,
+      });
+    },
+    onMutate: () => {
+      if (currentBarangay === "all") return;
+      return {
+        toastId: toast.loading("Preparing download...", {
+          description: "This may take a moment",
+          closeButton: false,
+        }),
+      };
+    },
+    onSettled: (data, error, variables, context) => {
+      console.log(data, error, variables);
+
+      if (context?.toastId) {
+        toast.dismiss(context.toastId);
+      }
+    },
+  });
 
   useEffect(() => {
     hotkeys("ctrl+k", (event) => {
@@ -263,19 +333,22 @@ const Teams = () => {
           </Button>
         ))}
         <Label htmlFor="members">Members: </Label>
-        <Select defaultValue="all" disabled>
+        <Select
+          defaultValue="all"
+          onValueChange={(value) => handleChangeOption("members", value)}
+        >
           <SelectTrigger id="members" className="w-auto">
             <SelectValue placeholder="Handle" />
           </SelectTrigger>
 
           <SelectContent className="w-auto">
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="0">0</SelectItem>
-            <SelectItem value="4+1">4 + 1 members</SelectItem>
-            <SelectItem value="=5">5 members</SelectItem>
-            <SelectItem value=">=5">With 5 members and above</SelectItem>
-            <SelectItem value="<=10">With 10 members and below</SelectItem>
-            <SelectItem value=">10">10 members above</SelectItem>
+            <SelectItem value="noMembers">0</SelectItem>
+            <SelectItem value="four">4</SelectItem>
+            <SelectItem value="five">5 members</SelectItem>
+            <SelectItem value="sixToNine">With 5 members and above</SelectItem>
+            <SelectItem value="equalToMax">10 (max)</SelectItem>
+            <SelectItem value="aboveMax">Above 10</SelectItem>
           </SelectContent>
         </Select>
         <AreaSelection
@@ -333,14 +406,14 @@ const Teams = () => {
               </Button>
 
               <Button
+                disabled={isPending}
                 className=" w-full flex gap-2"
                 variant="outline"
                 size="sm"
-                onClick={() => setOnOpen(3)}
-                disabled
+                onClick={() => mutateAsync()}
               >
-                <MdOutlineAssignmentInd fontSize={20} />
-                Re-assign
+                <FaPrint fontSize={20} />
+                Print Stab
               </Button>
             </PopoverContent>
           </Popover>

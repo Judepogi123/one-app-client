@@ -657,7 +657,6 @@ const GenerateList = () => {
             </Select> */}
             <div className="flex gap-2 absolute right-0 mr-2">
               <Button
-                disabled
                 className="flex gap-1"
                 onClick={() => setOnOpen(4)}
                 size="sm"

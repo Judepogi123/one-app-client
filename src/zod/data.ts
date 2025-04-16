@@ -210,3 +210,42 @@ export const NewCollBatchSchema = z.object({
   stab: z.string().default("1"),
   title: z.string().optional(),
 });
+
+export const EditBarangayCommelec = z.object({
+  result: z.string().min(1, "Please type Comelec results here").default("0"),
+  variance: z.string().default("-"),
+});
+
+export const NewMachineSchema = z.object({
+  locationId: z.string().optional(),
+  machineNo: z.string(),
+  precints: z.record(z.string().optional()).optional(),
+});
+
+export const EditMachineSchema = z.object({
+  result: z.string(),
+  precints: z.record(z.string().optional()).optional(),
+});
+
+const ACCEPTED_EXCEL_TYPES = [".xlsx", ".xls", ".csv"] as const;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
+
+export const UpdateVoterPrecincts = z.object({
+  file: z
+    .instanceof(File, { message: "Expected a file" })
+    .refine(
+      (file) => ACCEPTED_EXCEL_TYPES.some((ext) => file.name.endsWith(ext)),
+      `File must be one of: ${ACCEPTED_EXCEL_TYPES.join(", ")}`
+    )
+    .refine(
+      (file) => file.size <= MAX_FILE_SIZE,
+      `File must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`
+    ),
+  barangay: z.string(),
+});
+
+export const DownloadValidationReport = z.object({
+  untracked: z.boolean().default(false),
+  orMembers: z.boolean().default(false),
+  delisted: z.boolean().default(false),
+});

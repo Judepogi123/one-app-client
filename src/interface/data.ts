@@ -99,6 +99,34 @@ interface AllSupporters {
   tl: number;
   withTeams: number;
   voterWithoutTeam: number;
+  orMembers: number;
+  deadWithTeam: number;
+  DLwithTeam: number;
+}
+
+export interface MachineProps {
+  id: string;
+  number: number;
+  precincts: Precent[];
+  municipal: MunicipalProps;
+  municipalsId: number;
+  location: BarangayProps;
+  barangaysId: string;
+  result: number;
+  _count: {
+    prints: number;
+  };
+  regVoters: number;
+}
+interface Precent {
+  id: string;
+  municipalsId: number;
+  precintNumber: string;
+  municipal: MunicipalProps;
+  voters: VotersProps[];
+  machine?: MachineProps | null;
+  machineId?: string | null;
+  _count: number;
 }
 
 export interface TeamStatProps {
@@ -110,6 +138,7 @@ export interface TeamStatProps {
   belowMin: number;
   threeAndBelow: number;
   clean: number;
+  noMembers: number;
 }
 
 export interface ValidationProps {
@@ -161,6 +190,7 @@ export interface VotersProps {
   ValdilatedMember: ValdilatedMember;
   UntrackedVoter: UntrackedVoter;
   WhiteList: BlackList[];
+  precinct: Precent | null;
 }
 
 export interface BlackList {
@@ -230,6 +260,18 @@ export interface BarangayProps {
   teams: TeamProps[];
   teamComment: VoterRecord[];
   collectionResult: BarangayCollResult;
+  collectionStabVarian: CollectionResult[];
+  machines: MachineProps[];
+  precinct: Precent;
+}
+
+export interface CollectionResult {
+  id: string;
+  barangay?: BarangayProps | null;
+  barangaysId?: string | null;
+  timestamp?: string | null;
+  result: number;
+  variance: string;
 }
 interface BarangayCollResult {
   stabOne: number;
@@ -555,6 +597,13 @@ export interface TeamProps {
   AccountValidateTeam: AccountValidateTeam;
   ValdilatedMember: ValdilatedMember | null;
   untrackedCount: number;
+  stabStatus: TeamStabStatus;
+}
+
+export interface TeamStabStatus {
+  stabOnecollected: number;
+  stabTwocollected: number;
+  released: number;
 }
 
 export interface TeamLeaderProps {

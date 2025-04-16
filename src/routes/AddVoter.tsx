@@ -17,17 +17,15 @@ import {
   FormField,
   FormItem,
   FormLabel,
-
 } from "../components/ui/form";
 import {
   Select,
   SelectItem,
-
   SelectTrigger,
   SelectValue,
   SelectContent,
 } from "../components/ui/select";
-import Candidates from "../components/custom/Candidates";
+//import Candidates from "../components/custom/Candidates";
 
 //graphql
 import {
@@ -57,7 +55,13 @@ const AddVoter = () => {
   const form = useForm<VoterSchema>({ resolver: zodResolver(NewVoterSchema) });
   // const currentMunicipal = params.get("zipCode") || "all";
   // const currentBarangay = params.get("barangay") || "all";
-  const { watch, register } = form;
+  const {
+    watch,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+  console.log(errors);
 
   const theMunicipal = watch("municipalsId", 0);
   const theBarangay = watch("barangaysId");
@@ -104,6 +108,10 @@ const AddVoter = () => {
     },
   });
   console.log(puroks);
+
+  const onSubmit = async (data: VoterSchema) => {
+    console.log(data);
+  };
 
   return (
     <div className="w-full h-full">
@@ -166,7 +174,7 @@ const AddVoter = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="Voter's last name"
+                    placeholder="Voter's level"
                     {...register("level")}
                   />
                 </FormControl>
@@ -216,7 +224,7 @@ const AddVoter = () => {
                         placeholder="Select barangay"
                         {...register("barangaysId")}
                       />
-                      <SelectContent>
+                      <SelectContent className="w-full max-h-60">
                         {barangays &&
                           barangays.barangayList.map((item) => (
                             <SelectItem value={item.id.toString()}>
@@ -246,17 +254,21 @@ const AddVoter = () => {
             )}
           />
 
-          <FormField
+          {/* <FormField
             name="purokName"
             render={() => (
               <FormItem>
                 <FormLabel>Purok</FormLabel>
                 <FormControl>
-                  <Candidates select={true} label="Candidate: " className="mb-8" />
+                  <Candidates
+                    select={true}
+                    label="Candidate: "
+                    className="mb-8"
+                  />
                 </FormControl>
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormLabel className="mt-4">Capabilities and Others</FormLabel>
 
@@ -390,7 +402,7 @@ const AddVoter = () => {
         <Button variant="outline" className="hover:border-gray-300">
           Clear all fields
         </Button>
-        <Button>Save</Button>
+        <Button onClick={handleSubmit(onSubmit)}>Save</Button>
       </div>
     </div>
   );

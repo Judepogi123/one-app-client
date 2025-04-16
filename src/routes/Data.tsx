@@ -11,6 +11,7 @@ import { DataLayoutProps } from "../interface/layout";
 import { RiTeamLine } from "react-icons/ri";
 import { CiViewList } from "react-icons/ci";
 import { IoCreateOutline } from "react-icons/io5";
+//import { MdDashboardCustomize } from "react-icons/md";
 
 const dataListMenu: DataLayoutProps[] = [
   // {
@@ -37,6 +38,12 @@ const dataListMenu: DataLayoutProps[] = [
     icon: RiTeamLine,
     desc: "View and manage teams",
   },
+  // {
+  //   title: "Custom List",
+  //   value: "/teams",
+  //   icon: MdDashboardCustomize,
+  //   desc: "View and manage teams",
+  // },
 ];
 
 const Data = () => {

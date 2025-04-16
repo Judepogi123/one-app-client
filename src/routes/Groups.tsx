@@ -801,7 +801,7 @@ const Groups = () => {
       </Table>
 
       <Modal
-        className="max-w-5xl"
+        className="max-w-7xl"
         title={`Change ${handleLevel(team?.level as number)}`}
         open={onOpenModal === 1}
         onOpenChange={() => {

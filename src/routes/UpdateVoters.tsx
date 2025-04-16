@@ -8,6 +8,7 @@ import z from "zod";
 // UI components
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import UpdateVoterPrecinct from "../layout/UpdateVoterPrecincts";
 import {
   Form,
   FormControl,
@@ -63,6 +64,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { IoQrCodeSharp } from "react-icons/io5";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import { IoPersonAddOutline } from "react-icons/io5";
+import { FaListOl } from "react-icons/fa";
 //graphql
 import {
   REMOVE_MULTI_VOTER,
@@ -369,7 +371,6 @@ const UpdateVoters = () => {
                   className="flex gap-2"
                   variant="outline"
                   onClick={() => navigate(`/manage/addvoter`)}
-                  disabled
                 >
                   <IoPersonAddOutline /> Add Voter
                 </Button>
@@ -389,6 +390,14 @@ const UpdateVoters = () => {
                 >
                   <GrDocumentUpdate />
                   Update List
+                </Button>
+                <Button
+                  onClick={() => setOnOpen(2)}
+                  className="flex gap-2 items-center mt-2"
+                  variant="outline"
+                >
+                  <FaListOl />
+                  Update Voter Precincts
                 </Button>
               </div>
 
@@ -761,7 +770,9 @@ const UpdateVoters = () => {
         onOpenChange={() => {
           setOnOpen(0);
         }}
-      ></Modal>
+      >
+        <UpdateVoterPrecinct />
+      </Modal>
     </div>
   );
 };

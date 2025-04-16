@@ -24,6 +24,8 @@ export const GET_SUPPORTERS = gql`
         tl
         withTeams
         voterWithoutTeam
+        orMembers
+        deadWithTeam
       }
       teamStat(candidateId: $id) {
         aboveMax
@@ -34,6 +36,7 @@ export const GET_SUPPORTERS = gql`
         belowMin
         threeAndBelow
         clean
+        noMembers
       }
     }
     candidate(id: $id) {
@@ -1020,6 +1023,7 @@ export const GET_TEAM_LIST = gql`
     $level: String!
     $query: String!
     $skip: Int!
+    $members: String
   ) {
     teamMembersCount(
       zipCode: $zipCode
@@ -1028,6 +1032,7 @@ export const GET_TEAM_LIST = gql`
       level: $level
       query: $query
       skip: $skip
+      members: $members
     )
     teamCount(
       zipCode: $zipCode
@@ -1036,6 +1041,7 @@ export const GET_TEAM_LIST = gql`
       level: $level
       query: $query
       skip: $skip
+      members: $members
     )
     teamList(
       zipCode: $zipCode
@@ -1044,6 +1050,7 @@ export const GET_TEAM_LIST = gql`
       level: $level
       query: $query
       skip: $skip
+      members: $members
     ) {
       id
       level
@@ -1757,15 +1764,120 @@ export const GET_BARANGAY_STAB = gql`
     barangayList(zipCode: $zipCode) {
       id
       name
+      machines {
+        id
+        regVoters
+        result
+        precincts {
+          id
+        }
+      }
+
       supporters {
+        tl
         withTeams
-        figureHeads
       }
       collectionResult {
         allTeamMembers
         genQrCode
         stabOne
         stabTwo
+      }
+      collectionStabVarian {
+        id
+        variance
+        result
+      }
+    }
+  }
+`;
+
+export const GET_BARANGAY_TEAM_STAB = gql`
+  #graphql
+  query Barangay($id: ID!, $level: Int) {
+    barangay(id: $id) {
+      id
+      name
+      machines {
+        id
+        number
+        result
+        precincts {
+          id
+          precintNumber
+          _count
+        }
+      }
+      teams(level: $level) {
+        id
+        _count {
+          voters
+        }
+        teamLeader {
+          voter {
+            firstname
+            lastname
+            idNumber
+            precinct {
+              precintNumber
+            }
+          }
+        }
+        stabStatus {
+          released
+          stabOnecollected
+          stabTwocollected
+        }
+      }
+    }
+  }
+`;
+
+export const GET_ALL_MACHINE = gql`
+  query Machine($zipCode: Int) {
+    getAllMachines(zipCode: $zipCode) {
+      id
+      location {
+        name
+        id
+      }
+      precincts {
+        id
+        precintNumber
+      }
+      regVoters
+      result
+      number
+      _count {
+        prints
+      }
+    }
+  }
+`;
+
+export const GET_BARANGAY_PRECINCT = gql`
+  #graphql
+  query Barangay($id: ID!, $precinctId: String) {
+    barangay(id: $id) {
+      id
+      name
+      precinct(precinctId: $precinctId) {
+        id
+        precintNumber
+        _count
+        voters {
+          id
+          idNumber
+          qrCodes {
+            id
+            qrCode
+            scannedDateTime
+            stamp
+          }
+          level
+          firstname
+          lastname
+        }
       }
     }
   }

@@ -846,3 +846,59 @@ export const CREATE_NEW_BATCH = gql`
     newCollectionbatch(zipCode: $zipCode, stab: $stab, title: $title)
   }
 `;
+
+export const EDIT_BARANGAY_VARAIANCE = gql`
+  mutation EditBarangay(
+    $barangayId: String
+    $collId: String
+    $value: Int
+    $variance: String
+  ) {
+    editBarangayCollectionStab(
+      barangayId: $barangayId
+      collId: $collId
+      value: $value
+      variance: $variance
+    )
+  }
+`;
+
+export const NEW_MACHINE = gql`
+  mutation NewMachineWithPrecints(
+    $zipCode: Int
+    $precints: [String!]
+    $machineNo: Int
+    $barangaysId: String
+  ) {
+    newMachine(
+      zipCode: $zipCode
+      precints: $precints
+      machineNo: $machineNo
+      barangaysId: $barangaysId
+    )
+  }
+`;
+
+export const EDIT_MACHINE = gql`
+  mutation EditMachine(
+    $id: String!
+    $precincts: [String]
+    $newPrecints: [String]
+    $result: Int
+    $precinctMethod: Int
+  ) {
+    editMachine(
+      id: $id
+      precincts: $precincts
+      newPrecints: $newPrecints
+      result: $result
+      precinctMethod: $precinctMethod
+    )
+  }
+`;
+
+export const REMOVE_MACHINE = gql`
+  mutation RemoveMachine($id: String) {
+    removeMachine(id: $id)
+  }
+`;

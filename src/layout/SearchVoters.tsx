@@ -131,6 +131,7 @@ const SearchVoters = ({
                 "Purok",
                 "Barangay",
                 "Municipal",
+                "Tags",
                 "",
               ].map((item) => (
                 <TableHead>{item}</TableHead>
@@ -167,6 +168,11 @@ const SearchVoters = ({
                   <TableCell>{item.purok?.purokNumber}</TableCell>
                   <TableCell>{item.barangay.name}</TableCell>
                   <TableCell>{item.municipal.name}</TableCell>
+                  <TableCell>
+                    [{item.status === 0 && "D,"}
+                    {item.oor === "YES" && "OR,"}
+                    {item.inc === "YES" && "INC"}]
+                  </TableCell>
                   {item.WhiteList.length > 0 ? (
                     <TableCell>
                       <MdOutlineBlock />

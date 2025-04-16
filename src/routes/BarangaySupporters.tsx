@@ -86,47 +86,107 @@ const BarangaySupporters = () => {
   }, [data]);
 
   const totalBC = useMemo(() => {
-    return (
-      data?.barangayList?.reduce(
-        (acc, curr) => acc + (curr?.supporters?.bc || 0),
-        0
-      ) || 0
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr?.supporters?.bc || 0),
+      0
     );
   }, [data]);
 
   const totalPC = useMemo(() => {
-    return (
-      data?.barangayList?.reduce(
-        (acc, curr) => acc + (curr?.supporters?.pc || 0),
-        0
-      ) || 0
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr?.supporters?.pc || 0),
+      0
     );
   }, [data]);
 
   const totalTL = useMemo(() => {
-    return (
-      data?.barangayList?.reduce(
-        (acc, curr) => acc + (curr?.supporters?.tl || 0),
-        0
-      ) || 0
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr?.supporters?.tl || 0),
+      0
     );
   }, [data]);
 
-  const totleAboveMin = useMemo(() => {
-    return (
-      data?.barangayList?.reduce(
-        (acc, curr) => acc + (curr?.teamStat.belowMax || 0),
-        0
-      ) || 0
+  const totalAboveMax = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (arr, base) => arr + (base?.teamStat?.aboveMax || 0),
+      0
+    );
+  }, [data]);
+
+  const totalMax = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (arr, base) => arr + (base?.teamStat?.equalToMax || 0),
+      0
+    );
+  }, [data]);
+
+  const totalBelowMax = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (arr, base) => arr + (base?.teamStat?.belowMax || 0),
+      0
+    );
+  }, [data]);
+
+  const totalMin = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (arr, base) => arr + (base?.teamStat?.equalToMin || 0),
+      0
+    );
+  }, [data]);
+
+  const totalBelowMin = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (arr, base) => arr + (base?.teamStat?.belowMin || 0),
+      0
+    );
+  }, [data]);
+
+  const totalThreeAndBelow = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (arr, base) => arr + (base?.teamStat?.threeAndBelow || 0),
+      0
+    );
+  }, [data]);
+
+  // const totalDelisted = useMemo(() => {
+  //   return (data?.barangayList || []).reduce(
+  //     (acc, curr) => acc + (curr?.barangayDelistedVoter || 0),
+  //     0
+  //   );
+  // }, [data]);
+
+  const totalNoMembers = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr.teamStat.noMembers || 0),
+      0
+    );
+  }, [data]);
+
+  const totalOrMember = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr?.supporters?.orMembers || 0),
+      0
     );
   }, [data]);
 
   const totalClean = useMemo(() => {
-    return (
-      data?.barangayList?.reduce(
-        (acc, curr) => acc + (curr?.teamStat.clean || 0),
-        0
-      ) || 0
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr?.teamStat?.clean || 0),
+      0
+    );
+  }, [data]);
+
+  const totalPupolation = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr.barangayVotersCount || 0),
+      0
+    );
+  }, [data]);
+
+  const totalDead = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr.supporters.deadWithTeam || 0),
+      0
     );
   }, [data]);
 
@@ -317,8 +377,12 @@ const BarangaySupporters = () => {
           <TableHead>10</TableHead>
           <TableHead>6-9</TableHead>
           <TableHead>5</TableHead>
+          <TableHead>4</TableHead>
           <TableHead>1-3</TableHead>
-          <TableHead>Delisted Voter</TableHead>
+          <TableHead>0</TableHead>
+          <TableHead>OR w/team</TableHead>
+          <TableHead>D w/team</TableHead>
+          {/* <TableHead>Delisted Voter</TableHead> */}
           <TableHead>All Voters</TableHead>
         </TableHeader>
         <TableBody>
@@ -347,8 +411,12 @@ const BarangaySupporters = () => {
                 <TableCell>{item.teamStat?.equalToMax || 0}</TableCell>
                 <TableCell>{item.teamStat?.belowMax || 0}</TableCell>
                 <TableCell>{item.teamStat?.equalToMin || 0}</TableCell>
+                <TableCell>{item.teamStat?.belowMin || 0}</TableCell>
                 <TableCell>{item.teamStat?.threeAndBelow || 0}</TableCell>
-                <TableCell>{item.barangayDelistedVoter || 0}</TableCell>
+                <TableCell>{item.teamStat.noMembers || 0}</TableCell>
+                <TableCell>{item.supporters.orMembers || 0}</TableCell>
+                <TableCell>{item.supporters.deadWithTeam || 0}</TableCell>
+                {/* <TableCell>{item.barangayDelistedVoter || 0}</TableCell> */}
                 <TableCell>{item.barangayVotersCount || 0}</TableCell>
               </TableRow>
             ))
@@ -371,7 +439,17 @@ const BarangaySupporters = () => {
             <TableCell className="text-left">{totalTL}</TableCell>
             <TableCell className="text-left">{totalClean}</TableCell>
             <TableCell className="text-left">{totalVoterAsMembers}</TableCell>
-            <TableCell className="text-left">{totleAboveMin}</TableCell>
+            <TableCell className="text-left">{totalAboveMax}</TableCell>
+            <TableCell className="text-left">{totalMax}</TableCell>
+            <TableCell className="text-left">{totalBelowMax}</TableCell>
+            <TableCell className="text-left">{totalMin}</TableCell>
+            <TableCell className="text-left">{totalBelowMin}</TableCell>
+            <TableCell className="text-left">{totalThreeAndBelow}</TableCell>
+            <TableCell className="text-left">{totalNoMembers}</TableCell>
+            <TableCell className="text-left">{totalOrMember}</TableCell>
+            <TableCell className="text-left">{totalDead}</TableCell>
+            {/* <TableCell className="text-left">{totalDelisted}</TableCell> */}
+            <TableCell className="text-left">{totalPupolation}</TableCell>
           </TableRow>
         </TableFooter>
       </Table>

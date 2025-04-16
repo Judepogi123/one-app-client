@@ -19,8 +19,9 @@ import { RiSurveyLine } from "react-icons/ri";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { MdOpenInNew } from "react-icons/md";
 import { MdOutlineManageAccounts } from "react-icons/md";
-// import { BsCollection } from "react-icons/bs";
-// import { GiRadarSweep } from "react-icons/gi";
+import { BsCollection } from "react-icons/bs";
+//import { GiRadarSweep } from "react-icons/gi";
+import { GiVendingMachine } from "react-icons/gi";
 // import { MdOutlineBugReport } from "react-icons/md";
 const optionList: DataLayoutProps[] = [
   {
@@ -72,12 +73,18 @@ const optionList: DataLayoutProps[] = [
     icon: MdOutlineManageAccounts,
     desc: "Manage accounts",
   },
-  // {
-  //   title: "Collections",
-  //   value: "/manage/collection",
-  //   icon: BsCollection,
-  //   desc: "Track Stab",
-  // },
+  {
+    title: "Collections",
+    value: "/manage/collection",
+    icon: BsCollection,
+    desc: "Track Stab",
+  },
+  {
+    title: "Machines",
+    value: "/manage/machine",
+    icon: GiVendingMachine,
+    desc: "",
+  },
   // {
   //   title: "Scan",
   //   value: "/manage/scan",

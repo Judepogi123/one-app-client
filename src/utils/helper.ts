@@ -102,24 +102,37 @@ export const handleGetRole = (index: number) => {
   return roles[index] || "Unknown";
 };
 
-export const calculatePercentage = (part: number, total: number): string => {
-  return ((part / total) * 100).toFixed(2);
-};
+export const responseError = [
+  "Bad Request",
+  "User not found",
+  "Unauthorized Account",
+  "Account Suspended",
+  "Incorrect password",
+];
 
-
-export const responseError = ["Bad Request", "User not found","Unauthorized Account","Account Suspended","Incorrect password"]
-
-export const removeAllSpaces = (str: string) => str.replace(/\s+/g, '');
+export const removeAllSpaces = (str: string) => str.replace(/\s+/g, "");
 
 export const commentsTagShow = (tag: number) => {
-  const data = ["", "UD", "ND", "OP"]
-  return data[tag]
-}
+  const data = ["", "UD", "ND", "OP"];
+  return data[tag];
+};
 
-export const MembersCapacities = ["All", "0 Members",
+export const MembersCapacities = [
+  "All",
+  "0 Members",
   "3 and below",
   "4 only",
   "5 (Min. standard)",
   "6 to 9",
   "10 (Max. standard)",
-  "10 and above"]
+  "10 and above",
+];
+
+export const calculatePercentage = (part: number, whole: number): number => {
+  if (whole === 0) {
+    throw new Error("Whole cannot be zero (division by zero)");
+  }
+
+  // Round to 2 decimal places for cleaner output
+  return parseFloat(((part / whole) * 100).toFixed(2));
+};

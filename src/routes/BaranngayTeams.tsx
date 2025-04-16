@@ -17,6 +17,7 @@ import {
 } from "../components/ui/table";
 import Loading from "../components/custom/Loading";
 import Modal from "../components/custom/Modal";
+import PrintBarangayValidation from "../layout/PrintBarangayValidation";
 import { Button } from "../components/ui/button";
 
 //icons
@@ -106,7 +107,7 @@ const BaranngayTeams = () => {
           {data && data.barangay?.name} - Team List
         </h1>
 
-        <Button size="sm">
+        <Button size="sm" onClick={() => setOnOpen(3)}>
           <IoPrintOutline size={18} />
         </Button>
       </div>
@@ -201,6 +202,15 @@ const BaranngayTeams = () => {
         open={onOpen === 2}
         onOpenChange={() => {
           if (teamLoading) return;
+          setOnOpen(0);
+        }}
+      />
+
+      <Modal
+        title="Print Result"
+        children={<PrintBarangayValidation id={barangayID as string} />}
+        open={onOpen === 3}
+        onOpenChange={() => {
           setOnOpen(0);
         }}
       />
