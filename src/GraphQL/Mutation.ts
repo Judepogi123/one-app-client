@@ -870,7 +870,7 @@ export const NEW_MACHINE = gql`
     $machineNo: Int
     $barangaysId: String
   ) {
-    newMachine(
+    addMachine(
       zipCode: $zipCode
       precints: $precints
       machineNo: $machineNo
