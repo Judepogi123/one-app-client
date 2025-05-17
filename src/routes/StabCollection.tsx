@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 //lib
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+import { useMutation as ruseMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserData } from "../provider/UserDataProvider";
 //query
@@ -25,8 +26,13 @@ import {
 import MunicipalSel from "../components/custom/MunicipalSel";
 import { BarangayProps } from "../interface/data";
 
+//
+import { RESET_STAB } from "../GraphQL/Mutation";
+
 //icons
 import { FaPrint } from "react-icons/fa";
+import { toast } from "sonner";
+import axios from "../api/axios";
 
 const StabCollection = () => {
   const [onOpen, setOnOpen] = useState(0);
@@ -55,14 +61,18 @@ const StabCollection = () => {
     );
   };
 
-  const { data, refetch } = useQuery<{ barangayList: BarangayProps[] }>(
-    GET_BARANGAY_STAB,
-    {
-      variables: {
-        zipCode: parseInt(currentMunicipal, 10),
-      },
-    }
-  );
+  const { data, refetch, loading } = useQuery<{
+    barangayList: BarangayProps[];
+  }>(GET_BARANGAY_STAB, {
+    variables: {
+      zipCode: parseInt(currentMunicipal, 10),
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        closeButton: false,
+      });
+    },
+  });
 
   const handleCalVariance = (curr: number, result: number) => {
     if (curr === result) {
@@ -114,7 +124,79 @@ const StabCollection = () => {
     });
   }, [currentMunicipal]);
 
-  console.log(user);
+  const [resetStab, { loading: reseting }] = useMutation(RESET_STAB, {
+    onCompleted: () => {
+      setOnOpen(0);
+      toast.success("Reset successfully", {
+        closeButton: false,
+      });
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.success("Failed to reset.", {
+        closeButton: false,
+        description: `${err.message}`,
+      });
+    },
+  });
+
+  const handlePrintAttendance = async () => {
+    if (!selected) return;
+    const response = await axios.post(
+      "upload/print-team-members",
+      {
+        id: selected.id,
+      },
+      {
+        responseType: "blob",
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Failed to generate ID");
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selected.name}-ABC-Party-Attendance.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const { mutateAsync, isPending } = ruseMutation({
+    mutationFn: handlePrintAttendance,
+    onSuccess: () => {
+      toast.success("Generated Successfully", {
+        closeButton: false,
+        description: "Click the file/downloaded to open",
+      });
+    },
+    onError: (err) => {
+      toast.error("Something went wrong!", {
+        closeButton: false,
+        description: `${err.message}`,
+      });
+      console.log(err);
+    },
+  });
+
+  const handleResetStab = async () => {
+    await resetStab({
+      variables: {
+        zipCode: parseInt(currentMunicipal, 10),
+      },
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full p-2">
+        <p className=" text-center">Loading...</p>
+      </div>
+    );
+  }
 
   if (!data) {
     return;
@@ -138,6 +220,9 @@ const StabCollection = () => {
           value={currentMunicipal}
           handleChangeArea={handleChangeArea}
         />
+        <Button variant="outline" size="sm" onClick={() => setOnOpen(4)}>
+          Reset
+        </Button>
         <Button
           className=" flex items-center gap-2"
           size="sm"
@@ -232,11 +317,12 @@ const StabCollection = () => {
               View Barangay
             </Button>
             <Button
-              disabled
+              onClick={() => mutateAsync()}
+              disabled={isPending}
               variant="outline"
               className=" border border-gray-400 hover:border-gray-500"
             >
-              Print
+              Print Attendance Form
             </Button>
             <Button
               disabled
@@ -266,6 +352,21 @@ const StabCollection = () => {
         }
         open={onOpen === 3}
         onOpenChange={() => setOnOpen(0)}
+      />
+      <Modal
+        onFunction={handleResetStab}
+        title="Reset Stab collection"
+        open={onOpen === 4}
+        onOpenChange={() => setOnOpen(0)}
+        footer={true}
+        loading={reseting}
+        children={
+          <div>
+            <p className=" font-medium text-lg">
+              !!!Warning: This action cannot be undo afterwards.
+            </p>
+          </div>
+        }
       />
     </div>
   );

@@ -1,5 +1,4 @@
 import z from "zod";
-
 export const UserSchema = z.object({
   phoneNumber: z.string(),
   password: z.string().min(8, "Must have at least characters"),
@@ -195,6 +194,7 @@ export const GenerateTeamSchema = z.object({
   dead: z.boolean().default(false),
   selected: z.boolean().default(false),
   headOnly: z.boolean().default(false),
+  membersCountOnly: z.boolean().default(false),
   membersCount: z.string().default("all"),
 });
 
@@ -249,3 +249,53 @@ export const DownloadValidationReport = z.object({
   orMembers: z.boolean().default(false),
   delisted: z.boolean().default(false),
 });
+
+export const TeamLeaderPropsSchema = z.object({
+  id: z.string(),
+  voter: VoterSchema.nullable().optional(),
+  hubId: z.string(),
+  municipal: MunicipalSchema,
+  barangay: BarangaySchema,
+  purokCoorId: z.string().optional(),
+  voterId: z.string().optional(),
+  municipalsId: z.number(),
+  barangaysId: z.string(),
+  teamId: z.string().optional(),
+  votersId: z.string().optional(),
+  purokId: z.string(),
+  handle: z.number().optional(),
+  level: z.number(),
+  candidatesId: z.string().optional(),
+  barangayCoor: z.object({
+    id: z.string(),
+    teamId: z.string().nullable(),
+  }),
+  purokCoors: z.object({
+    id: z.string(),
+    teamId: z.string().nullable(),
+  }),
+});
+
+export const TeamPropsSchema = z.object({
+  id: z.string(),
+  voters: z.array(VotersSchema),
+  purok: PurokSchema,
+  purokId: z.string(),
+  barangay: BarangaySchema,
+  barangaysId: z.string(),
+  municipal: MunicipalSchema,
+  municipalsId: z.number(),
+  hubId: z.string().nullable().optional(),
+  level: z.number(),
+  teamLeaderId: z.string(),
+  candidatesId: z.string().nullable().optional(),
+  teamLeader: TeamLeaderPropsSchema,
+  _count: z.object({
+    voters: z.number(),
+  }),
+});
+
+export const EditBarangayStabSchema = z.record(
+  z.string().min(1),
+  z.string().optional()
+);

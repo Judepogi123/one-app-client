@@ -53,6 +53,7 @@ const GenerateTeam = ({ barangay, zipCode, selectedId, level }: Props) => {
     formState: { isSubmitting },
   } = form;
   const headerOnly = watch("headOnly", false);
+  const membersCountOnly = watch("membersCountOnly", false);
 
   const onSubmit = async (data: TeamProps) => {
     if (zipCode === "all" || barangay === "all") {
@@ -191,6 +192,23 @@ const GenerateTeam = ({ barangay, zipCode, selectedId, level }: Props) => {
 
           <div className="w-full mt-2 col-span-2">
             <FormField
+              name="membersCountOnly"
+              render={({ field }) => (
+                <FormItem className="col-span-2 mb-2">
+                  <div className="flex items-center mt-2 gap-2">
+                    <FormLabel>Members count only</FormLabel>
+                    <FormControl>
+                      <Checkbox
+                        onCheckedChange={field.onChange}
+                        disabled={headerOnly}
+                        checked={field.value}
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
               name="membersCount"
               control={form.control}
               render={({ field: { value, onChange, onBlur } }) => (
@@ -202,6 +220,7 @@ const GenerateTeam = ({ barangay, zipCode, selectedId, level }: Props) => {
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
+                        disabled={membersCountOnly}
                         defaultValue="all"
                         className="grid grid-cols-3 gap-2"
                         onValueChange={onChange}

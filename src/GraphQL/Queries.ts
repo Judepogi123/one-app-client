@@ -22,6 +22,7 @@ export const GET_SUPPORTERS = gql`
         bc
         pc
         tl
+        DLwithTeam
         withTeams
         voterWithoutTeam
         orMembers
@@ -1806,6 +1807,9 @@ export const GET_BARANGAY_TEAM_STAB = gql`
           id
           precintNumber
           _count
+          stabOne
+          stabTwo
+          inTeam
         }
       }
       teams(level: $level) {
@@ -1822,6 +1826,10 @@ export const GET_BARANGAY_TEAM_STAB = gql`
               precintNumber
             }
           }
+        }
+        membersAttendance {
+          actual
+          id
         }
         stabStatus {
           released

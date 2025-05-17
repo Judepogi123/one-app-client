@@ -130,7 +130,7 @@ export const MembersCapacities = [
 
 export const calculatePercentage = (part: number, whole: number): number => {
   if (whole === 0) {
-    throw new Error("Whole cannot be zero (division by zero)");
+    return 0; // Avoid division by zero
   }
 
   // Round to 2 decimal places for cleaner output

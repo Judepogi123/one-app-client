@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
-import axios from "../api/axios";
+import axios, { localhost } from "../api/axios";
 //ui
 import {
   Select,
@@ -80,6 +80,42 @@ const SurveyExport = ({
   //   setSelectedOption({ title, id });
   // };
 
+  const downloadSurveyOptions = async (): Promise<void> => {
+    if (!surveyID) {
+      toast.warning("Failed to generate results!");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "upload/print-survey-options",
+        {
+          zipCode: "4905",
+          multiple: true,
+          surveyId: surveyID,
+          queryId: selectedQuery,
+        },
+        { responseType: "blob" }
+      );
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${surveyID}-results.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading survey options:", error);
+      throw error;
+    }
+  };
+
   const handleSelectQuery = (value: string) => {
     setSelectedQuery(value);
   };
@@ -118,7 +154,7 @@ const SurveyExport = ({
     try {
       // Send a request to the new XLSX export endpoint
       const response = await axios.post(
-        "http://localhost:3000/export/xlsx", // Updated URL
+        `${localhost}export/xlsx`, // Updated URL
         { option: data.option },
         { responseType: "blob" }
       );
@@ -225,7 +261,7 @@ const SurveyExport = ({
         <Button variant="outline" onClick={() => setOnExport(false)}>
           Cancel
         </Button>
-        <Button>Print</Button>
+        <Button onClick={downloadSurveyOptions}>Print</Button>
         <Button onClick={handleGetoption} disabled={loading}>
           {loading ? "Please wait..." : "Next"}
         </Button>

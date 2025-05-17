@@ -71,7 +71,7 @@ const SurveyResult = () => {
   const [presentationMode, setPresentationMode] = useState(false);
   const [selectedMunicipal, setSelectedMunicipal] = useState<
     string | undefined
-  >(undefined);
+  >("4905");
 
   const { data, loading, refetch } = useQuery<{
     survey: SurveyInfoProps;
@@ -110,6 +110,7 @@ const SurveyResult = () => {
     },
     skip: !selectedMunicipal,
   });
+
   const handlePrint = async () => {
     if (!selectedBaragnay) {
       toast.warning("Invalid Area", {
@@ -237,7 +238,7 @@ const SurveyResult = () => {
         <Select
           value={selectedMunicipal}
           onValueChange={(value) => setSelectedMunicipal(value)}
-          defaultValue={municipals[0].id.toString()}
+          defaultValue={municipals[0].id.toString() ?? "4905"}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select municipal" />

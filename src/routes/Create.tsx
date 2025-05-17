@@ -43,12 +43,12 @@ const optionList: DataLayoutProps[] = [
     desc: "",
   },
 
-  // {
-  //   title: "Area",
-  //   value: "/area",
-  //   icon: MdOutlineAnalytics,
-  //   desc: "Population and Barangay",
-  // },
+  {
+    title: "Area",
+    value: "/area",
+    icon: MdOutlineAnalytics,
+    desc: "Population and Barangay",
+  },
   {
     title: "Validation",
     value: "/manage/validation",

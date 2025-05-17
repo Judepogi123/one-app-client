@@ -67,6 +67,8 @@ const BarangaySupporters = () => {
     );
   };
 
+  console.log(data);
+
   const totalVoterAsMembers = useMemo(() => {
     return (
       data?.barangayList?.reduce(
@@ -148,12 +150,12 @@ const BarangaySupporters = () => {
     );
   }, [data]);
 
-  // const totalDelisted = useMemo(() => {
-  //   return (data?.barangayList || []).reduce(
-  //     (acc, curr) => acc + (curr?.barangayDelistedVoter || 0),
-  //     0
-  //   );
-  // }, [data]);
+  const totalDelisted = useMemo(() => {
+    return (data?.barangayList || []).reduce(
+      (acc, curr) => acc + (curr?.supporters.DLwithTeam || 0),
+      0
+    );
+  }, [data]);
 
   const totalNoMembers = useMemo(() => {
     return (data?.barangayList || []).reduce(
@@ -382,7 +384,7 @@ const BarangaySupporters = () => {
           <TableHead>0</TableHead>
           <TableHead>OR w/team</TableHead>
           <TableHead>D w/team</TableHead>
-          {/* <TableHead>Delisted Voter</TableHead> */}
+          <TableHead>DL Voter</TableHead>
           <TableHead>All Voters</TableHead>
         </TableHeader>
         <TableBody>
@@ -416,7 +418,7 @@ const BarangaySupporters = () => {
                 <TableCell>{item.teamStat.noMembers || 0}</TableCell>
                 <TableCell>{item.supporters.orMembers || 0}</TableCell>
                 <TableCell>{item.supporters.deadWithTeam || 0}</TableCell>
-                {/* <TableCell>{item.barangayDelistedVoter || 0}</TableCell> */}
+                <TableCell>{item.supporters.DLwithTeam || 0}</TableCell>
                 <TableCell>{item.barangayVotersCount || 0}</TableCell>
               </TableRow>
             ))
@@ -448,7 +450,7 @@ const BarangaySupporters = () => {
             <TableCell className="text-left">{totalNoMembers}</TableCell>
             <TableCell className="text-left">{totalOrMember}</TableCell>
             <TableCell className="text-left">{totalDead}</TableCell>
-            {/* <TableCell className="text-left">{totalDelisted}</TableCell> */}
+            <TableCell className="text-left">{totalDelisted}</TableCell>
             <TableCell className="text-left">{totalPupolation}</TableCell>
           </TableRow>
         </TableFooter>

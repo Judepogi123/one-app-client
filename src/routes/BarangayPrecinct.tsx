@@ -26,6 +26,7 @@ const BarangayPrecinct = () => {
       },
     }
   );
+
   if (loading) {
     return (
       <div className="w-full p-2">
@@ -69,7 +70,7 @@ const BarangayPrecinct = () => {
             <TableRow>
               <TableCell>{i + 1}</TableCell>
               <TableCell>
-                {item.lastname}, {item.lastname}
+                {item.lastname}, {item.firstname}
               </TableCell>
               <TableCell>{item.idNumber}</TableCell>
               <TableCell>{handleLevel(item.level)}</TableCell>

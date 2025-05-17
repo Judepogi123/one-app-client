@@ -20,6 +20,7 @@ import { MachineProps } from "../interface/data";
 import EditMachine from "../layout/EditMachine";
 import { REMOVE_MACHINE } from "../GraphQL/Mutation";
 import { toast } from "sonner";
+import NewPrecinct from "../layout/NewPrecinct";
 const Machines = () => {
   const user = useUserData();
   const [onOpen, setOnOpen] = useState(0);
@@ -189,7 +190,28 @@ const Machines = () => {
               The selected machine will be permanently remove, cannot be undo
               afterwards.
             </p>
+            <p className=" font-medium text-sm italic">
+              It will include all Precincts ralated in this machine, as for the
+              voter's precinct it will be reset.
+            </p>
           </div>
+        }
+      />
+
+      <Modal
+        className="max-w-sm max-h- overflow-auto"
+        open={onOpen === 4}
+        onOpenChange={() => {
+          setSelected(null);
+          setOnOpen(0);
+        }}
+        title={`${selected?.location.name} Machine No. ${selected?.number}`}
+        children={
+          <NewPrecinct
+            zipCode={parseInt(currentMunicipal, 10)}
+            setOnOpen={setOnOpen}
+            item={selected}
+          />
         }
       />
     </div>

@@ -886,6 +886,7 @@ export const EDIT_MACHINE = gql`
     $newPrecints: [String]
     $result: Int
     $precinctMethod: Int
+    $machineNo: Int
   ) {
     editMachine(
       id: $id
@@ -893,6 +894,7 @@ export const EDIT_MACHINE = gql`
       newPrecints: $newPrecints
       result: $result
       precinctMethod: $precinctMethod
+      machineNo: $machineNo
     )
   }
 `;
@@ -900,5 +902,24 @@ export const EDIT_MACHINE = gql`
 export const REMOVE_MACHINE = gql`
   mutation RemoveMachine($id: String) {
     removeMachine(id: $id)
+  }
+`;
+
+export const EDIT_MEMBERS_ATTENDANCE = gql`
+  #graphql
+  mutation EditMembersAttendance($teams: [EditTeamAttendance!]) {
+    teamMembersAttendance(teams: $teams)
+  }
+`;
+
+export const RESET_STAB = gql`
+  mutation ResetStab($zipCode: Int, $barangayId: String) {
+    resetStab(zipCode: $zipCode, barangayId: $barangayId)
+  }
+`;
+
+export const NEW_MACHINE_PRECINCT = gql`
+  mutation NewMachinePrecinct($machineId: String!, $precinctNo: String!) {
+    newMachinePrecinct(machineId: $machineId, precinctNo: $precinctNo)
   }
 `;

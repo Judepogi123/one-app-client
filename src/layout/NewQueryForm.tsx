@@ -50,7 +50,16 @@ interface NewQueryFormProps {
 }
 
 const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
-  const form = useForm<FormType>({ resolver: zodResolver(formSchema) });
+  const form = useForm<FormType>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      queries: "",
+      type: "Single",
+      onTop: true,
+      style: 1,
+      withCustomOption: false,
+    },
+  });
   const {
     handleSubmit,
     register,
@@ -89,6 +98,7 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
       toast("Something went wrong");
     }
   };
+
   return (
     <div className="w-full h-auto">
       <Form {...form}>
@@ -175,6 +185,8 @@ const NewQueryForm = ({ surveyId }: NewQueryFormProps) => {
                 <FormLabel>Style</FormLabel>
                 <FormControl>
                   <Input
+                    max={2}
+                    min={1}
                     defaultValue={1}
                     {...field}
                     type="number"

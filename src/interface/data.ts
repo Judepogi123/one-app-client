@@ -118,7 +118,7 @@ export interface MachineProps {
   };
   regVoters: number;
 }
-interface Precent {
+export interface Precent {
   id: string;
   municipalsId: number;
   precintNumber: string;
@@ -127,6 +127,9 @@ interface Precent {
   machine?: MachineProps | null;
   machineId?: string | null;
   _count: number;
+  stabOne: number;
+  stabTwo: number;
+  inTeam: number;
 }
 
 export interface TeamStatProps {
@@ -598,6 +601,12 @@ export interface TeamProps {
   ValdilatedMember: ValdilatedMember | null;
   untrackedCount: number;
   stabStatus: TeamStabStatus;
+  membersAttendance: MembersAttendanceProps | null;
+}
+
+export interface MembersAttendanceProps {
+  id: string;
+  actual: number;
 }
 
 export interface TeamStabStatus {

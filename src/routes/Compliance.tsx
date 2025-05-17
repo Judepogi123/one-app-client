@@ -59,7 +59,11 @@ const Compliance = () => {
   const [harvestResponse, { loading: submitting }] = useMutation(
     SUBMIT_ALL_RESPONSE,
     {
-      onError: (error) => toast(error.message),
+      onError: (error) => {
+        console.log(error);
+
+        toast(error.message);
+      },
       onCompleted: () => toast("JSON file successfullly uploaded!"),
     }
   );
@@ -124,6 +128,8 @@ const Compliance = () => {
     },
     skip: !selectedMun,
   });
+
+  console.log("Putang ina", data?.allSurveyResponse);
 
   useEffect(() => {
     if (selectedMun) {
@@ -272,7 +278,7 @@ const Compliance = () => {
         </Select>
 
         <div className="w-auto flex gap-1">
-          <Button onClick={()=> setOnReset(true)} size="sm" variant="outline">
+          <Button onClick={() => setOnReset(true)} size="sm" variant="outline">
             <MdDeleteOutline />
           </Button>
           <Button size="sm" onClick={() => setOnOpen(1)}>
