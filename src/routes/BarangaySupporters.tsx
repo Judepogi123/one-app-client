@@ -211,15 +211,14 @@ const BarangaySupporters = () => {
           barangayList: JSON.stringify(barangayList),
         },
         {
-          responseType: "blob", // This ensures the response is treated as a binary blob
+          responseType: "blob",
         }
       );
 
-      // Create a URL for the blob and trigger a download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${data.candidate?.firstname} ${data.candidate?.lastname}.xlsx`; // Set the file name
+      a.download = `${data.candidate?.firstname} ${data.candidate?.lastname}.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();

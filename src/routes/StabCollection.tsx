@@ -143,7 +143,7 @@ const StabCollection = () => {
   const handlePrintMembersStatus = async () => {
     if (!currentMunicipal) return;
     const response = await axios.post(
-      "/upload/print-members-status",
+      "upload/print-members-status",
       {
         zipCode: currentMunicipal,
       },

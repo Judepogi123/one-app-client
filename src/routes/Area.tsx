@@ -15,7 +15,6 @@ import z from "zod";
 //interface
 import { MunicipalVoterListSchema } from "../zod/data";
 
-//queryAndMutation
 import { GET_MUNICIPAL_VOTERS } from "../GraphQL/Queries";
 
 //icon
@@ -23,8 +22,6 @@ import { GET_MUNICIPAL_VOTERS } from "../GraphQL/Queries";
 import { AiOutlineExperiment } from "react-icons/ai";
 import { BsBuildingAdd } from "react-icons/bs";
 //
-
-// type BarangayType = z.infer<typeof BarangaySchema>;
 type MunicipalVoterList = z.infer<typeof MunicipalVoterListSchema>;
 
 const Area = () => {
@@ -34,8 +31,6 @@ const Area = () => {
   const { municipalID } = useParams();
   const id = parseInt(municipalID || "", 10);
   const currentField = selected.get("field");
-
-  //const navigate = useNavigate();
 
   const { loading } = useQuery<MunicipalVoterList>(GET_MUNICIPAL_VOTERS, {
     variables: { id },
