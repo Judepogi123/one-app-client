@@ -9,9 +9,7 @@ import AddNewBarangay from "./AddNewBarangay";
 import BarangayList from "../layout/BarangayList";
 import VotersList from "../layout/VotersList";
 //lib
-import {
-  useQuery,
-} from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useParams, useSearchParams } from "react-router-dom";
 import z from "zod";
 //interface
@@ -21,15 +19,10 @@ import { MunicipalVoterListSchema } from "../zod/data";
 import { GET_MUNICIPAL_VOTERS } from "../GraphQL/Queries";
 
 //icon
-// import { CiFilter } from "react-icons/ci";
-// import { IoMdAdd } from "react-icons/io";
-// import { IoPersonAddOutline } from "react-icons/io5";
+
 import { AiOutlineExperiment } from "react-icons/ai";
 import { BsBuildingAdd } from "react-icons/bs";
 //
-// import { BarangaySchema } from "../zod/data";
-
-//layout
 
 // type BarangayType = z.infer<typeof BarangaySchema>;
 type MunicipalVoterList = z.infer<typeof MunicipalVoterListSchema>;
@@ -44,12 +37,9 @@ const Area = () => {
 
   //const navigate = useNavigate();
 
-  const { loading } = useQuery<MunicipalVoterList>(
-    GET_MUNICIPAL_VOTERS,
-    {
-      variables: { id },
-    }
-  );
+  const { loading } = useQuery<MunicipalVoterList>(GET_MUNICIPAL_VOTERS, {
+    variables: { id },
+  });
   if (loading) return <p>Loading...</p>;
   const handleChangeSelected = (value: number) => {
     setSelected(
@@ -60,7 +50,6 @@ const Area = () => {
       { replace: true }
     );
   };
-
 
   const handleChangeSelectedLayout = () => {
     switch (currentField) {

@@ -127,22 +127,19 @@ const SurveyResult = () => {
           barangayId: selectedBaragnay,
         },
         {
-          responseType: "blob", // Important for handling binary data
+          responseType: "blob",
         }
       );
 
-      // Create a URL for the Blob data
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
 
-      // Create a temporary anchor element
       const a = document.createElement("a");
       a.href = url;
       a.download = "survey-report.pdf";
       document.body.appendChild(a);
       a.click();
 
-      // Clean up
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
@@ -154,17 +151,17 @@ const SurveyResult = () => {
     mutationFn: handlePrint,
     onMutate: () => {
       const toastId = toast.loading("Downloading...", { closeButton: false });
-      return { toastId }; // Pass the toastId to onSuccess and onError
+      return { toastId };
     },
     onSuccess: (_data, _variables, context) => {
-      toast.dismiss(context?.toastId); // Auto close the loading toast
+      toast.dismiss(context?.toastId);
       toast.success("Download complete", {
         closeButton: false,
         description: "Open the PDF file to see the results",
       });
     },
     onError: (_error, _variables, context) => {
-      toast.dismiss(context?.toastId); // Auto close the loading toast
+      toast.dismiss(context?.toastId);
       toast.error("Download error", { closeButton: false });
     },
   });
@@ -176,14 +173,12 @@ const SurveyResult = () => {
 
     try {
       const temp: DataList = barangayList.map((item) => [
-        item.name, // Barangay name
-        item.femaleSize, // Female count
-        item.maleSize, // Male count
+        item.name,
+        item.femaleSize,
+        item.maleSize,
         item.femaleSize + item.maleSize,
-        item.RespondentResponse, // Respondent response count (if available)
+        item.RespondentResponse,
       ]);
-
-      // Add the header row
       temp.unshift([
         "Barangay",
         "Female Size",
@@ -192,7 +187,6 @@ const SurveyResult = () => {
         "Respondent Response",
       ]);
 
-      // Update state with the new DataList
       setBarangayResponse(temp);
     } catch (error) {
       console.error("Error mapping barangay list:", error);
@@ -276,7 +270,7 @@ const SurveyResult = () => {
             chartType="BarChart"
             width="100%"
             height="2500px"
-            data={barangayResponse} // Use the dynamic barangayResponse
+            data={barangayResponse}
             options={options}
           />
         )}
