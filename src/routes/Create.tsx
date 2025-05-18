@@ -74,10 +74,10 @@ const optionList: DataLayoutProps[] = [
     desc: "Manage accounts",
   },
   {
-    title: "Collections",
+    title: "Election Report",
     value: "/manage/collection",
     icon: BsCollection,
-    desc: "Track Stab",
+    desc: "Track and Account Members",
   },
   {
     title: "Machines",

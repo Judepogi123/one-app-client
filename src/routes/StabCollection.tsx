@@ -140,6 +140,48 @@ const StabCollection = () => {
     },
   });
 
+  const handlePrintMembersStatus = async () => {
+    if (!currentMunicipal) return;
+    const response = await axios.post(
+      "upload/print-members-status",
+      {
+        zipCode: currentMunicipal,
+      },
+      {
+        responseType: "blob",
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Failed to generate ID");
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `team-Members-report.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const { mutateAsync: mutatePrint, isPending: printing } = ruseMutation({
+    mutationFn: handlePrintMembersStatus,
+    onSuccess: () => {
+      toast.success("Generated Successfully", {
+        closeButton: false,
+        description: "Click the file/downloaded to open",
+      });
+    },
+    onError: (err) => {
+      toast.error("Something went wrong!", {
+        closeButton: false,
+        description: `${err.message}`,
+      });
+      console.log(err);
+    },
+  });
+
   const handlePrintAttendance = async () => {
     if (!selected) return;
     const response = await axios.post(
@@ -224,9 +266,10 @@ const StabCollection = () => {
           Reset
         </Button>
         <Button
+          disabled={printing}
           className=" flex items-center gap-2"
           size="sm"
-          onClick={() => setOnOpen(1)}
+          onClick={() => mutatePrint()}
         >
           <FaPrint fontSize={12} />
           Print
