@@ -96,6 +96,42 @@ const BarangayStabCollection = () => {
     },
   });
 
+  const handlePrintMachineReport = async () => {
+    if (!data?.barangay) return;
+    const response = await axios.post(
+      "upload/barangay-machine-report",
+      {
+        barangayId: barangayId,
+      },
+      {
+        responseType: "blob",
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Failed to generate ID");
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${data.barangay.name}-Stab-Collection-Report.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const { mutateAsync: printMachineReport, isPending: machineReportPrinting } =
+    tuseMutation({
+      mutationFn: handlePrintMachineReport,
+      onError: (err) => {
+        console.log("Failed", err);
+      },
+      onSuccess: () => {
+        console.log("Success");
+      },
+    });
+
   if (loading) {
     return (
       <div className="w-full p-2">
@@ -118,11 +154,17 @@ const BarangayStabCollection = () => {
             className=" flex flex-row gap-2"
             variant="outline"
             size="sm"
-            disabled={reseting}
+            disabled
           >
             <RxReset /> Reset
           </Button>
-          <Button size="sm">Print</Button>
+          <Button
+            disabled={machineReportPrinting || reseting}
+            size="sm"
+            onClick={() => printMachineReport()}
+          >
+            Print
+          </Button>
         </div>
       </div>
       <div className=" w-full border p-2 flex flex-col gap-1">
