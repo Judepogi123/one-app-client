@@ -18,8 +18,6 @@ import { Button } from "../components/ui/button";
 import AreaSelection from "../components/custom/AreaSelection";
 import { useEffect } from "react";
 
-// Define constants
-
 type UpdateVoterPrecinctType = z.infer<typeof UpdateVoterPrecincts>;
 
 const UpdateVoterPrecinct = () => {

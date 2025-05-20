@@ -73,7 +73,7 @@ const EditBarangayStab = ({ item, barangayId, setOnOpen }: Props) => {
     try {
       const dataArray = Object.entries(data).map(([teamId, value]) => ({
         teamId,
-        value: value || "0", // Fallback to "0" if undefined
+        value: value || "0",
       }));
 
       const filteredData = dataArray.filter((item) => item.value !== "0");

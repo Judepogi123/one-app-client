@@ -140,29 +140,6 @@ const BarangayStabCollection = () => {
                   item={machine.precincts}
                   barangayId={barangayId as string}
                 />
-                {/* <Table>
-                  <TableHeader>
-                    <TableHead>No.</TableHead>
-                    <TableHead>Precint No.</TableHead>
-                    <TableHead>Reg Voters</TableHead>
-                    <TableHead>In Team</TableHead>
-                  </TableHeader>
-                  <TableBody>
-                    {machine.precincts.map((item, i) => (
-                      <TableRow
-                        key={i}
-                        onClick={() =>
-                          nav(`/manage/collection/${barangayId}/${item.id}`)
-                        }
-                      >
-                        <TableCell>{i + 1}</TableCell>
-                        <TableCell>{item.precintNumber}</TableCell>
-                        <TableCell>{item._count ?? 0}</TableCell>
-                        <TableCell>{item._count ?? 0}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table> */}
               </div>
               <div className=" w-full py-4">
                 <p>Results: {machine.result ?? 0}</p>
