@@ -19,9 +19,9 @@ const Home = () => {
   };
 
   return (
-    <div className=" w-full h-full">
+    <div className=" w-full h-screen">
       <Header handleChangeMenu={handleChangeMenu} currentMenu={currentMenu} />
-      <div className="w-full h-full">
+      <div className="w-full h-[90%]">
         <Outlet />
       </div>
       {/* <div className="block lg:hidden p-4">

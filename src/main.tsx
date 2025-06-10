@@ -69,11 +69,14 @@ import StabCollection from "./routes/StabCollection";
 import CollectionReport from "./routes/CollectionReport";
 import Scan from "./routes/Scan";
 import BarangayStabCollection from "./routes/BarangayStabCollection";
+import GenerateID from "./routes/GenerateID";
 // Styles
 import "./index.css";
 import UserValidation from "./routes/UserValidation";
 import Machines from "./routes/Machines";
 import BarangayPrecinct from "./routes/BarangayPrecinct";
+import UploadID from "./layout/UploadID";
+import GeneratedIDrecord from "./routes/GeneratedIDrecord";
 
 // Apollo Client Setup
 const errorLink = onError(({ graphQLErrors }) => {
@@ -235,6 +238,18 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                       <Route
                         path="manage/draft/:draftID"
                         element={<AddNewVoter />}
+                      />
+                      <Route
+                        path="manage/generate-id"
+                        element={<GenerateID />}
+                      />
+                      <Route
+                        path="manage/generate-id/records"
+                        element={<GeneratedIDrecord />}
+                      />
+                      <Route
+                        path="manage/generate-id/upload"
+                        element={<UploadID />}
                       />
                       <Route path="area" element={<Analytics />} />
                       <Route path="area/:municipalID" element={<Area />} />

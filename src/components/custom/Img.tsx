@@ -6,12 +6,14 @@ interface ImageProps {
   src: string;
   local: boolean | undefined;
   style?: React.CSSProperties | undefined;
-  name:string
+  name: string;
   className?: string;
   image?: boolean;
+  width?: number;
+  height?: number;
 }
 
-const Img = ({ src, local,name,className }: ImageProps) => {
+const Img = ({ src, local, name, className, width, height }: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,7 +66,9 @@ const Img = ({ src, local,name,className }: ImageProps) => {
 
   return (
     <img
-    className={className}
+      width={width}
+      height={height}
+      className={className}
       src={src}
       alt={`${src}`}
       onError={(e) => {

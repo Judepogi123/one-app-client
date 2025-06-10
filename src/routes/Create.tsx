@@ -22,6 +22,7 @@ import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsCollection } from "react-icons/bs";
 //import { GiRadarSweep } from "react-icons/gi";
 import { GiVendingMachine } from "react-icons/gi";
+import { HiOutlineIdentification } from "react-icons/hi2";
 // import { MdOutlineBugReport } from "react-icons/md";
 const optionList: DataLayoutProps[] = [
   {
@@ -85,12 +86,12 @@ const optionList: DataLayoutProps[] = [
     icon: GiVendingMachine,
     desc: "",
   },
-  // {
-  //   title: "Scan",
-  //   value: "/manage/scan",
-  //   icon: GiRadarSweep,
-  //   desc: "Search And Fix",
-  // },
+  {
+    title: "Generate ID",
+    value: "/manage/generate-id",
+    icon: HiOutlineIdentification,
+    desc: "",
+  },
   // {
   //   title: "Attendance",
   //   value: "/manage/accounts",

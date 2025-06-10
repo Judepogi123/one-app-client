@@ -3,6 +3,27 @@ export interface ExcelData {
   [key: string]: any;
 }
 
+export interface TemplateId {
+  id: string;
+  url: string;
+  level: number;
+  name?: string | null;
+  desc?: string | null;
+  timestamp: Date;
+  municipal: MunicipalProps;
+  municipalsId: number;
+}
+
+export interface IdRecords {
+  id: string;
+  desc?: string | null;
+  template: TemplateId;
+  voter: VotersProps;
+  votersId: string;
+  timestamp: string;
+  templateIdId: string;
+}
+
 export interface AdminUser {
   uid: string;
   password: string;

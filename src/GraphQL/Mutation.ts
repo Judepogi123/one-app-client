@@ -923,3 +923,21 @@ export const NEW_MACHINE_PRECINCT = gql`
     newMachinePrecinct(machineId: $machineId, precinctNo: $precinctNo)
   }
 `;
+
+export const NEW_ID_TEMPLATE = gql`
+  mutation NewIdTemplate(
+    $uri: String
+    $name: String
+    $desc: String
+    $municipalsId: Int
+    $level: Int
+  ) {
+    uploadIdTemplate(
+      uri: $uri
+      name: $name
+      desc: $desc
+      municipalsId: $municipalsId
+      level: $level
+    )
+  }
+`;

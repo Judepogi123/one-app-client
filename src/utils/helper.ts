@@ -136,3 +136,7 @@ export const calculatePercentage = (part: number, whole: number): number => {
   // Round to 2 decimal places for cleaner output
   return parseFloat(((part / whole) * 100).toFixed(2));
 };
+
+export const cmToPx = (cm: number, dpi = 96): number => {
+  return Math.round(cm * (dpi / 2.54));
+};

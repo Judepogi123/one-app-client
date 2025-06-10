@@ -299,3 +299,28 @@ export const EditBarangayStabSchema = z.record(
   z.string().min(1),
   z.string().optional()
 );
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
+
+export const UploadIDSchema = z.object({
+  name: z.string().min(1, "ID name is required"),
+  file: z
+    .instanceof(File, { message: "Please upload an image file" })
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+      message: `Only these image types are accepted: ${ACCEPTED_IMAGE_TYPES.map(
+        (type) => type.split("/")[1]
+      ).join(", ")}`,
+    })
+    .refine(
+      (file) => file.size <= MAX_FILE_SIZE,
+      `Maximum image size is ${MAX_FILE_SIZE / 1024 / 1024}MB`
+    ),
+  desc: z.string().optional(),
+  level: z.string().min(1, "Please select level"),
+  front: z.boolean().default(false),
+});

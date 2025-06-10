@@ -42,7 +42,7 @@ const Header = ({}: HeaderProps) => {
   const navigate = useNavigate();
   const user = useUserData();
   return (
-    <div className=" w-full h-auto hidden lg:block">
+    <div className=" w-full h-[10%] hidden lg:block">
       <div className="w-full h-auto flex justify-between p-4">
         <Breadcrumb>
           <BreadcrumbList>

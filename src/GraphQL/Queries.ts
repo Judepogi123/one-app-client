@@ -1890,3 +1890,108 @@ export const GET_BARANGAY_PRECINCT = gql`
     }
   }
 `;
+
+export const SEARCH_FIGURE_HEAD = gql`
+  #graphql
+  query SearchFigureHeads(
+    $barangayId: String
+    $zipCode: String
+    $query: String
+    $level: String
+    $skip: Int
+  ) {
+    searchFigureHead(
+      barangayId: $barangayId
+      zipCode: $zipCode
+      query: $query
+      level: $level
+      skip: $skip
+    ) {
+      id
+      idNumber
+      firstname
+      lastname
+      level
+      barangay {
+        name
+      }
+      purok {
+        purokNumber
+      }
+      municipal {
+        name
+      }
+    }
+  }
+`;
+
+export const GET_ALL_IDS = gql`
+  #graphql
+  query GetAllID($zipCode: String) {
+    getAllIDs(zipCode: $zipCode) {
+      id
+      name
+      desc
+      level
+      timestamp
+      municipalsId
+      url
+    }
+  }
+`;
+
+export const GET_BARANGAY_VOTERS = gql`
+  #graphql
+  query GetAllBarangayVoters($barangayID: String) {
+    barangayVoters(barangayID: $barangayID) {
+      id
+      idNumber
+      firstname
+      lastname
+      level
+      barangay {
+        name
+      }
+      purok {
+        purokNumber
+      }
+      municipal {
+        name
+      }
+    }
+  }
+`;
+
+export const GET_ID_RECORD = gql`
+  query GetIdRecords(
+    $zipCode: String
+    $query: String
+    $templateId: String
+    $skip: Int
+  ) {
+    generatedRecord(
+      zipCode: $zipCode
+      query: $query
+      templateId: $templateId
+      skip: $skip
+    ) {
+      id
+      timestamp
+      voter {
+        idNumber
+        lastname
+        firstname
+        municipal {
+          name
+        }
+        barangay {
+          name
+        }
+      }
+      template {
+        id
+        name
+      }
+    }
+  }
+`;
