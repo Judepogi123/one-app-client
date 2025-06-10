@@ -184,7 +184,7 @@ const GenerateID = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement("a");
       a.href = url;
-      a.download = "IDs.pdf";
+      a.download = `${selectedID?.name}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -202,7 +202,6 @@ const GenerateID = () => {
       });
     },
     onMutate: () => {
-      // Show toast with cancel button
       toastId = toast.loading("Generating IDs...", {
         cancel: {
           label: "Cancel",
