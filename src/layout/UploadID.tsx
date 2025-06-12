@@ -363,23 +363,6 @@ const UploadID = () => {
                   </FormItem>
                 )}
               />
-
-              <FormField
-                name="front"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        value={value}
-                        placeholder="Template Description"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
             </Form>
           </div>
         }

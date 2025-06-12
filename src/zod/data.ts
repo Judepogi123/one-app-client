@@ -322,5 +322,4 @@ export const UploadIDSchema = z.object({
     ),
   desc: z.string().optional(),
   level: z.string().min(1, "Please select level"),
-  front: z.boolean().default(false),
 });
