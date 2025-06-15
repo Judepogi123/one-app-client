@@ -5,7 +5,7 @@ import axios from "../api/axios";
 import { DndContext, DragEndEvent, pointerWithin } from "@dnd-kit/core";
 //hooks
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { useDebounce } from "use-debounce";
 import { useUserData } from "../provider/UserDataProvider";
 //layout
@@ -39,13 +39,14 @@ import { HiIdentification } from "react-icons/hi2";
 import { TbError404 } from "react-icons/tb";
 import { CiViewList } from "react-icons/ci";
 //queries
-import { SEARCH_FIGURE_HEAD } from "../GraphQL/Queries";
+import { GET_ALL_FH, GET_TEAM_LIST } from "../GraphQL/Queries";
 import { toast } from "sonner";
-import { VotersProps } from "../interface/data";
+import { TeamProps, VotersProps } from "../interface/data";
 import IdPreview from "../layout/IdPreview";
 
 //
 import { TemplateId } from "../interface/data";
+import { handleFHLabel } from "../utils/helper";
 
 const GenerateID = () => {
   const [onOpen, setOpen] = useState(0);
@@ -64,12 +65,12 @@ const GenerateID = () => {
     idUid: "",
     idName: "",
     page: "1",
-    level: "1",
+    level: "TL",
   });
   const currentMunicipal = searchParams.get("zipCode") || "";
   const currentBarangay = searchParams.get("barangay") || "";
   const currentPage = searchParams.get("page") || "1";
-  const currentLevel = searchParams.get("level") || "1";
+  const currentLevel = searchParams.get("level") || "TL";
 
   const handleChangeArea = (type: string, value: string) => {
     if (type !== "page") {
@@ -86,38 +87,51 @@ const GenerateID = () => {
     );
   };
 
-  const { loading, data, refetch } = useQuery<{
-    searchFigureHead: VotersProps[];
-  }>(SEARCH_FIGURE_HEAD, {
-    onError: (err) => {
-      console.log("Search FH: ", err);
-      toast.error("Something went wrong", {
-        description: `${err.message}`,
-        closeButton: false,
-      });
-    },
+  const { data, loading, refetch } = useQuery<{
+    teamList: TeamProps[];
+    teamCount: number;
+    teamMembersCount: number;
+  }>(GET_TEAM_LIST, {
     variables: {
-      barangayId: currentBarangay,
       zipCode: currentMunicipal,
-      query: value,
-      skip: (parseInt(currentPage, 10) - 1) * 10,
+      barangayId: currentBarangay,
+      purokId: "all",
       level: currentLevel,
+      page: currentPage,
+      skip: (parseInt(currentPage, 10) - 1) * 50,
+      query: value,
+      withIssues: "",
+      members: "",
+    },
+    fetchPolicy: "cache-and-network",
+    onError: (error) => {
+      toast(`${error.message}`);
+      console.error("Error fetching data", error);
     },
   });
 
+  console.log({ data });
+
   useEffect(() => {
-    if (!value) return;
-    const refrain = async () => {
-      const page = parseInt(currentPage, 10);
-      refetch({
-        barangayId: currentBarangay,
-        zipCode: currentMunicipal,
-        level: currentLevel,
-        skip: (page - 1) * 10,
-      });
-    };
-    refrain();
-  }, [value]);
+    refetch({
+      zipCode: currentMunicipal,
+      barangayId: currentBarangay,
+      purokId: "all",
+      level: currentLevel,
+      page: currentPage,
+      skip: (parseInt(currentPage, 10) - 1) * 50,
+      query: value,
+      members: "",
+    });
+  }, [
+    currentLevel,
+    currentPage,
+    currentMunicipal,
+    currentBarangay,
+    currentBarangay,
+    value,
+    refetch,
+  ]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
@@ -134,6 +148,7 @@ const GenerateID = () => {
     }
 
     const draggedVoter = active.data.current as VotersProps; // Type assertion
+    console.log({ draggedVoter });
 
     // Check if already selected
     const isAlreadySelected = selectedVoters.some(
@@ -217,14 +232,6 @@ const GenerateID = () => {
     },
   });
 
-  const handleSelectAll = async () => {
-    if (!data) {
-      return;
-    }
-    const { searchFigureHead } = data;
-    setSelectedVoters([...searchFigureHead]);
-  };
-
   const handleNavPage = (dir: string) => {
     let toPage = 0;
     const thisPage = parseInt(currentPage, 10);
@@ -235,6 +242,35 @@ const GenerateID = () => {
     }
     handleChangeArea("page", toPage.toString());
   };
+
+  const [getAllBarangayFH, { loading: fhLoading }] = useLazyQuery<{
+    barangayFigureHead: TeamProps[];
+  }>(GET_ALL_FH);
+  const handleSelectAll = async () => {
+    const response = await getAllBarangayFH({
+      variables: {
+        barangayId: currentBarangay,
+        level: currentLevel,
+      },
+    });
+
+    if (response.data) {
+      const { barangayFigureHead } = response.data;
+      console.log({ barangayFigureHead });
+
+      const tlVoters = barangayFigureHead.map((item) => item.teamLeader?.voter);
+      if (tlVoters && tlVoters.length > 0) {
+        setSelectedVoters(tlVoters as VotersProps[]);
+      }
+    }
+  };
+
+  const { mutateAsync: selectingAll } = useMutation({
+    mutationFn: handleSelectAll,
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   return (
     <div className=" w-full h-full flex ">
@@ -306,7 +342,7 @@ const GenerateID = () => {
                 <Select
                   disabled={isPending}
                   value={currentLevel}
-                  defaultValue="1"
+                  defaultValue="TL"
                   onValueChange={(e) => {
                     handleChangeArea("level", e);
                   }}
@@ -315,12 +351,13 @@ const GenerateID = () => {
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">TL</SelectItem>
-                    <SelectItem value="2">PC</SelectItem>
-                    <SelectItem value="3">BC</SelectItem>
+                    <SelectItem value="TL">TL</SelectItem>
+                    <SelectItem value="PC">PC</SelectItem>
+                    <SelectItem value="BC">BC</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
+                  disabled={fhLoading}
                   className=" mt-4"
                   onClick={() => {
                     if (!selectedID) {
@@ -329,13 +366,13 @@ const GenerateID = () => {
                       });
                       return;
                     }
-                    if (parseInt(currentLevel, 10) !== selectedID?.level) {
+                    if (handleFHLabel(currentLevel) !== selectedID?.level) {
                       toast.warning("Level not matched from selected ID", {
                         closeButton: false,
                       });
                       return;
                     }
-                    handleSelectAll();
+                    selectingAll();
                   }}
                   size="sm"
                   variant="outline"
@@ -406,13 +443,13 @@ const GenerateID = () => {
             ) : data ? (
               <>
                 <ScrollArea className=" w-full h-[90%] overflow-auto">
-                  {data.searchFigureHead.length > 0 ? (
-                    data.searchFigureHead.map((item, i) => (
+                  {data.teamList.length > 0 ? (
+                    data.teamList.map((item, i) => (
                       <SearchedFh
                         query={value}
                         id={item.id}
-                        voter={item}
-                        number={(parseInt(currentPage, 10) - 1) * 10 + i + 1}
+                        team={item}
+                        number={(parseInt(currentPage, 10) - 1) * 50 + i + 1}
                       />
                     ))
                   ) : (
@@ -435,7 +472,7 @@ const GenerateID = () => {
                     Prev
                   </Button>
                   <Button
-                    disabled={data.searchFigureHead.length <= 9}
+                    disabled={data.teamList.length <= 9}
                     size="sm"
                     onClick={() => handleNavPage("next")}
                   >

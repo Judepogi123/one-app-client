@@ -1,22 +1,22 @@
 import React from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { VotersProps } from "../../interface/data";
+import { TeamProps, VotersProps } from "../../interface/data";
 import { handleLevel } from "../../utils/helper";
 import { handleElements } from "../../utils/element";
 
 interface Props {
   id: string;
-  voter: VotersProps;
+  team: TeamProps;
   number: number;
   query: string;
 }
 
-const SearchedFh = ({ id, voter, number, query }: Props) => {
+const SearchedFh = ({ id, team, number, query }: Props) => {
   const { setNodeRef, listeners, attributes, transform, isDragging } =
     useDraggable({
       id: id,
       data: {
-        ...voter,
+        ...(team.teamLeader?.voter as VotersProps),
       },
     });
 
@@ -41,15 +41,18 @@ const SearchedFh = ({ id, voter, number, query }: Props) => {
       {...attributes}
     >
       <div className="cursor-grab active:cursor-grabbing">
-        <p className=" font-medium text-sm">{handleLevel(voter.level)}</p>
+        <p className=" font-medium text-sm">{handleLevel(team.level)}</p>
         <div>
-          {number}. {handleElements(query, voter.lastname)},{" "}
-          {handleElements(query, voter.firstname)} - ({voter.idNumber})
+          {number}.{" "}
+          {handleElements(query, team.teamLeader?.voter?.lastname as string)},{" "}
+          {handleElements(query, team.teamLeader?.voter?.firstname as string)} -
+          ({handleElements(query, team.teamLeader?.voter?.idNumber as string)})
         </div>
 
-        <p className=" text-sm">
-          {voter.barangay.name}, {voter.municipal.name}
-        </p>
+        {/* <p className=" text-sm">
+          {team.teamLeader?.voter?.barangay.name},{" "}
+          {team.teamLeader?.voter?.municipal.name}
+        </p> */}
       </div>
     </div>
   );

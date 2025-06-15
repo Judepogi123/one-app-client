@@ -1098,7 +1098,14 @@ export const GET_TEAM_LIST = gql`
           purok {
             purokNumber
           }
+          barangay {
+            name
+          }
+          municipal {
+            name
+          }
           teamId
+          level
         }
       }
       candidate {
@@ -1957,6 +1964,36 @@ export const GET_BARANGAY_VOTERS = gql`
       }
       municipal {
         name
+      }
+    }
+  }
+`;
+
+export const GET_ALL_FH = gql`
+  query GetBarangayFh($barangayId: String, $level: String) {
+    barangayFigureHead(barangayId: $barangayId, level: $level) {
+      id
+      level
+      teamLeader {
+        id
+        votersId
+        voter {
+          id
+          firstname
+          lastname
+          idNumber
+          purok {
+            purokNumber
+          }
+          barangay {
+            name
+          }
+          municipal {
+            name
+          }
+          teamId
+          level
+        }
       }
     }
   }

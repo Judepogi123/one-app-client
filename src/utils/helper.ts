@@ -140,3 +140,13 @@ export const calculatePercentage = (part: number, whole: number): number => {
 export const cmToPx = (cm: number, dpi = 96): number => {
   return Math.round(cm * (dpi / 2.54));
 };
+
+export const handleFHLabel = (level: string) => {
+  const levelList: any = [
+    { name: "TL", value: 1 },
+    { name: "PC", value: 2 },
+    { name: "BC", value: 3 },
+  ];
+  const teamLevel = levelList.find((x: { name: string }) => x.name === level);
+  return teamLevel.value;
+};
