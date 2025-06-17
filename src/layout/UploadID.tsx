@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useUserData } from "../provider/UserDataProvider";
 import { useParams } from "react-router-dom";
 //lib
 import axios from "../api/axios";
@@ -69,8 +68,6 @@ const UploadID = () => {
       setOnOpen(0);
     },
   });
-
-  const user = useUserData();
 
   const onSubmit = async (data: UploadIDType) => {
     console.log({ data });

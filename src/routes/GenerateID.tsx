@@ -10,9 +10,7 @@ import { useDebounce } from "use-debounce";
 import { useUserData } from "../provider/UserDataProvider";
 //layout
 import AreaSelection from "../components/custom/AreaSelection";
-import UploadID from "../layout/UploadID";
 import { Button } from "../components/ui/button";
-import Modal from "../components/custom/Modal";
 import SearchedFh from "../components/item/SearchedFh";
 import SelectID from "../components/custom/SelectID";
 import {
@@ -49,7 +47,6 @@ import { TemplateId } from "../interface/data";
 import { handleFHLabel } from "../utils/helper";
 
 const GenerateID = () => {
-  const [onOpen, setOpen] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVoters, setSelectedVoters] = useState<VotersProps[]>([]);
   const [selectedID, setSelectedID] = useState<TemplateId | undefined>(
