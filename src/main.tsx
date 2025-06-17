@@ -248,7 +248,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                         element={<GeneratedIDrecord />}
                       />
                       <Route
-                        path="manage/generate-id/upload"
+                        path="manage/generate-id/upload/:zipCode"
                         element={<UploadID />}
                       />
                       <Route path="area" element={<Analytics />} />

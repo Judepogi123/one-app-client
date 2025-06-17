@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUserData } from "../provider/UserDataProvider";
+import { useParams } from "react-router-dom";
 //lib
 import axios from "../api/axios";
 import { useMutation } from "@apollo/client";
@@ -43,6 +44,7 @@ type UploadIDType = z.infer<typeof UploadIDSchema>;
 const UploadID = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [onOpen, setOnOpen] = useState(0);
+  const { zipCode } = useParams();
   const form = useForm<UploadIDType>({
     resolver: zodResolver(UploadIDSchema),
     defaultValues: {
@@ -72,7 +74,7 @@ const UploadID = () => {
 
   const onSubmit = async (data: UploadIDType) => {
     console.log({ data });
-
+    if (!zipCode) return;
     try {
       const imageData = new FormData();
       imageData.append("file", data.file);
@@ -97,7 +99,7 @@ const UploadID = () => {
           name: data.name,
           desc: data.desc,
           level: parseInt(data.level, 10),
-          municipalsId: user?.forMunicipal ? user.forMunicipal : 4905,
+          municipalsId: parseInt(zipCode, 10),
         },
       });
       setPreviewImage(null);

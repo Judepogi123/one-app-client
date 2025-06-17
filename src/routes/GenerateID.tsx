@@ -295,7 +295,15 @@ const GenerateID = () => {
               disabled={isPending}
               size="sm"
               className=" flex items-center gap-2"
-              onClick={() => nav("/manage/generate-id/upload")}
+              onClick={() => {
+                if (currentMunicipal === "all") {
+                  toast.warning("Select municipal first", {
+                    closeButton: false,
+                  });
+                  return;
+                }
+                nav(`/manage/generate-id/upload/${currentMunicipal}`);
+              }}
             >
               <IoCloudUploadOutline size={20} /> Upload
             </Button>
@@ -487,12 +495,6 @@ const GenerateID = () => {
             )}
           </div>
         </div>
-        <Modal
-          className=" max-w-4xl"
-          open={onOpen === 1}
-          onOpenChange={() => setOpen(0)}
-          children={<UploadID />}
-        />
       </DndContext>
     </div>
   );

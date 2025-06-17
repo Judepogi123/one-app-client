@@ -37,6 +37,8 @@ const SelectID = ({ zipCode, setSelectedID, selectedID, disabled }: Props) => {
     }
   }, [selected]);
 
+  console.log("Select ID: ", { data });
+
   return (
     <Select
       disabled={disabled}
